@@ -1,2 +1,3 @@
-# http-dot-net.in.ua
-.NET Core Ukraine user group community site
+# .NET Core Ukraine User Group Website
+
+http://dot-net.in.ua
