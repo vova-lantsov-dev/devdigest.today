@@ -1,3 +1,3 @@
-# .NET Core Ukraine User Group Website
+# .NET Core Ukrainian User Group Website
 
 http://dot-net.in.ua
