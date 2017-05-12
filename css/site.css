@@ -22,14 +22,36 @@ h5 {
 
 .links a {
     font-weight: lighter;
+    text-decoration: none;
+display: block;
 }
 
-.links a:hover {}
+.links a:hover {
+    color: #FFF;
+}
 
 .links li {
     text-align: center;
     font-size: 21pt;
     text-transform: uppercase;
     border-radius: 0 !important;
+    margin-bottom: 15px;
+}
+
+.links li:hover {
+    background-color: #69529a;
+    color: #FFF;
+    border-color: #2b3580;
+}
+
+.links li:hover a{
+    color: #FFF;
+}
+.logo {
+    vertical-align: middle;
+    text-align: center;
+    display: block;
+    margin: auto;
+    margin-top: 10px;
     margin-bottom: 15px;
 }
