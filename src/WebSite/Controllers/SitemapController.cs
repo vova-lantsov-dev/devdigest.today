@@ -33,10 +33,9 @@ namespace WebSite.Controllers
         {
             var page = 1;
             var key = "sitemap";
-            var xml = string.Empty;
             IPagedList<Publication> pagedResult;
 
-            xml = _cache.Get(key)?.ToString();
+            var xml = _cache.Get(key)?.ToString();
 
             if (string.IsNullOrEmpty(xml))
             {

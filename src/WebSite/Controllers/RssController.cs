@@ -48,24 +48,26 @@ namespace WebSite.Controllers
                     {
                         Copyright = Settings.Current.WebSiteTitle,
                         Description = Settings.Current.DefaultDescription,
-                        Image =
-                            new RssImage
-                            {
-                                Description = Settings.Current.WebSiteTitle,
-                                Height = 100,
-                                Width = 100,
-                                Link = new RssUrl(Settings.Current.FacebookImage),
-                                Title = Settings.Current.WebSiteTitle,
-                                Url = new RssUrl(Settings.Current.FacebookImage)
-                            },
+                        SkipDays = new List<Day>(),
+                        SkipHours = new List<Hour>(),
+                        AtomLink = new RssLink(Settings.Current.RssFeedUrl),
+                        Image = new RssImage
+                        {
+                            Description = Settings.Current.WebSiteTitle,
+                            Height = 100,
+                            Width = 100,
+                            Link = new RssUrl(Settings.Current.FacebookImage),
+                            Title = Settings.Current.WebSiteTitle,
+                            Url = new RssUrl(Settings.Current.FacebookImage)
+                        },
                         Language = new CultureInfo("ru"),
                         LastBuildDate = lastUpdateDate,
                         Link = new RssUrl(Settings.Current.RssFeedUrl),
-                        ManagingEditor = new RssEmail(Settings.Current.SupportEmail),
+                        ManagingEditor = new RssPerson("Andrew G.", Settings.Current.SupportEmail),
                         PubDate = lastUpdateDate,
                         Title = Settings.Current.WebSiteTitle,
                         TTL = 10,
-                        WebMaster = new RssEmail(Settings.Current.SupportEmail),
+                        WebMaster = new RssPerson("Andrew G.", Settings.Current.SupportEmail),
                         Items = new List<RssItem> { }
                     }
                 };
@@ -93,7 +95,7 @@ namespace WebSite.Controllers
                 Link = new RssUrl(p.ShareUrl),
                 PubDate = p.DateTime,
                 Title = p.Title,
-                Guid = new RssGuid { IsPermaLink = false, Value = p.Id.ToString() },
+                Guid = new RssGuid { IsPermaLink = true, Value = p.ShareUrl },
                 Source = new RssSource { Url = new RssUrl(p.ShareUrl) }
             };
         }
