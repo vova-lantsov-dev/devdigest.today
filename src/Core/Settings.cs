@@ -38,7 +38,7 @@ namespace Core
                 DefaultDescription = WebUtility.HtmlDecode(configuration["DefaultDescription"]),
                 DefaultKeywords = WebUtility.HtmlDecode(configuration["DefaultKeywords"]),
                 PublicationKey = Guid.Parse(configuration["PublicationKey"]),
-                SupportEmail = "dncuug@agi.net.us"
+                SupportEmail = "dncuug@agi.net.ua"
             };
         }
 

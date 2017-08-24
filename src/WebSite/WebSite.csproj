@@ -5,7 +5,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
     <PackageReference Include="X.PagedList.Mvc.Core" Version="1.0.4-beta" />
-    <PackageReference Include="xwebrss" Version="2.0.0" />
+    <PackageReference Include="xwebrss" Version="2.1.0" />
     <PackageReference Include="xsitemap" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
@@ -13,6 +13,6 @@
     <DotNetCliToolReference Include="BundlerMinifier.Core" Version="2.4.337" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\Core\Core.csproj" />    
   </ItemGroup>
 </Project>
