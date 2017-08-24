@@ -1,0 +1,41 @@
+﻿@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+@model IPagedList<Core.ViewModels.PublicationViewModel>
+
+@section head {
+
+    <meta property="og:site_name" content="@Core.Settings.Current.WebSiteTitle" />
+    <meta property="og:title" content="@Core.Settings.Current.WebSiteTitle" />
+    <meta property="og:type" content="website" />
+    <!-- <meta property="og:url" content="@Core.Settings.Current.WebSiteUrl" /> -->
+    <meta property="og:image" content="@Core.Settings.Current.FacebookImage" />
+    <meta property="og:description" content="@Core.Settings.Current.DefaultDescription" />
+
+    <meta property="author" content="@Core.Settings.Current.WebSiteTitle" />
+    <meta property="article:author" content="https://www.facebook.com/dncuug/">
+    
+    <meta name="keywords" content="@Core.Settings.Current.DefaultKeywords" />
+    <meta name="description" content="@Core.Settings.Current.DefaultDescription" />
+}
+
+<div class="container">
+    <!-- Example row of columns -->
+    <div class="row">
+        <div style="height: 25px;" class="col-md-12"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            @foreach (var p in Model)
+            {
+                @Html.Partial("_Publication", p)
+            }
+
+            @Html.PagedListPager(Model, page => $"/page/{page}")
+        </div>
+        <div class="col-md-4">
+            
+        </div>
+    </div>
+
+</div>
+<!-- /container -->
