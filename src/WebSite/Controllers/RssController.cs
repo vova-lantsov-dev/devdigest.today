@@ -21,56 +21,66 @@ namespace WebSite.Controllers
     public class RssController : Controller
     {
         private readonly PublicationManager _manager;
+        private readonly IMemoryCache _cache;
 
         public RssController(IMemoryCache cache)
         {
+            _cache = cache;
             _manager = new PublicationManager(Core.Settings.Current.ConnectionString, cache);
         }
 
         [HttpGet]
         [Route("rss")]
-        public async Task<IActionResult> GetRssFeed(string url, Guid key)
+        public async Task<IActionResult> GetRssFeed()
         {
-            var pagedResult = await _manager.GetPublications(1, 50);
-            var lastUpdateDate = pagedResult.Max(o => o.DateTime);
+            var key = "rss";
+            var xml = _cache.Get(key)?.ToString();
 
-            var rss = new RssDocument
+            if (string.IsNullOrEmpty(xml))
             {
-                Channel =
-                new RssChannel
+                var pagedResult = await _manager.GetPublications(1, 50);
+                var lastUpdateDate = pagedResult.Max(o => o.DateTime);
+
+                var rss = new RssDocument
                 {
-                    Copyright = Settings.Current.WebSiteTitle,
-                    Description = Settings.Current.DefaultDescription,
-                    Image =
-                        new RssImage
-                        {
-                            Description = Settings.Current.WebSiteTitle,
-                            Height = 100,
-                            Width = 100,
-                            Link = new RssUrl(Settings.Current.FacebookImage),
-                            Title = Settings.Current.WebSiteTitle,
-                            Url = new RssUrl(Settings.Current.FacebookImage)
-                        },
-                    Language = new CultureInfo("ru"),
-                    LastBuildDate = lastUpdateDate,
-                    Link = new RssUrl(Settings.Current.RssFeedUrl),
-                    ManagingEditor = new RssEmail(Settings.Current.SupportEmail),
-                    PubDate = lastUpdateDate,
-                    Title = Settings.Current.WebSiteTitle,
-                    TTL = 10,
-                    WebMaster = new RssEmail(Settings.Current.SupportEmail),
-                    Items = new List<RssItem> { }
-                }
-            };
+                    Channel =
+                    new RssChannel
+                    {
+                        Copyright = Settings.Current.WebSiteTitle,
+                        Description = Settings.Current.DefaultDescription,
+                        Image =
+                            new RssImage
+                            {
+                                Description = Settings.Current.WebSiteTitle,
+                                Height = 100,
+                                Width = 100,
+                                Link = new RssUrl(Settings.Current.FacebookImage),
+                                Title = Settings.Current.WebSiteTitle,
+                                Url = new RssUrl(Settings.Current.FacebookImage)
+                            },
+                        Language = new CultureInfo("ru"),
+                        LastBuildDate = lastUpdateDate,
+                        Link = new RssUrl(Settings.Current.RssFeedUrl),
+                        ManagingEditor = new RssEmail(Settings.Current.SupportEmail),
+                        PubDate = lastUpdateDate,
+                        Title = Settings.Current.WebSiteTitle,
+                        TTL = 10,
+                        WebMaster = new RssEmail(Settings.Current.SupportEmail),
+                        Items = new List<RssItem> { }
+                    }
+                };
 
-            foreach (var p in pagedResult)
-            {
-                rss.Channel.Items.Add(CreateRssItem(p));
+                foreach (var p in pagedResult)
+                {
+                    rss.Channel.Items.Add(CreateRssItem(p));
+                }
+
+                xml = rss.ToXml();
+
+                _cache.Set(key, xml, TimeSpan.FromMinutes(10));
             }
 
-            var xml = rss.ToXml();
             return Content(xml, RssDocument.MimeType);
-
         }
 
         private RssItem CreateRssItem(DAL.Publication publication)
