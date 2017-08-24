@@ -1,0 +1,174 @@
+﻿body {
+    padding-top: 50px;
+}
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+h1, h2, h3, h4,
+.navbar-inverse .navbar-brand,
+.navbar-inverse .navbar-nav > li > a,
+footer, footer a {    
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+}
+
+.navbar-header, .navbar-inverse {
+    background-color: #662079;
+}
+
+.navbar-inverse .navbar-brand {
+    color: #FFF;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+    color: #FFF;
+}
+
+.jumbotron {
+    background-image: url(/images/bg6.jpg);
+    background-size: cover;
+    background-position: center top;
+    font-weight: 200;
+}
+
+.jumbotron h1 {
+    font-weight: 200;
+} 
+
+.jumbotron .social {
+    font-size: 21px;
+    background-color: #662079;
+    padding: 10px;
+    color: #FFF;
+    font-family: 'Roboto', sans-serif;
+}
+
+.jumbotron .social a {
+    color: #FFF;
+}
+
+.jumbotron, {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.jumbotron p {    
+    font-weight: normal;
+}
+
+.post {
+    min-height: 700px;
+    margin-bottom: 40px;
+}
+
+.comments {
+    margin-top: 15px;
+    border-top: 1px solid #EEE;
+    border-bottom: 1px solid #EEE;
+}
+
+.publication-preview {
+    box-shadow: 1px 1px 10px #CCC;
+    margin-bottom: 40px;
+}
+
+.publication-preview h3 {
+    
+}
+
+.publication-preview .description {
+    
+}
+
+.date {
+    margin-bottom: 5px;
+    font-style: italic;
+    color: #CCC;    
+}
+
+.publication-preview .image-block {
+}
+
+.publication-preview .image-block img{
+    width: 100%;
+}
+
+.share {
+    margin-top: 25px;    
+}
+
+.publication-preview section {
+    border: 1px solid #EEE;
+    padding: 20px;
+}
+
+footer {
+    color: #FFF;
+    background-color: #662079;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    padding-top: 25px;
+}
+
+footer a {
+    color: #FFF;
+}
+
+footer a:hover {
+    color: #FFF;
+}
+
+footer li {
+    list-style: none;
+    padding-left: 10px;
+}
+
+footer ul {
+    padding: 0;
+    list-style: none;
+}
+
+.content {
+    margin-top: 25px;
+}
+
+.content, .description {
+    font-family: 'PT Serif', serif;
+    font-size: 12pt;
+}
+
+.pagination>.active>a, 
+.pagination>.active>a:focus, 
+.pagination>.active>a:hover, 
+.pagination>.active>span, 
+.pagination>.active>span:focus, 
+.pagination>.active>span:hover {
+    background-color: #662079;
+}
+
+.pagination > li > a, .pagination > li > span {
+    color: #662079;
+}
+
+.ad {
+    width: 100%;    
+    overflow: hidden;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.ad img {
+    width: 100%;    
+}
+
+.navbar-brand {
+    font-size: 12pt;
+}
+
+@media only screen and (max-width : 414px) {
+    .share .btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
