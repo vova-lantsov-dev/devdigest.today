@@ -40,6 +40,11 @@ namespace Core
             return result;
         }
 
+        public IEnumerable<Category> GetCategories()
+        {
+            return _database.Category;
+        }
+
         public async Task<Publication> Get(int id)
         {
             var key = $"publication_{id}";

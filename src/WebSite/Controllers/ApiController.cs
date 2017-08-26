@@ -25,6 +25,19 @@ namespace WebSite.Controllers
         }
 
         [HttpGet]
+        [Route("api/categories")]
+        public async Task<IActionResult> GetCategories()
+        {
+            var categories = _publicationManager.GetCategories().Select(o => new
+            {
+                o.Id,
+                o.Name
+            }).ToList();
+
+            return Ok(categories);
+        }
+
+        [HttpGet]
         [Route("api/publications/new")]
         public async Task<IActionResult> AddPublicaton(string url, Guid key, int categoryId = 1)
         {
