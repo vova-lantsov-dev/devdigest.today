@@ -9,15 +9,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Core
 {
-    public class PublicationManager
+    public class PublicationManager : ManagerBase
     {
-        private readonly DAL.DatabaseContext _database;
+
         private readonly IMemoryCache _cache;
 
         public PublicationManager(string connectionString, IMemoryCache cache)
+            : base(connectionString)
         {
             _cache = cache;
-            _database = new DatabaseContext(connectionString);
         }
 
         public async Task<IPagedList<Publication>> GetPublications(int page = 1, int pageSize = 10)
@@ -38,6 +38,11 @@ namespace Core
             }
 
             return result;
+        }
+
+        public IEnumerable<Category> GetCategories()
+        {
+            return _database.Category;
         }
 
         public async Task<Publication> Get(int id)

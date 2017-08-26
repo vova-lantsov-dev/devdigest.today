@@ -15,40 +15,26 @@
                     <label for="security-key">Ключ</label>
                     <input type="password" class="form-control" id="security-key" placeholder="Security Key">
                 </div>
-                <button type="button" id="add-post" class="btn btn-default">Добавить</button>
+                <div class="form-group">
+                    <label for="category-id">Категория</label>
+                    <select class="form-control" id="category-id">
+                    </select>
+                </div>
+
+                <button type="button" id="add-post" class="btn btn-primary">Добавить</button>                
             </form>
+
+            <br />
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                </div>
+            </div>      
 
             <script src="https://code.jquery.com/jquery-3.2.1.min.js"
                     integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
                     crossorigin="anonymous"></script>
 
-            <script>
-                $("#add-post").click(function () {
-                    addNewPost();
-                });
-
-                function addNewPost() {
-                    debugger;
-                    var link = $("#link").val();
-                    var key = $("#security-key").val();
-
-                    var url = '/api/publications/new?url=' + link + '&key=' + key;
-
-                    $.get(url,
-                        function(data) {
-                            debugger;
-                            window.location.replace(data.shareUrl);
-                        }).done(function() {
-
-                    }).fail(function(err) {
-                        if (!!err && err.status == 403)
-                            alert('Неверный ключ');
-                        else
-                            console.error(err);
-                    });
-                }
-
-            </script>
+            <script src="/js/new-post.js"></script>
 
         </div>
     </div>
