@@ -19,8 +19,6 @@ namespace Core
         public string FacebookImage => $"{WebSiteUrl}images/fb_logo.png";
 
         public string RssFeedUrl => $"{WebSiteUrl}rss";
-
-        public Guid PublicationKey { get; set; }
         
         public string SupportEmail { get; set; }
 
@@ -37,7 +35,6 @@ namespace Core
                 WebSiteTitle = configuration["WebSiteTitle"],
                 DefaultDescription = WebUtility.HtmlDecode(configuration["DefaultDescription"]),
                 DefaultKeywords = WebUtility.HtmlDecode(configuration["DefaultKeywords"]),
-                PublicationKey = Guid.Parse(configuration["PublicationKey"]),
                 SupportEmail = "dncuug@agi.net.ua"
             };
         }
