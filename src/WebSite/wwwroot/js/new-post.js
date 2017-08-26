@@ -23,7 +23,8 @@ function addNewPost() {
     var key = $("#security-key").val();
     var categoryId = $("#category-id").val();
     var progress = $(".progress");
-    var url = '/api/publications/new?url=' + link + '&key=' + key & '&categoryId=' + categoryId;
+    var url = '/api/publications/new?url=' + link + '&key=' + key + '&categoryId=' + categoryId;
+
 
     progress.show();
 
