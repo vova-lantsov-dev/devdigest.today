@@ -25,7 +25,7 @@ namespace WebSite.Controllers
         {
             _publicationManager = new PublicationManager(Settings.Current.ConnectionString, cache);
             _userManager = new UserManager(Settings.Current.ConnectionString);
-            _telegramManager = new TelegramManager(Settings.Current.TelegramToken, (Settings.Current.TelegramChannelId);
+            _telegramManager = new TelegramManager(Settings.Current.TelegramToken, Settings.Current.TelegramChannelId);
         }
 
         [HttpGet]
