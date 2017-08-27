@@ -24,6 +24,8 @@ namespace Core
         
         public string TelegramToken { get; set; }
 
+        public string TelegramChannelId { get; set; }
+
         #region Current
 
         public static Settings Current { get; private set; }
@@ -36,10 +38,10 @@ namespace Core
                 WebSiteUrl = configuration["WebSiteUrl"],
                 WebSiteTitle = configuration["WebSiteTitle"],
                 TelegramToken = configuration["TelegramToken"],
+                TelegramChannelId = configuration["TelegramChannelId"],
                 DefaultDescription = WebUtility.HtmlDecode(configuration["DefaultDescription"]),
                 DefaultKeywords = WebUtility.HtmlDecode(configuration["DefaultKeywords"]),
-                SupportEmail = "dncuug@agi.net.ua",
-
+                SupportEmail = "dncuug@agi.net.ua"
             };
         }
 
