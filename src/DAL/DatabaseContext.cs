@@ -12,12 +12,18 @@ namespace DAL
         public virtual DbSet<Publication> Publication { get; set; }
         public virtual DbSet<User> User { get; set; }
 
+        private string _connectionString;
+
+        public DatabaseContext(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("Server=server2.agi.net.ua;User Id=db_root;Password=KP342qnw;Database=dot_net_in_ua;CharSet=utf8;");
+                optionsBuilder.UseMySql(_connectionString);
             }
         }
 
@@ -129,6 +135,8 @@ namespace DAL
                     .ValueGeneratedNever();
 
                 entity.Property(e => e.CategoryId).HasColumnType("int(11)");
+
+                entity.Property(e => e.Comment).HasMaxLength(1000);
 
                 entity.Property(e => e.Content).HasMaxLength(5000);
 

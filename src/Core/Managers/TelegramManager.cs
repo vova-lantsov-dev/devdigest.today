@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -7,23 +8,25 @@ using Telegram.Bot.Types.Enums;
 
 namespace Core.Managers
 {
-    public class TelegramManager : IManager
+    public class TelegramManager : ManagerBase
     {
-        private string _token;
-        private string _channelId;
-
-        public TelegramManager(string token, string channelId)
+        public TelegramManager(string connectionString)
+            : base(connectionString)
         {
-            _token = token;
-            _channelId = channelId;
         }
 
-        public async Task<bool> Send(string comment, string link)
+        public async Task<bool> Send(int categoryId, string comment, string link)
         {
-            var message = comment + Environment.NewLine + Environment.NewLine + link;
+            var channels = _database.Channel.Where(o => o.CategoryId == categoryId).ToList();
 
-            var bot = new Telegram.Bot.TelegramBotClient(_token);
-            var result = await bot.SendTextMessageAsync(_channelId, message, ParseMode.Default, false, false);
+            foreach (var channel in channels)
+            {
+                var message = comment + Environment.NewLine + Environment.NewLine + link;
+
+                var bot = new Telegram.Bot.TelegramBotClient(channel.Token);
+                var result = await bot.SendTextMessageAsync(channel.Name, message, ParseMode.Default, false, false);
+            }
+
             return true;
         }
     }
