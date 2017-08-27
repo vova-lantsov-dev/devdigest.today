@@ -78,7 +78,7 @@ namespace WebSite.Controllers
 
                 await _telegramManager.Send(request.CategoryId, request.Comment, request.Link);
 
-                return Created(new Uri($"{Core.Settings.Current.WebSiteUrl}p    ost/{publication.Id}"), model);
+                return Created(new Uri($"{Core.Settings.Current.WebSiteUrl}post/{publication.Id}"), model);
             }
 
             return StatusCode((int)HttpStatusCode.BadRequest);
