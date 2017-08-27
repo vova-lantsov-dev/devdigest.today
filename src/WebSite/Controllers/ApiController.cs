@@ -25,7 +25,7 @@ namespace WebSite.Controllers
         {
             _publicationManager = new PublicationManager(Settings.Current.ConnectionString, cache);
             _userManager = new UserManager(Settings.Current.ConnectionString);
-            _telegramManager = new TelegramManager(Settings.Current.TelegramToken, Settings.Current.TelegramChannelId);
+            _telegramManager = new TelegramManager(Settings.Current.ConnectionString);
         }
 
         [HttpGet]
@@ -67,7 +67,7 @@ namespace WebSite.Controllers
                 DateTime = DateTime.Now,
                 UserId = user.Id,
                 CategoryId = request.CategoryId,
-                //Comment = model.Comment
+                Comment = request.Comment
             };
 
             publication = await _publicationManager.Save(publication);
@@ -75,13 +75,13 @@ namespace WebSite.Controllers
             if (publication != null)
             {
                 var model = new PublicationViewModel(publication, Settings.Current.WebSiteUrl);
-                await _telegramManager.Send(request.Comment, request.Link);
 
-                return Created(new Uri($"{Core.Settings.Current.WebSiteUrl}post/{publication.Id}"), model);
+                await _telegramManager.Send(request.CategoryId, request.Comment, request.Link);
+
+                return Created(new Uri($"{Core.Settings.Current.WebSiteUrl}p    ost/{publication.Id}"), model);
             }
 
             return StatusCode((int)HttpStatusCode.BadRequest);
         }
-
     }
 }

@@ -7,6 +7,7 @@ namespace DAL
     public partial class DatabaseContext : DbContext
     {
         public virtual DbSet<Category> Category { get; set; }
+        public virtual DbSet<Channel> Channel { get; set; }
         public virtual DbSet<Event> Event { get; set; }
         public virtual DbSet<Publication> Publication { get; set; }
         public virtual DbSet<User> User { get; set; }
@@ -41,6 +42,35 @@ namespace DAL
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<Channel>(entity =>
+            {
+                entity.HasIndex(e => e.CategoryId)
+                    .HasName("Channel_Category_Id_fk");
+
+                entity.HasIndex(e => e.Name)
+                    .HasName("Channel_Name_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CategoryId).HasColumnType("int(11)");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Token)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.HasOne(d => d.Category)
+                    .WithMany(p => p.Channel)
+                    .HasForeignKey(d => d.CategoryId)
+                    .HasConstraintName("Channel_Category_Id_fk");
             });
 
             modelBuilder.Entity<Event>(entity =>
@@ -105,6 +135,8 @@ namespace DAL
                     .ValueGeneratedNever();
 
                 entity.Property(e => e.CategoryId).HasColumnType("int(11)");
+
+                entity.Property(e => e.Comment).HasMaxLength(1000);
 
                 entity.Property(e => e.Content).HasMaxLength(5000);
 
