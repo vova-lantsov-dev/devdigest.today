@@ -22,20 +22,27 @@ function addNewPost() {
     var link = $("#link").val();
     var key = $("#security-key").val();
     var categoryId = $("#category-id").val();
-    var progress = $(".progress");
-    var url = '/api/publications/new?url=' + link + '&key=' + key + '&categoryId=' + categoryId;
+    var comment = $("#post-comment").val();
 
+    var progress = $(".progress");
+    
+    var data = {
+        link: link,
+        key: key,
+        categoryId: categoryId,
+        comment: comment
+    };
 
     progress.show();
 
-    $.get(url, function (data) {
-        progress.hide();
-        window.location.replace(data.shareUrl);
-    }).done(function () {
-    }).fail(function (err) {
-        if (!!err && err.status == 403)
-            alert('Неверный ключ');
-        else
-            console.error(err);
-    });
+    $.post('/api/publications/new', data)
+        .done(function () {
+            progress.hide();
+            window.location.replace(data.shareUrl);
+        }).fail(function (err) {
+            if (!!err && err.status == 403)
+                alert('Неверный ключ');
+            else
+                console.error(err);
+        });
 }
