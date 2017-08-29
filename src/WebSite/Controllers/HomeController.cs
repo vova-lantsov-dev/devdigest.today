@@ -50,6 +50,14 @@ namespace WebSite.Controllers
             return View("~/Views/Home/Partners.cshtml");
         }
 
+        [Route("about")]
+        public async Task<IActionResult> About()
+        {
+            ViewData["Title"] = $"О проекте";
+
+            return View("~/Views/Home/About.cshtml");
+        }
+
         [Route("post/{id}")]
         public async Task<IActionResult> Post(int id)
         {
@@ -75,14 +83,6 @@ namespace WebSite.Controllers
         public async Task<IActionResult> Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        [Route("about")]
-        public async Task<IActionResult> About()
-        {
-            ViewData["Title"] = $"Об проекте";
-
-            return View("~/Views/Home/About.cshtml");
-        }
+        }        
     }
 }
