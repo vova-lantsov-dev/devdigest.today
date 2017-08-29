@@ -26,7 +26,8 @@ namespace WebSite.Controllers
             ViewData["Title"] = "Добро пожаловать!";
 
             var pagedResult = await _manager.GetPublications();
-            var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, Settings.Current.WebSiteUrl)), pagedResult);
+            var categories = _manager.GetCategories();
+            var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, Settings.Current.WebSiteUrl, categories)), pagedResult);
 
             return View(model);
         }
