@@ -2,12 +2,16 @@
 @using X.PagedList.Mvc.Core;
 @model IPagedList<Core.ViewModels.PublicationViewModel>
 
+@{
+    var categoryId = ViewBag.CategoryId as int?;
+}
+
 @section head {
 
     <meta property="og:site_name" content="@Core.Settings.Current.WebSiteTitle" />
     <meta property="og:title" content="@Core.Settings.Current.WebSiteTitle" />
     <meta property="og:type" content="website" />
-    <!-- <meta property="og:url" content="@Core.Settings.Current.WebSiteUrl" /> -->
+    
     <meta property="og:image" content="@Core.Settings.Current.FacebookImage" />
     <meta property="og:description" content="@Core.Settings.Current.DefaultDescription" />
 
@@ -30,7 +34,11 @@
                 @Html.Partial("_Publication", p)
             }
 
-            @Html.PagedListPager(Model, page => $"/page/{page}")
+            @if (categoryId != null){
+                @Html.PagedListPager(Model, page => $"/page/{page}?categoryId={categoryId}")
+            } else {
+                @Html.PagedListPager(Model, page => $"/page/{page}")
+            }
         </div>
         <div class="col-md-4">
             

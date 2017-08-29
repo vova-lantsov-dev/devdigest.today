@@ -32,12 +32,15 @@ namespace WebSite.Controllers
         }
 
         [Route("page/{page}")]
-        public async Task<IActionResult> Page(int page)
+        public async Task<IActionResult> Page(int? categoryId = null, int page = 1)
         {
             ViewData["Title"] = $"Страница {page}";
 
-            var pagedResult = await _manager.GetPublications(page);
-            var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, Settings.Current.WebSiteUrl)), pagedResult);
+            var pagedResult = await _manager.GetPublications(categoryId, page);
+            var categories = _manager.GetCategories();
+            var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, Settings.Current.WebSiteUrl, categories)), pagedResult);
+
+            ViewBag.CategoryId = categoryId;
 
             return View("~/Views/Home/Page.cshtml", model);
         }
@@ -83,6 +86,6 @@ namespace WebSite.Controllers
         public async Task<IActionResult> Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }        
+        }
     }
 }
