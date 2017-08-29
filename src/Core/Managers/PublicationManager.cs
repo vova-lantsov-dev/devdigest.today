@@ -20,7 +20,7 @@ namespace Core
             _cache = cache;
         }
 
-        public async Task<IPagedList<Publication>> GetPublications(int page = 1, int pageSize = 10)
+        public async Task<IPagedList<Publication>> GetPublications(int? categoryId = null, int page = 1, int pageSize = 10)
         {
             var key = $"page_{page}_{pageSize}";
 
@@ -30,7 +30,13 @@ namespace Core
             {
                 var skip = (page - 1) * pageSize;
 
-                var items = _database.Publication.OrderByDescending(o => o.DateTime).Skip(skip).Take(pageSize).ToList();
+                var items = _database
+                                .Publication
+                                .Where( o => o.CategoryId == categoryId || categoryId == null)
+                                .OrderByDescending(o => o.DateTime)
+                                .Skip(skip)
+                                .Take(pageSize).ToList();
+                                
                 var totalItemsCount = await _database.Publication.CountAsync();
 
                 result = new StaticPagedList<Publication>(items, page, pageSize, totalItemsCount);
