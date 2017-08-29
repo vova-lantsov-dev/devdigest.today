@@ -36,9 +36,9 @@ function addNewPost() {
     progress.show();
 
     $.post('/api/publications/new', data)
-        .done(function () {
+        .done(function (response) {
             progress.hide();
-            window.location.replace(data.shareUrl);
+            window.location.replace(response.shareUrl);
         }).fail(function (err) {
             if (!!err && err.status == 403)
                 alert('Неверный ключ');
