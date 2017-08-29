@@ -1,0 +1,99 @@
+﻿@section head {
+    <meta property="og:site_name" content=".NET Core Ukrainian User Group" />
+    <meta property="og:title" content="@ViewData["Title"]" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@Core.Settings.Current.WebSiteUrl" />
+    <meta property="og:image" content="@Core.Settings.Current.FacebookImage" />
+    <meta property="og:description" content="@Core.Settings.Current.DefaultDescription" />
+
+    <meta property="author" content="@Core.Settings.Current.WebSiteTitle" />
+    <meta property="article:author" content="https://www.facebook.com/dncuug/">
+
+    <meta name="keywords" content="@Core.Settings.Current.DefaultKeywords" />
+    <meta name="description" content="@Core.Settings.Current.DefaultDescription" />
+}
+
+<div class="container">
+    <!-- Example row of columns -->
+    <div class="row post">
+        <div class="col-md-8">
+            <h1>@ViewData["Title"]</h1>
+
+            <div class="row">
+                <article class="col-md-12 content">
+                    <ol>
+                        <li>
+                            Проект релизован на базе .NET Core и размещен в Microsoft Azure.
+                        </li>
+                        <li>Поддержка RSS. <a href="https://github.com/dncuug/X.Web.RSS">X.Web.RSS</a>, которая есть также <a href="">на nuget.org</a>.</li>
+                        <li>Генерация sitemap-файлов. Библиотека <a href="https://www.nuget.org/packages/xsitemap/">X.Web.Sitemaps</a></li>
+                    </ol>
+
+                    <p>
+                        Немного про принцип работы сайта. Как я уже писал ранее, сайт является агрегатором новостей. Находя интересную статью, или публикацию,  через специальный интерфейс добавляеться ссылка. Чтобы вручную не копировать заголовок и описание статьи, я решил использовать подход, аналогичный тому, который использует Facebook. Специально для этой цели я написал небольшую библиотеку <a href="https://github.com/dncuug/X.Web.MetaExtractor">X.Web.MetaExtractor</a>.
+                    </p>
+
+                    <p>
+                        Суть работы библиотеки сводится к следующему:
+                    </p><ol>
+                        <li>Загружается текст страницы по ссылке.</li>
+                        <li>Проводится поиск OpenGraph-тегов</li>
+                        <li>Если og-тэги не были найдены, происходит поиск HTML тэгам (тэг title, мета-тэг description).</li>
+                        <li>Проводится поиск всех тэгов img.</li>
+                    </ol>
+                    <p></p>
+
+                    Сама библиотека распространяется под лицензией <a href="https://github.com/dncuug/X.Web.MetaExtractor/blob/master/LICENSE">MIT</a>, поэтому может исопльзоваться как в проектах с открытым исходным кодом, так и в коммерческих проектах.
+                    <br>
+                    <a href="https://andrew.gubskiy.com">Андрей Губский</a>.
+                    <br><br>
+                    <strong>P.S</strong><br>
+                    В ближайших планах - создание дайджеста мероприятий.<br>
+                    Также, будем рады авторам, у которых есть желанию публиковать статьи по теме разработки на платформе .NET Core!
+
+                    <p>
+                        Если У вас есть идеи по улучшению работы сайта, или по его наполнению – пишите!
+                    </p>                    
+                    
+
+                </article>
+            </div>
+            <div class="row">
+                <article class="col-md-12 content">
+                    <strong>Авторы (те кто собирает интрестное)</strong><br/><br />
+                    <ul class="media-list">
+                        <li class="media">
+                            <div class="media-left">
+                                <img class="media-object" style="width: 150px" src="https://scontent.fiev3-1.fna.fbcdn.net/v/t1.0-9/18157318_1173437062802376_7889155451464875729_n.jpg?oh=1ef7335395be7a56916ae013214b5b39&amp;oe=5A2D7A52" alt="Фото Andrew Gubskiy." />
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">
+                                    <a href="https://andrew.gubskiy.com" class="btn btn-link btn-lg">Андрей Губский</a>
+                                </h4>
+                                <h5>Тема: .NET Core</h5>
+                                <p>
+                                </p>
+                            </div>
+                        </li>
+                        <li class="media">
+                            <div class="media-left">
+                                <img class="media-object" style="width: 150px" src="https://scontent.fiev3-1.fna.fbcdn.net/v/t1.0-9/20638091_10214127776287479_639128778974174627_n.jpg?oh=7995e26acf97082826c7af010050989c&oe=5A1479F9" alt="Фото Дмитрий Иванов." />
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">
+                                    <a href="https://www.facebook.com/drakonoffnet" class="btn btn-link btn-lg">Дмитрий Иванов</a>
+                                </h4>
+                                <h5>Тема: Xamarin</h5>
+                                <p></p>
+                            </div>
+                        </li>
+                    </ul>
+                </article>
+
+            </div>
+        </div>
+        <div class="col-md-8">
+
+        </div>
+    </div>
+</div>
