@@ -25,15 +25,26 @@
                     @Model.DateTime.ToString("MMMM dd, yyyy") 
                 </div>    
 
-            <div class="image-block">
-                @if (string.IsNullOrEmpty(Model.Image)) {
-                    <img class="img-responsive" alt="@Model.Title" src="http://dot-net.in.ua/images/news.jpg" />
-                }
-                else{
-                    <img class="img-responsive" alt="@Model.Title" src="@Model.Image" />
-                }
-            </div>
+            @if (!Core.YouTube.IsYouTube(Model.Link)) {
+                <div class="image-block">
+                    @if (string.IsNullOrEmpty(Model.Image)) {
+                        <img class="img-responsive" alt="@Model.Title" src="http://dot-net.in.ua/images/news.jpg" />
+                    }
+                    else{
+                        <img class="img-responsive" alt="@Model.Title" src="@Model.Image" />
+                    }
+                </div>
+            }
             
+            @if (Core.YouTube.IsYouTube(Model.Link)) {
+                var videoId = Core.YouTube.GetVideoId(Model.Link);
+                <div class="row">
+                    <div class="col-md-12 video">
+                        @Html.Partial("_YouTube", videoId)
+                    </div>    
+                </div>
+            }
+
             <div class="row">
                 <article class="col-md-12 content">
                     @if (string.IsNullOrEmpty(@Model.Content)) {

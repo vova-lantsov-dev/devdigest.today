@@ -76,7 +76,11 @@ namespace WebSite.Controllers
             {
                 var model = new PublicationViewModel(publication, Settings.Current.WebSiteUrl);
 
-                await _telegramManager.Send(request.CategoryId, request.Comment, request.Link);
+                var url = Core.YouTube.IsYouTube(request.Link)
+                    ? model.ShareUrl
+                    : request.Link;
+
+                await _telegramManager.Send(request.CategoryId, request.Comment, url);
 
                 return Created(new Uri($"{Core.Settings.Current.WebSiteUrl}post/{publication.Id}"), model);
             }
