@@ -138,13 +138,15 @@ namespace DAL
 
                 entity.Property(e => e.Comment).HasMaxLength(1000);
 
-                entity.Property(e => e.Content).HasMaxLength(5000);
+                entity.Property(e => e.Content).HasColumnType("text");
 
                 entity.Property(e => e.DateTime).HasColumnType("datetime");
 
                 entity.Property(e => e.Description)
                     .IsRequired()
                     .HasMaxLength(5000);
+
+                entity.Property(e => e.EmbededPlayerCode).HasMaxLength(1000);
 
                 entity.Property(e => e.Image).HasMaxLength(250);
 

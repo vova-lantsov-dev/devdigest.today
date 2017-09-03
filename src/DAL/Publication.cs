@@ -16,6 +16,7 @@ namespace DAL
         public string Link { get; set; }
         public DateTime DateTime { get; set; }
         public string Comment { get; set; }
+        public string EmbededPlayerCode { get; set; }
 
         public Category Category { get; set; }
         public User User { get; set; }
