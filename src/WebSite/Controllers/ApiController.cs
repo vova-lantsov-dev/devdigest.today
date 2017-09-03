@@ -56,7 +56,6 @@ namespace WebSite.Controllers
 
             var metadata = await extractor.Extract(new Uri(request.Link));
 
-
             var publication = new DAL.Publication
             {
                 Title = metadata.Title,
@@ -70,13 +69,22 @@ namespace WebSite.Controllers
                 Comment = request.Comment
             };
 
+            if (Core.EmbededPlayer.GetPlayerSoure(request.Link) != null)
+            {
+                var player = new Core.EmbededPlayer(request.Link);
+                publication.EmbededPlayerCode = player.Render();
+            }
+
             publication = await _publicationManager.Save(publication);
 
             if (publication != null)
             {
                 var model = new PublicationViewModel(publication, Settings.Current.WebSiteUrl);
 
-                await _telegramManager.Send(request.CategoryId, request.Comment, request.Link);
+                //If we can embed main content into site page, so we can share this page.
+                var url = string.IsNullOrEmpty(model.EmbededPlayerCode) ? model.Link : model.ShareUrl;
+
+                await _telegramManager.Send(request.CategoryId, request.Comment, url);
 
                 return Created(new Uri($"{Core.Settings.Current.WebSiteUrl}post/{publication.Id}"), model);
             }
