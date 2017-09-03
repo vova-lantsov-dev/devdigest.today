@@ -25,7 +25,7 @@
                     @Model.DateTime.ToString("MMMM dd, yyyy") 
                 </div>    
 
-            @if (!Core.YouTube.IsYouTube(Model.Link)) {
+            @if (string.IsNullOrEmpty(Model.EmbededPlayerCode)) {
                 <div class="image-block">
                     @if (string.IsNullOrEmpty(Model.Image)) {
                         <img class="img-responsive" alt="@Model.Title" src="http://dot-net.in.ua/images/news.jpg" />
@@ -36,11 +36,11 @@
                 </div>
             }
             
-            @if (Core.YouTube.IsYouTube(Model.Link)) {
-                var videoId = Core.YouTube.GetVideoId(Model.Link);
+            @if (!string.IsNullOrEmpty(Model.EmbededPlayerCode)) {
+                
                 <div class="row">
                     <div class="col-md-12 video">
-                        @Html.Partial("_YouTube", videoId)
+                        @Html.Partial("_EmbededPlayer", Model.EmbededPlayerCode)
                     </div>    
                 </div>
             }
