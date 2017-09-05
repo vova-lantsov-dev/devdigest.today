@@ -39,7 +39,7 @@ namespace WebSite.Controllers
             if (string.IsNullOrEmpty(xml))
             {
                 var pagedResult = await _manager.GetPublications(1, 50);
-                var lastUpdateDate = pagedResult.Max(o => o.DateTime);
+                var lastUpdateDate = pagedResult.OrderByDescending(o => o.DateTime).Select(o => o.DateTime).FirstOrDefault();
 
                 var rss = new RssDocument
                 {
