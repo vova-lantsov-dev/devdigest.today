@@ -38,7 +38,7 @@ namespace WebSite.Controllers
 
             if (string.IsNullOrEmpty(xml))
             {
-                var categoryId = null;
+                int? categoryId = null;
                 var pagedResult = await _manager.GetPublications(categoryId, 1, 50);
                 var lastUpdateDate = pagedResult.Select(o => o.DateTime).DefaultIfEmpty().Max();
 
