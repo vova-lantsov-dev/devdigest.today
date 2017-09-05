@@ -38,7 +38,8 @@ namespace WebSite.Controllers
 
             if (string.IsNullOrEmpty(xml))
             {
-                var pagedResult = await _manager.GetPublications(1, 50);
+                var categoryId = null;
+                var pagedResult = await _manager.GetPublications(categoryId, 1, 50);
                 var lastUpdateDate = pagedResult.Select(o => o.DateTime).DefaultIfEmpty().Max();
 
                 var rss = new RssDocument
