@@ -23,54 +23,34 @@
     <meta name="description" content="@Core.Settings.Current.DefaultDescription" />
 }
 
-<!-- Main jumbotron for a primary marketing message or call to action -->
-<div class="jumbotron">
-    <div class="container">
-        <!-- <h1>.NET Core Ukrainian User Group</h1>         -->        
-        <div class="col-md-8">
-            <h1>Добро пожаловать в украинское сообщество разработчиков на платформе .NET Core!</h1>        
-            <!-- <img class="img-responsive" src="https://www.microsoft.com/net/images/home-hero.png" />         -->
-        </div>
-        <div class="col-md-4 social">
-            <!-- <p>Добро пожаловать на сайт украинской группы разработчиков на платформе .NET Core!</p>
-            Наши страницы в: -->
-            Присоединяйтесь к нам:
-            <ul style="list-style: none; padding-left: 10px;">
-                <li>– <a href="https://www.facebook.com/groups/dncuug/">Facebook</a></li>
-                <li>– <a href="https://github.com/dncuug">GitHub</a></li>
-                <li>– <a href="https://telegram.me/dncuug">Telegram</a></li>
-                <li>– <a href="https://gitter.im/dncuug/Lobby">gitter</a></li>			
-            </ul>
-        </div>
-    </div>
-</div>
-
-<div class="container">
-    <!-- Example row of columns -->
-    <div class="row">
-        <div class="col-md-8">
-            @foreach (var p in Model)
-            {
-                @Html.Partial("_Publication", p)
-            }
-
-            @Html.PagedListPager(Model, page => $"/page/{page}")
-        </div>
-        <div class="col-md-4">
-            
-            <div class="fb-page" 
-                 data-href="https://www.facebook.com/dncuug"
-                 data-width="380" 
-                 data-hide-cover="false"
-                 data-show-facepile="false"></div>
-
-            <div class="ad">
-                <a href="https://azureday.net">
-                    <img alt="Azure Day 2017" src="/images/banners/azureday2017banner.png" />
-                </a>
+@section top {
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+        <div class="container">
+            <!-- <h1>.NET Core Ukrainian User Group</h1>         -->        
+            <div class="col-md-8">
+                <h1>Добро пожаловать в украинское сообщество разработчиков на платформе .NET Core!</h1>        
+                <!-- <img class="img-responsive" src="https://www.microsoft.com/net/images/home-hero.png" />         -->
+            </div>
+            <div class="col-md-4 social">
+                <!-- <p>Добро пожаловать на сайт украинской группы разработчиков на платформе .NET Core!</p>
+                Наши страницы в: -->
+                Присоединяйтесь к нам:
+                <ul style="list-style: none; padding-left: 10px;">
+                    <li>– <a href="https://www.facebook.com/groups/dncuug/">Facebook</a></li>
+                    <li>– <a href="https://github.com/dncuug">GitHub</a></li>
+                    <li>– <a href="https://telegram.me/dncuug">Telegram</a></li>
+                    <li>– <a href="https://gitter.im/dncuug/Lobby">gitter</a></li>			
+                </ul>
             </div>
         </div>
     </div>
+}
 
-</div>
-<!-- /container -->
+
+@foreach (var p in Model)
+{
+    @Html.Partial("_Publication", p)
+}
+
+@Html.PagedListPager(Model, page => $"/page/{page}")

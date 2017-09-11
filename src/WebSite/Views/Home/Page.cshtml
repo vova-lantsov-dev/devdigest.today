@@ -22,28 +22,14 @@
     <meta name="description" content="@Core.Settings.Current.DefaultDescription" />
 }
 
-<div class="container">
-    <!-- Example row of columns -->
-    <div class="row">
-        <div style="height: 25px;" class="col-md-12"></div>
-    </div>
-    <div class="row">
-        <div class="col-md-8">
-            @foreach (var p in Model)
-            {
-                @Html.Partial("_Publication", p)
-            }
 
-            @if (categoryId != null){
-                @Html.PagedListPager(Model, page => $"/page/{page}?categoryId={categoryId}")
-            } else {
-                @Html.PagedListPager(Model, page => $"/page/{page}")
-            }
-        </div>
-        <div class="col-md-4">
-            
-        </div>
-    </div>
+@foreach (var p in Model)
+{
+    @Html.Partial("_Publication", p)
+}
 
-</div>
-<!-- /container -->
+@if (categoryId != null){
+    @Html.PagedListPager(Model, page => $"/page/{page}?categoryId={categoryId}")
+} else {
+    @Html.PagedListPager(Model, page => $"/page/{page}")
+}
