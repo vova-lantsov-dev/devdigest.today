@@ -6,7 +6,9 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Core;
+using Core.Managers;
 using Core.ViewModels;
+using Core.VIewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using X.Web.MetaExtractor;
@@ -17,11 +19,13 @@ namespace WebSite.Controllers
     {
         private readonly PublicationManager _publicationManager;
         private readonly UserManager _userManager;
+        private readonly TelegramManager _telegramManager;
 
         public ApiController(IMemoryCache cache)
         {
-            _publicationManager = new PublicationManager(Core.Settings.Current.ConnectionString, cache);
-            _userManager = new UserManager(Core.Settings.Current.ConnectionString);
+            _publicationManager = new PublicationManager(Settings.Current.ConnectionString, cache);
+            _userManager = new UserManager(Settings.Current.ConnectionString);
+            _telegramManager = new TelegramManager(Settings.Current.ConnectionString);
         }
 
         [HttpGet]
@@ -37,11 +41,11 @@ namespace WebSite.Controllers
             return Ok(categories);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("api/publications/new")]
-        public async Task<IActionResult> AddPublicaton(string url, Guid key, int categoryId = 1)
+        public async Task<IActionResult> AddPublicaton(NewPostRequest request)
         {
-            DAL.User user = _userManager.GetBySecretKey(key);
+            DAL.User user = _userManager.GetBySecretKey(request.Key);
 
             if (user == null)
             {
@@ -50,8 +54,7 @@ namespace WebSite.Controllers
 
             var extractor = new X.Web.MetaExtractor.Extractor();
 
-            var metadata = await extractor.Extract(new Uri(url));
-
+            var metadata = await extractor.Extract(new Uri(request.Link));
 
             var publication = new DAL.Publication
             {
@@ -62,19 +65,31 @@ namespace WebSite.Controllers
                 Type = metadata.Type,
                 DateTime = DateTime.Now,
                 UserId = user.Id,
-                CategoryId = categoryId
+                CategoryId = request.CategoryId,
+                Comment = request.Comment
             };
+
+            if (Core.EmbededPlayer.GetPlayerSoure(request.Link) != null)
+            {
+                var player = new Core.EmbededPlayer(request.Link);
+                publication.EmbededPlayerCode = player.Render();
+            }
 
             publication = await _publicationManager.Save(publication);
 
             if (publication != null)
             {
                 var model = new PublicationViewModel(publication, Settings.Current.WebSiteUrl);
+
+                //If we can embed main content into site page, so we can share this page.
+                var url = string.IsNullOrEmpty(model.EmbededPlayerCode) ? model.Link : model.ShareUrl;
+
+                await _telegramManager.Send(request.CategoryId, request.Comment, url);
+
                 return Created(new Uri($"{Core.Settings.Current.WebSiteUrl}post/{publication.Id}"), model);
             }
 
             return StatusCode((int)HttpStatusCode.BadRequest);
         }
-
     }
 }

@@ -25,15 +25,26 @@
                     @Model.DateTime.ToString("MMMM dd, yyyy") 
                 </div>    
 
-            <div class="image-block">
-                @if (string.IsNullOrEmpty(Model.Image)) {
-                    <img class="img-responsive" alt="@Model.Title" src="http://dot-net.in.ua/images/news.jpg" />
-                }
-                else{
-                    <img class="img-responsive" alt="@Model.Title" src="@Model.Image" />
-                }
-            </div>
+            @if (string.IsNullOrEmpty(Model.EmbededPlayerCode)) {
+                <div class="image-block">
+                    @if (string.IsNullOrEmpty(Model.Image)) {
+                        <img class="img-responsive" alt="@Model.Title" src="http://dot-net.in.ua/images/news.jpg" />
+                    }
+                    else{
+                        <img class="img-responsive" alt="@Model.Title" src="@Model.Image" />
+                    }
+                </div>
+            }
             
+            @if (!string.IsNullOrEmpty(Model.EmbededPlayerCode)) {
+                
+                <div class="row">
+                    <div class="col-md-12 video">
+                        @Html.Partial("_EmbededPlayer", Model.EmbededPlayerCode)
+                    </div>    
+                </div>
+            }
+
             <div class="row">
                 <article class="col-md-12 content">
                     @if (string.IsNullOrEmpty(@Model.Content)) {

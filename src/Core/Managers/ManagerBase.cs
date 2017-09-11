@@ -2,7 +2,12 @@ using DAL;
 
 namespace Core
 {
-    public abstract class ManagerBase
+    public interface IManager
+    {
+
+    }
+    
+    public abstract class ManagerBase : IManager
     {
         protected readonly DAL.DatabaseContext _database;
 

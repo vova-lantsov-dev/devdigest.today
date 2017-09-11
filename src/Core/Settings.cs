@@ -21,6 +21,10 @@ namespace Core
         public string RssFeedUrl => $"{WebSiteUrl}rss";
         
         public string SupportEmail { get; set; }
+        
+        public string TelegramToken { get; set; }
+
+        public string TelegramChannelId { get; set; }
 
         #region Current
 
@@ -33,6 +37,8 @@ namespace Core
                 ConnectionString = configuration.GetConnectionString("DefaultConnection"),
                 WebSiteUrl = configuration["WebSiteUrl"],
                 WebSiteTitle = configuration["WebSiteTitle"],
+                TelegramToken = configuration["TelegramToken"],
+                TelegramChannelId = configuration["TelegramChannelId"],
                 DefaultDescription = WebUtility.HtmlDecode(configuration["DefaultDescription"]),
                 DefaultKeywords = WebUtility.HtmlDecode(configuration["DefaultKeywords"]),
                 SupportEmail = "dncuug@agi.net.ua"

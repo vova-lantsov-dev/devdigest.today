@@ -26,18 +26,22 @@ namespace WebSite.Controllers
             ViewData["Title"] = "Добро пожаловать!";
 
             var pagedResult = await _manager.GetPublications();
-            var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, Settings.Current.WebSiteUrl)), pagedResult);
+            var categories = _manager.GetCategories();
+            var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, Settings.Current.WebSiteUrl, categories)), pagedResult);
 
             return View(model);
         }
 
         [Route("page/{page}")]
-        public async Task<IActionResult> Page(int page)
+        public async Task<IActionResult> Page(int? categoryId = null, int page = 1)
         {
             ViewData["Title"] = $"Страница {page}";
 
-            var pagedResult = await _manager.GetPublications(page);
-            var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, Settings.Current.WebSiteUrl)), pagedResult);
+            var pagedResult = await _manager.GetPublications(categoryId, page);
+            var categories = _manager.GetCategories();
+            var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, Settings.Current.WebSiteUrl, categories)), pagedResult);
+
+            ViewBag.CategoryId = categoryId;
 
             return View("~/Views/Home/Page.cshtml", model);
         }
@@ -48,6 +52,14 @@ namespace WebSite.Controllers
             ViewData["Title"] = $"Партнеры";
 
             return View("~/Views/Home/Partners.cshtml");
+        }
+
+        [Route("about")]
+        public async Task<IActionResult> About()
+        {
+            ViewData["Title"] = $"О проекте";
+
+            return View("~/Views/Home/About.cshtml");
         }
 
         [Route("post/{id}")]
