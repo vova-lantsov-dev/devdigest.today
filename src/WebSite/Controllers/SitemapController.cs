@@ -43,10 +43,9 @@ namespace WebSite.Controllers
                 sitemap.Add(CreateUrl(Settings.Current.WebSiteUrl));
                 sitemap.Add(CreateUrl(Settings.Current.WebSiteUrl + "partners/"));
 
-
                 do
                 {
-                    pagedResult = await _manager.GetPublications(page);
+                    pagedResult = await _manager.GetPublications(null, page);
                     page++;
 
                     foreach (var p in pagedResult)
