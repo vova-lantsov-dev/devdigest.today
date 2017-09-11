@@ -42,7 +42,7 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-left">
-                    <li><a>|</a></li>
+                    <li class="mobile-hidden"><a>|</a></li>
                     <li><a href="/page/1?categoryId=1">.NET Core</a></li>
                     <li><a href="/page/1?categoryId=2">Xamarin</a></li>
                 </ul>
@@ -57,7 +57,30 @@
         </div>
     </nav>
 
-    @RenderBody()
+    @RenderSection("top", required: false)
+
+    <div class="container">    
+        <div class="row content">
+            <div class="col-md-8">
+                @RenderBody()
+            </div>
+            <div class="col-md-4">
+
+                <div class="fb-page" 
+                    data-href="https://www.facebook.com/dncuug"
+                    data-width="380" 
+                    data-hide-cover="false"
+                    data-show-facepile="false"></div>
+
+                <div class="ad">
+                    <a href="https://azureday.net">
+                        <img alt="Azure Day 2017" src="/images/banners/azureday2017banner.png" />
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <footer class="container-fluid">
         <section class="container">
