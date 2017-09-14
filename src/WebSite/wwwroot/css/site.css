@@ -38,19 +38,24 @@ footer, footer a {
 } 
 
 .jumbotron .social {
-    font-size: 21px;
-    background-color: #662079;
     padding: 10px;
-    color: #FFF;
     font-family: 'Roboto', sans-serif;
 }
 
 .jumbotron .social a {
-    color: #FFF;
+    color: #662079;
 }
 
-.jumbotron, {
+.jumbotron {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.jumbotron h1 {
+    font-size: 36pt;
+}
+
+.jumbotron .container{
+    background-color: rgba(255,255,255,0.5);
 }
 
 .jumbotron p {    
@@ -78,7 +83,7 @@ footer, footer a {
 }
 
 .publication-preview .description {
-    
+    overflow: hidden;    
 }
 
 .date {
@@ -171,22 +176,6 @@ footer ul {
     color: #FFF;    
 }
 
-@media only screen and (max-width : 414px) {
-    .share .btn {
-        width: 100%;
-        margin-top: 10px;
-    }
-
-    .nav > li.mobile-hidden {
-        display: none;
-    }
-
-    footer,
-    footer .text-right {
-        text-align: center;
-    }
-}
-
 .youtube-container {
     position: relative;
     width: 100%;
@@ -200,4 +189,53 @@ footer ul {
     left: 0;
     width: 100%;
     height: 100%;
+}
+
+.social-icons {
+    padding: 0;
+}
+
+.social-icons li{
+    display: inline-block;
+    font-size: 72pt;
+    padding-right: 20pt;
+}
+
+.social-icons a {
+    text-decoration: none;
+}
+
+.social-icons a:hover {
+    text-decoration: none;
+    color: #000;
+}
+
+@media only screen and (max-width : 414px) {
+    .share .btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .nav > li.mobile-hidden {
+        display: none;
+    }
+
+    footer,
+    footer .text-right {
+        text-align: center;
+        font-size: 9pt;
+    }
+
+    footer img {
+        display: none;
+    }
+
+    .social-icons li{
+        font-size: 50pt;
+        padding-right: 15pt;
+    }
+
+    .jumbotron h1 {
+        font-size: 18pt;
+    }
 }
