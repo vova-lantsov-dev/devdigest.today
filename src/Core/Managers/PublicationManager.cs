@@ -22,7 +22,7 @@ namespace Core
 
         public async Task<IPagedList<Publication>> GetPublications(int? categoryId = null, int page = 1, int pageSize = 10)
         {
-            var key = $"page_{page}_{pageSize}";
+            var key = $"page_{page}_{pageSize}_{categoryId}";
 
             var result = _cache.Get(key) as IPagedList<Publication>;
 
