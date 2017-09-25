@@ -35,7 +35,7 @@ namespace WebSite.Controllers
         [Route("page/{page}")]
         public async Task<IActionResult> Page(int? categoryId = null, int page = 1)
         {
-            ViewData["Title"] = $"{Core.Pages.Page;} {page}";
+            ViewData["Title"] = $"{Core.Pages.Page} {page}";
 
             var pagedResult = await _manager.GetPublications(categoryId, page);
             var categories = _manager.GetCategories();
