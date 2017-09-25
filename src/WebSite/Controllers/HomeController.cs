@@ -23,7 +23,7 @@ namespace WebSite.Controllers
 
         public async Task<IActionResult> Index()
         {
-            ViewData["Title"] = "Добро пожаловать!";
+            ViewData["Title"] = "Welcome!";
 
             var pagedResult = await _manager.GetPublications();
             var categories = _manager.GetCategories();
@@ -35,7 +35,7 @@ namespace WebSite.Controllers
         [Route("page/{page}")]
         public async Task<IActionResult> Page(int? categoryId = null, int page = 1)
         {
-            ViewData["Title"] = $"Страница {page}";
+            ViewData["Title"] = $"{Core.Pages.Page;} {page}";
 
             var pagedResult = await _manager.GetPublications(categoryId, page);
             var categories = _manager.GetCategories();
@@ -49,7 +49,7 @@ namespace WebSite.Controllers
         [Route("partners")]
         public async Task<IActionResult> Partners()
         {
-            ViewData["Title"] = $"Партнеры";
+            ViewData["Title"] = Core.Pages.Partners;
 
             return View("~/Views/Home/Partners.cshtml");
         }
@@ -57,7 +57,7 @@ namespace WebSite.Controllers
         [Route("about")]
         public async Task<IActionResult> About()
         {
-            ViewData["Title"] = $"О проекте";
+            ViewData["Title"] = Core.Pages.AboutUs;
 
             return View("~/Views/Home/About.cshtml");
         }
