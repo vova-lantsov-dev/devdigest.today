@@ -49,7 +49,11 @@
         } else {
             @Html.Raw(@Model.Content)
         }
-        <a  target="blank" href="@Model.Url">Читать полностью</a>
+
+        @if (!string.IsNullOrEmpty(Model.Url)) {
+            &nbsp;
+            <a  target="blank" href="@Model.Url">Читать полностью</a>
+        }
     </article>    
 </div>
 
