@@ -35,7 +35,7 @@
                 @if(@Model.Category != null) {
                     <span class="label category-label label-default">@Model.Category.Name</span>
                 }
-                @if (!string.IsNullOrEmpty(Model.Url)) {
+                @if (Model.Url != null) {
                     <a class="btn btn-default" target="blank" href="@Model.Url">Перейти к оригиналу&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>
                 }
                 <a class="btn btn-default" href="/post/@Model.Id">Подробнее&nbsp;<i class="glyphicon glyphicon-info-sign"></i></a>

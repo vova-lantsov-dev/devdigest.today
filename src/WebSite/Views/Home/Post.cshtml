@@ -50,7 +50,7 @@
             @Html.Raw(@Model.Content)
         }
 
-        @if (!string.IsNullOrEmpty(Model.Url)) {
+        @if (Model.Url != null) {
             <span>&nbsp;</span>            
             <a  target="blank" href="@Model.Url">Читать полностью</a>
         }
@@ -66,7 +66,9 @@
         <a class="btn btn-social-icon btn-vk" target="blank" href="https://vk.com/share.php?url=@Model.ShareUrl"><span class="fa fa-vk"></span></a>
     </div>
     <div class="col-md-6 text-right">
-        <a class="btn btn-default" target="blank" href="@Model.Url">Перейти к оригиналу&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>
+        @if (Model.Url != null) {        
+            <a class="btn btn-default" target="blank" href="@Model.Url">Перейти к оригиналу&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>
+        }
     </div>
 </div>   
 

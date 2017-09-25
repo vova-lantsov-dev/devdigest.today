@@ -43,7 +43,7 @@ namespace Core.ViewModels
 
         }
 
-        public Uri Url => new Uri(this.Link);
+        public Uri Url => string.IsNullOrWhiteSpace(this.Link) ? null : new Uri(this.Link);
 
         public string ShareUrl => $"{_websiteUrl}post/{Id}";
 
