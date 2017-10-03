@@ -104,8 +104,8 @@ footer, footer a {
 }
 
 .publication-preview section {
-    border: 1px solid #EEE;
-    padding: 20px;
+    border-bottom: 1px solid #EEE;
+    padding-bottom: 20px;
 }
 
 footer {
@@ -208,6 +208,11 @@ footer ul {
 .social-icons a:hover {
     text-decoration: none;
     color: #000;
+}
+
+.btn,
+.btn-social-icon {
+    border: none;
 }
 
 @media only screen and (max-width : 414px) {
