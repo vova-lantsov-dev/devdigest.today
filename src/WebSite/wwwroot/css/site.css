@@ -74,7 +74,7 @@ footer, footer a {
 }
 
 .publication-preview {
-    box-shadow: 1px 1px 10px #CCC;
+    /*box-shadow: 1px 1px 10px #CCC;*/
     margin-bottom: 40px;
 }
 
@@ -212,7 +212,7 @@ footer ul {
 
 .btn,
 .btn-social-icon {
-    border: none;
+    border-radius: 0;
 }
 
 @media only screen and (max-width : 414px) {
