@@ -47,11 +47,6 @@
         } else {
             @Html.Raw(@Model.Content)
         }
-
-        @if (Model.Url != null) {
-            <span>&nbsp;</span>            
-            <a target="blank" href="@Model.Url">Read full article</a>
-        }
     </article>    
 </div>
 
