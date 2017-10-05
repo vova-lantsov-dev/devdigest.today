@@ -297,3 +297,7 @@ footer ul {
         font-size: 18pt;
     }
 }
+
+.gitter-chat-embed {
+    z-index: 9999;
+}
