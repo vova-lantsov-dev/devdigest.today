@@ -14,6 +14,7 @@ namespace Core.ViewModels
             Image = vacancy.Image;
             Description = vacancy.Description;
             Content = vacancy.Content;
+            Contact = vacancy.Contact;
             Url = string.IsNullOrWhiteSpace(vacancy.Url) ? null : new Uri(vacancy.Url);
         }
 
@@ -24,6 +25,35 @@ namespace Core.ViewModels
         public string Description { get; set; }
         public string ShareUrl => $"{_websiteUrl}vacancy/{Id}";
         public string Content { get; set; }
+        public string Contact { get; set; }
         public Uri Url { get; set; }
+
+        public ContactType ContactType
+        {
+            get
+            {
+                var contact = Contact.Trim().ToLower();
+
+                if (contact.Contains("facbook.com"))
+                    return ContactType.Facebook;
+
+                if (contact.Contains("linkedin.com"))
+                    return ContactType.LinkedIn;
+
+                if (contact.Contains("http://") || contact.Contains("https://"))
+                    return ContactType.WebSite;
+
+                if (contact.Contains("@"))
+                    return ContactType.Email;
+
+                if (contact.Contains("@"))
+                    return ContactType.Email;
+
+                if (contact.Contains("+38") || contact.Contains("+1") || contact.Contains("+7")) //Imprve this logic
+                    return ContactType.Phone;
+
+                return ContactType.Default;
+            }
+        }
     }
 }

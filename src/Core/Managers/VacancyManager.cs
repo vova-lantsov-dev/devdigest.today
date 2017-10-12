@@ -30,7 +30,7 @@ namespace Core.Managers
                     .Skip(skip)
                     .Take(pageSize).ToList();
 
-                var totalItemsCount = await _database.Publication.CountAsync();
+                var totalItemsCount = await _database.Vacancy.CountAsync();
 
                 result = new StaticPagedList<Vacancy>(items, page, pageSize, totalItemsCount);
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());
@@ -44,6 +44,7 @@ namespace Core.Managers
             var key = $"vacancy_{id}";
 
             var result = _cache.Get(key) as Vacancy;
+            result = null;
 
             if (result == null)
             {

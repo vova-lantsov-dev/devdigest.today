@@ -91,14 +91,16 @@ footer a {
     border-bottom: 1px solid #EEE;
 }
 
-.publication-preview {
+.publication-preview,
+.vacancy-preview {
     /*box-shadow: 1px 1px 10px #CCC;*/
     margin-bottom: 40px;
 }
 
 .publication-preview h3 {}
 
-.publication-preview .description {
+.publication-preview .description,
+.vacancy-preview .description {
     overflow: hidden;
 }
 
@@ -124,14 +126,27 @@ footer a {
     color: #777;
 }
 
+.share .text-right .btn-contact {
+    color: #FFF;
+}
+
+.share .text-right .btn-contact:hover {
+    color: #000;
+}
+
 .share .text-right .btn:hover {
     color: #333;
 }
 
-.publication-preview section {
+.publication-preview section,
+.vacancy-preview section {
     border: 1px solid #EEE;
-    border-top: none;
     padding: 20px;
+}
+
+.publication-preview section,
+{
+    border-top: none;
 }
 
 footer {

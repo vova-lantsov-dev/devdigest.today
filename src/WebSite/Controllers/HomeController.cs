@@ -50,7 +50,7 @@ namespace WebSite.Controllers
         [Route("vacancies/{page}")]
         public async Task<IActionResult> Vacancies(int page = 1)
         {
-            ViewData["Title"] = $"{Core.Pages.Vacancies} {page}";
+            ViewData["Title"] = $"{Core.Pages.Vacancies}";
 
             var pagedResult = await _vacancyManager.GetVacancies(page);
 
