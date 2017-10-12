@@ -1,6 +1,6 @@
 using System;
 
-namespace Core.VIewModels
+namespace Core.ViewModels
 {
     public class NewPostRequest
     {

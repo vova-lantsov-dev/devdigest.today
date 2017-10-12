@@ -1,32 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Core;
+using Core.Managers;
+using Core.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Core;
-using Core.ViewModels;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using X.PagedList;
 
 namespace WebSite.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly PublicationManager _manager;
+        private readonly PublicationManager _publicationManager;
+        private readonly VacancyManager _vacancyManager;
 
         public HomeController(IMemoryCache cache)
         {
-            _manager = new PublicationManager(Core.Settings.Current.ConnectionString, cache);
+            _publicationManager = new PublicationManager(Core.Settings.Current.ConnectionString, cache);
+            _vacancyManager = new VacancyManager(Core.Settings.Current.ConnectionString, cache);
         }
 
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "Welcome!";
 
-            var pagedResult = await _manager.GetPublications();
-            var categories = _manager.GetCategories();
+            var pagedResult = await _publicationManager.GetPublications();
+            var categories = _publicationManager.GetCategories();
             var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, Settings.Current.WebSiteUrl, categories)), pagedResult);
 
             return View(model);
@@ -37,13 +38,42 @@ namespace WebSite.Controllers
         {
             ViewData["Title"] = $"{Core.Pages.Page} {page}";
 
-            var pagedResult = await _manager.GetPublications(categoryId, page);
-            var categories = _manager.GetCategories();
+            var pagedResult = await _publicationManager.GetPublications(categoryId, page);
+            var categories = _publicationManager.GetCategories();
             var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, Settings.Current.WebSiteUrl, categories)), pagedResult);
 
             ViewBag.CategoryId = categoryId;
 
             return View("~/Views/Home/Page.cshtml", model);
+        }
+
+        [Route("vacancies/{page}")]
+        public async Task<IActionResult> Vacancies(int page = 1)
+        {
+            ViewData["Title"] = $"{Core.Pages.Vacancies} {page}";
+
+            var pagedResult = await _vacancyManager.GetVacancies(page);
+
+            var model = new StaticPagedList<VacancyViewModel>(pagedResult.Select(o => new VacancyViewModel(o, Settings.Current.WebSiteUrl)), pagedResult);
+
+
+            return View("~/Views/Home/Vacancies.cshtml", model);
+        }
+
+        [Route("vacancy/{id}")]
+        public async Task<IActionResult> Vacancy(int id)
+        {
+            var vacancy = await _vacancyManager.Get(id);
+
+            if (vacancy == null)
+            {
+                return StatusCode((int)HttpStatusCode.NotFound);
+            }
+
+            var model = new VacancyViewModel(vacancy, Settings.Current.WebSiteUrl);
+            ViewData["Title"] = model.Title;
+
+            return View("~/Views/Home/Vacancy.cshtml", model);
         }
 
         [Route("partners")]
@@ -65,7 +95,7 @@ namespace WebSite.Controllers
         [Route("post/{id}")]
         public async Task<IActionResult> Post(int id)
         {
-            var publication = await _manager.Get(id);
+            var publication = await _publicationManager.Get(id);
 
             if (publication == null)
             {
@@ -82,6 +112,12 @@ namespace WebSite.Controllers
         public async Task<IActionResult> NewPost()
         {
             return View("~/Views/Home/NewPost.cshtml");
+        }
+
+        [Route("vacancy/new")]
+        public async Task<IActionResult> NewVacancy()
+        {
+            return View("~/Views/Home/NewVacancy.cshtml");
         }
 
         public async Task<IActionResult> Error()

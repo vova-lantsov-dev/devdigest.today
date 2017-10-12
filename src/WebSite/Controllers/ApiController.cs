@@ -1,23 +1,19 @@
-﻿
+﻿using Core;
+using Core.Managers;
+using Core.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Core;
-using Core.Managers;
-using Core.ViewModels;
-using Core.VIewModels;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using X.Web.MetaExtractor;
 
 namespace WebSite.Controllers
 {
     public class ApiController : Controller
     {
         private readonly PublicationManager _publicationManager;
+        private readonly VacancyManager _vacancyManager;
         private readonly UserManager _userManager;
         private readonly TelegramManager _telegramManager;
 
@@ -25,6 +21,7 @@ namespace WebSite.Controllers
         {
             _publicationManager = new PublicationManager(Settings.Current.ConnectionString, cache);
             _userManager = new UserManager(Settings.Current.ConnectionString);
+            _vacancyManager = new VacancyManager(Settings.Current.ConnectionString, cache);
             _telegramManager = new TelegramManager(Settings.Current.ConnectionString);
         }
 
@@ -86,7 +83,44 @@ namespace WebSite.Controllers
 
                 await _telegramManager.Send(request.CategoryId, request.Comment, url);
 
-                return Created(new Uri($"{Core.Settings.Current.WebSiteUrl}post/{publication.Id}"), model);
+                return Created(new Uri(model.ShareUrl), model);
+            }
+
+            return StatusCode((int)HttpStatusCode.BadRequest);
+        }
+
+        [HttpPost]
+        [Route("api/vacancy/new")]
+        public async Task<IActionResult> AddVacancy(NewVacancyRequest request)
+        {
+            var user = _userManager.GetBySecretKey(request.Key);
+
+            if (user == null)
+            {
+                return StatusCode((int)HttpStatusCode.Forbidden);
+            }
+
+            var vacancy = new DAL.Vacancy
+            {
+                Title = request.Title,
+                Description = request.Description,
+                Contact = request.Contact,
+                UserId = user.Id,
+                Active = true,
+                Content = null,
+                Image = null,
+                Url = null,
+            };
+
+            vacancy = await _vacancyManager.Save(vacancy);
+
+            if (vacancy != null)
+            {
+                var model = new VacancyViewModel(vacancy, Settings.Current.WebSiteUrl);
+
+                //await _telegramManager.Send(request.CategoryId, request.Comment, model.ShareUrl);
+
+                return Created(new Uri(model.ShareUrl), model);
             }
 
             return StatusCode((int)HttpStatusCode.BadRequest);

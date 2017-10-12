@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Core;
+using Core.Managers;
 using Core.ViewModels;
 using DAL;
 using Microsoft.AspNetCore.Mvc;

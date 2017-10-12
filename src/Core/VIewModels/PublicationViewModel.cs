@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DAL;
 
 namespace Core.ViewModels
 {
     public class PublicationViewModel : DAL.Publication
     {
-        private string _websiteUrl;
+        private readonly string _websiteUrl;
 
         public PublicationViewModel()
         {

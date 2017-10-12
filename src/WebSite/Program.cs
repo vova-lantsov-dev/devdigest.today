@@ -26,6 +26,7 @@ namespace WebSite
                     config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                           .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
                           .AddJsonFile($"/Users/andrew/pub/dot-net.in.ua/appsettings.json", optional: true, reloadOnChange: true)
+                          .AddJsonFile($"c:/pub/dot-net.in.ua/appsettings.json", optional: true, reloadOnChange: true)
                           .AddEnvironmentVariables();
 
                 })

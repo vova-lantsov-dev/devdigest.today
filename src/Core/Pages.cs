@@ -5,5 +5,6 @@ namespace Core
         public const string AboutUs = "About Us";
         public const string Partners = "Partners";
         public const string Page = "Page";
+        public const string Vacancies = "Vacancies";
     }
 }

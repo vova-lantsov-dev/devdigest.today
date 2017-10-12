@@ -11,6 +11,7 @@ namespace DAL
         public virtual DbSet<Event> Event { get; set; }
         public virtual DbSet<Publication> Publication { get; set; }
         public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<Vacancy> Vacancy { get; set; }
 
         private string _connectionString;
 
@@ -150,9 +151,7 @@ namespace DAL
 
                 entity.Property(e => e.Image).HasMaxLength(250);
 
-                entity.Property(e => e.Link)
-                    .IsRequired()
-                    .HasMaxLength(250);
+                entity.Property(e => e.Link).HasMaxLength(250);
 
                 entity.Property(e => e.Title)
                     .IsRequired()
@@ -190,6 +189,65 @@ namespace DAL
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<Vacancy>(entity =>
+            {
+                entity.HasIndex(e => e.CategoryId)
+                    .HasName("Vacancy_Category_Id_fk");
+
+                entity.HasIndex(e => e.Id)
+                    .HasName(" Vacancy_Id_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Image)
+                    .HasName(" Vacancy_Image_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.UserId)
+                    .HasName("Vacancy_User_Id_fk");
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Active).HasColumnType("bit(1)");
+
+                entity.Property(e => e.CategoryId).HasColumnType("int(11)");
+
+                entity.Property(e => e.Contact)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.Content).HasColumnType("text");
+
+                entity.Property(e => e.Date).HasColumnType("datetime");
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasMaxLength(5000);
+
+                entity.Property(e => e.Image).HasMaxLength(500);
+
+                entity.Property(e => e.Title)
+                    .IsRequired()
+                    .HasMaxLength(300);
+
+                entity.Property(e => e.Url).HasMaxLength(5000);
+
+                entity.Property(e => e.UserId).HasColumnType("int(11)");
+
+                entity.HasOne(d => d.Category)
+                    .WithMany(p => p.Vacancy)
+                    .HasForeignKey(d => d.CategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Vacancy_Category_Id_fk");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Vacancy)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Vacancy_User_Id_fk");
             });
         }
     }

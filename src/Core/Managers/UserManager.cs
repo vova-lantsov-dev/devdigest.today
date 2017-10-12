@@ -2,14 +2,13 @@ using System;
 using System.Linq;
 using DAL;
 
-namespace Core
+namespace Core.Managers
 {
     public class UserManager : ManagerBase
     {
         public UserManager(string connectionString)
             : base(connectionString)
         {
-
         }
 
         public User GetBySecretKey(Guid key)
