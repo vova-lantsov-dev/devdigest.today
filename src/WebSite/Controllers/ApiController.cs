@@ -106,6 +106,7 @@ namespace WebSite.Controllers
                 Description = request.Description,
                 Contact = request.Contact,
                 UserId = user.Id,
+                CategoryId = request.CategoryId,
                 Active = true,
                 Content = null,
                 Image = null,
