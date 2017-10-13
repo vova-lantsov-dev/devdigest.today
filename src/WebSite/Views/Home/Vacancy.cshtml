@@ -21,7 +21,6 @@
 @if (!Model.Active) {
     <span class="label label-default">Archived</span>
 }
-
 </h3>
 
 
@@ -45,7 +44,7 @@
 </div>
 
 <div class="row share">
-    <div class="col-md-6">
+    <div class="col-md-6 social-buttons">
         <a class="btn btn-social-icon btn-twitter" target="blank" href="https://twitter.com/home?status=@Model.ShareUrl"><span class="fa fa-twitter"></span></a>
         <a class="btn btn-social-icon btn-facebook" target="blank" href="https://www.facebook.com/sharer/sharer.php?u=@Model.ShareUrl"><span class="fa fa-facebook"></span></a>
         <a class="btn btn-social-icon btn-google" target="blank" href="https://plus.google.com/share?url=@Model.ShareUrl"><span class="fa fa-google"></span></a>
