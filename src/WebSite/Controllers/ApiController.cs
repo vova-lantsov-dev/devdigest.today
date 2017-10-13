@@ -120,7 +120,7 @@ namespace WebSite.Controllers
             {
                 var model = new VacancyViewModel(vacancy, Settings.Current.WebSiteUrl);
 
-                //await _telegramManager.Send(request.CategoryId, request.Comment, model.ShareUrl);
+                await _telegramManager.Send(request.CategoryId, request.Comment, model.ShareUrl);
 
                 return Created(new Uri(model.ShareUrl), model);
             }
