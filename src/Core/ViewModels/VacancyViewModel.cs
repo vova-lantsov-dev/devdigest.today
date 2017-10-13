@@ -16,6 +16,7 @@ namespace Core.ViewModels
             Content = vacancy.Content;
             Contact = vacancy.Contact;
             Active = vacancy.Active;
+            Date = vacancy.Date;
             Url = string.IsNullOrWhiteSpace(vacancy.Url) ? null : new Uri(vacancy.Url);
         }
 
