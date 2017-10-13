@@ -107,6 +107,7 @@ namespace WebSite.Controllers
                 Contact = request.Contact,
                 UserId = user.Id,
                 CategoryId = request.CategoryId,
+                Date = DateTime.Now,
                 Active = true,
                 Content = null,
                 Image = null,

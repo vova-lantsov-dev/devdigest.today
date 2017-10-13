@@ -26,11 +26,12 @@ namespace Core.Managers
 
                 var items = _database
                     .Vacancy
+                    .Where( o => o.Active)
                     .OrderByDescending(o => o.Id)
                     .Skip(skip)
                     .Take(pageSize).ToList();
 
-                var totalItemsCount = await _database.Vacancy.CountAsync();
+                var totalItemsCount = await _database.Vacancy.Where( o => o.Active).CountAsync();
 
                 result = new StaticPagedList<Vacancy>(items, page, pageSize, totalItemsCount);
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());

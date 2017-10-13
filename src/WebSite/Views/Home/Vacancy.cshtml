@@ -17,12 +17,14 @@
 
 <h1>Vacancy</h1>
 
-<h3>
-    @Model.Title
-    @if (!Model.Active) {
-        @Html.Raw("Archived");
-    }
+<h3>@Model.Title
+@if (!Model.Active) {
+    <span class="label label-default">Archived</span>
+}
+
 </h3>
+
+
 
 <div class="date">
     @Model.Date.ToString("MMMM dd, yyyy") 
@@ -68,7 +70,7 @@
 
         @if(Model.ContactType == Core.ContactType.Email)
         {
-            <a class="btn btn-success btn-contact"  target="_contact" href="mailto:@Model.Email"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;Send Email</a>	
+            <a class="btn btn-success btn-contact"  target="_contact" href="mailto:@Model.Contact"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;Send Email</a>	
         }
 
         @if(Model.ContactType == Core.ContactType.Phone)
