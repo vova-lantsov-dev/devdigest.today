@@ -283,7 +283,8 @@ footer ul {
 }
 
 @media only screen and (max-width: 414px) {
-    .share .btn-default {
+    .share .btn-default,
+    .share .btn-success {
         width: 100%;
         margin-top: 10px;
     }
