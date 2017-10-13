@@ -15,6 +15,7 @@ namespace Core.ViewModels
             Description = vacancy.Description;
             Content = vacancy.Content;
             Contact = vacancy.Contact;
+            Active = vacancy.Active;
             Url = string.IsNullOrWhiteSpace(vacancy.Url) ? null : new Uri(vacancy.Url);
         }
 
@@ -26,6 +27,7 @@ namespace Core.ViewModels
         public string ShareUrl => $"{_websiteUrl}vacancy/{Id}";
         public string Content { get; set; }
         public string Contact { get; set; }
+        public bool Active { get; set; }
         public Uri Url { get; set; }
 
         public ContactType ContactType

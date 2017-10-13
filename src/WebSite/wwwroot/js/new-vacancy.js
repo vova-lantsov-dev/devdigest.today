@@ -1,4 +1,4 @@
-$("#add-vacancy").click(function () { addNewVacancy(); });
+$("#add-vacancy").click(function() { addNewVacancy(); });
 $(".progress").hide();
 
 loadCategories();
@@ -9,8 +9,8 @@ function loadCategories() {
     options.html('');
 
     $.get('/api/categories',
-        function (result) {
-            $.each(result, function () {
+        function(result) {
+            $.each(result, function() {
                 options.append($("<option />").val(this.id).text(this.name));
             });
         }
@@ -41,11 +41,11 @@ function addNewVacancy() {
 
     progress.show();
 
-    $.post('/api/vacancies/new', data)
-        .done(function (response) {
+    $.post('/api/vacancy/new', data)
+        .done(function(response) {
             progress.hide();
             window.location.replace(response.shareUrl);
-        }).fail(function (err) {
+        }).fail(function(err) {
             if (!!err && err.status == 403)
                 alert('Access denied');
             else
