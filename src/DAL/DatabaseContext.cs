@@ -9,6 +9,7 @@ namespace DAL
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<Channel> Channel { get; set; }
         public virtual DbSet<Event> Event { get; set; }
+        public virtual DbSet<FacebookPage> FacebookPage { get; set; }
         public virtual DbSet<Publication> Publication { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<Vacancy> Vacancy { get; set; }
@@ -19,12 +20,12 @@ namespace DAL
         {
             _connectionString = connectionString;
         }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql(_connectionString);
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseMySql("Server=server2.agi.net.ua;User Id=db_root;Password=KP342qnw;Database=dot_net_in_ua;CharSet=utf8;");
             }
         }
 
@@ -117,6 +118,40 @@ namespace DAL
                     .WithMany(p => p.Event)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("Event_User_Id_fk");
+            });
+
+            modelBuilder.Entity<FacebookPage>(entity =>
+            {
+                entity.HasIndex(e => e.CategoryId)
+                    .HasName("FacebookPage_Category_Id_fk");
+
+                entity.HasIndex(e => e.Id)
+                    .HasName("FacebookPages_Id_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Token)
+                    .HasName("FacebookPages_Token_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CategoryId).HasColumnType("int(11)");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.Token)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.HasOne(d => d.Category)
+                    .WithMany(p => p.FacebookPage)
+                    .HasForeignKey(d => d.CategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FacebookPage_Category_Id_fk");
             });
 
             modelBuilder.Entity<Publication>(entity =>
