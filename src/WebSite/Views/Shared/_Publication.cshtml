@@ -24,12 +24,8 @@
             </div>    
         </div>
         <div class="row share">
-            <div class="col-md-4 social-buttons">
-                <a class="btn btn-social-icon btn-twitter" target="blank" href="https://twitter.com/home?status=@Model.ShareUrl"><span class="fa fa-twitter"></span></a>
-                <a class="btn btn-social-icon btn-facebook" target="blank" href="https://www.facebook.com/sharer/sharer.php?u=@Model.ShareUrl"><span class="fa fa-facebook"></span></a>
-                <a class="btn btn-social-icon btn-google" target="blank" href="https://plus.google.com/share?url=@Model.ShareUrl"><span class="fa fa-google"></span></a>
-                <a class="btn btn-social-icon btn-linkedin" target="blank" href="https://www.linkedin.com/shareArticle?mini=true&url=@Model.ShareUrl&title=@Model.Title"><span class="fa fa-linkedin"></span></a>
-                <a class="btn btn-social-icon btn-vk" target="blank" href="https://vk.com/share.php?url=@Model.ShareUrl"><span class="fa fa-vk"></span></a>
+            <div class="col-md-4">
+                @Html.Partial("_SocialButtons", new Core.Link(Model.Title, Model.ShareUrl))
             </div>
             <div class="col-md-8 text-right">
                 @if(@Model.Category != null) {
