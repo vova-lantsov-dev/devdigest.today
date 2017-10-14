@@ -32,7 +32,8 @@ namespace Core.Managers
                                 .Skip(skip)
                                 .Take(pageSize).ToList();
 
-                var totalItemsCount = await _database.Publication.CountAsync();
+                var totalItemsCount = await _database.Publication
+                    .Where(o => o.CategoryId == categoryId || categoryId == null).CountAsync();
 
                 result = new StaticPagedList<Publication>(items, page, pageSize, totalItemsCount);
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());
