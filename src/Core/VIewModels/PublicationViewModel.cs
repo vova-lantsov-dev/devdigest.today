@@ -4,13 +4,23 @@ using System.Linq;
 
 namespace Core.ViewModels
 {
-    public class PublicationViewModel : DAL.Publication
+    public class PublicationViewModel
     {
-        private readonly string _websiteUrl;
+        public int Id { get; set; }
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string Content { get; set; }
+        public string Description { get; set; }
+        public string Image { get; set; }
+        public string Link { get; set; }
+        public DateTime DateTime { get; set; }
+        public string EmbededPlayerCode { get; set; }
+        public Uri Url => string.IsNullOrWhiteSpace(this.Link) ? null : new Uri(this.Link);
+        public string ShareUrl => $"{_websiteUrl}post/{Id}";
+        public string Keywords => X.Text.TextHelper.GetKeywords(Description, 10);
+        public CategoryViewModel Category { get; set; }
 
-        public PublicationViewModel()
-        {
-        }
+        private readonly string _websiteUrl;
 
         public PublicationViewModel(DAL.Publication publication, string websiteUrl, IEnumerable<DAL.Category> categories = null)
         {
@@ -41,16 +51,6 @@ namespace Core.ViewModels
             }
 
         }
-
-        public Uri Url => string.IsNullOrWhiteSpace(this.Link) ? null : new Uri(this.Link);
-
-        public string ShareUrl => $"{_websiteUrl}post/{Id}";
-
-        public string Keywords => X.Text.TextHelper.GetKeywords(Description, 10);
-
-        public string EmbededPlayerCode { get; set; }
-
-        public CategoryViewModel Category { get; set; }
 
         public override string ToString()
         {

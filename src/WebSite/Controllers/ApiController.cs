@@ -15,14 +15,14 @@ namespace WebSite.Controllers
         private readonly PublicationManager _publicationManager;
         private readonly VacancyManager _vacancyManager;
         private readonly UserManager _userManager;
-        private readonly TelegramManager _telegramManager;
+        private readonly CrossPostManager _crossPostManager;
 
         public ApiController(IMemoryCache cache)
         {
             _publicationManager = new PublicationManager(Settings.Current.ConnectionString, cache);
             _userManager = new UserManager(Settings.Current.ConnectionString);
             _vacancyManager = new VacancyManager(Settings.Current.ConnectionString, cache);
-            _telegramManager = new TelegramManager(Settings.Current.ConnectionString);
+            _crossPostManager = new CrossPostManager(Settings.Current.ConnectionString);
         }
 
         [HttpGet]
@@ -81,8 +81,8 @@ namespace WebSite.Controllers
                 //If we can embed main content into site page, so we can share this page.
                 var url = string.IsNullOrEmpty(model.EmbededPlayerCode) ? model.Link : model.ShareUrl;
 
-                await _telegramManager.Send(request.CategoryId, request.Comment, url);
-
+                await _crossPostManager.Send(request.CategoryId, request.Comment, url);
+                
                 return Created(new Uri(model.ShareUrl), model);
             }
 
@@ -120,8 +120,8 @@ namespace WebSite.Controllers
             {
                 var model = new VacancyViewModel(vacancy, Settings.Current.WebSiteUrl);
 
-                await _telegramManager.Send(request.CategoryId, request.Comment, model.ShareUrl);
-
+                await _crossPostManager.Send(request.CategoryId, request.Comment, model.ShareUrl);
+               
                 return Created(new Uri(model.ShareUrl), model);
             }
 

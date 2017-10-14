@@ -9,6 +9,7 @@
     <PackageReference Include="X.PagedList" Version="7.1.0" />
     <PackageReference Include="X.Text" Version="2.0.0" />
     <PackageReference Include="X.Web.MetaExtractor" Version="1.0.2" />
+    <PackageReference Include="x.web.facebook" Version="2.0.3-beta" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj" />
