@@ -108,18 +108,6 @@ namespace WebSite.Controllers
             return View("~/Views/Home/Post.cshtml", model);
         }
 
-        [Route("post/new")]
-        public async Task<IActionResult> NewPost()
-        {
-            return View("~/Views/Home/NewPost.cshtml");
-        }
-
-        [Route("vacancy/new")]
-        public async Task<IActionResult> NewVacancy()
-        {
-            return View("~/Views/Home/NewVacancy.cshtml");
-        }
-
         public async Task<IActionResult> Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
