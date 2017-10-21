@@ -1,16 +1,12 @@
 ﻿@model Core.ViewModels.PublicationViewModel
 
 @section head {
-    <meta property="og:site_name" content=".NET Core Ukrainian User Group" />
     <meta property="og:title" content="@Model.Title" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="@Model.ShareUrl" />
     <meta property="og:image" content="@Model.Image" />
     <meta property="og:description" content="@Model.Description" />    
 
-    <meta property="author" content="@Core.Settings.Current.WebSiteTitle" />
-    <meta property="article:author" content="https://www.facebook.com/dncuug/">
-    
     <meta name="keywords" content="@Model.Keywords" />
     <meta name="description" content="@Model.Description" />
 }

@@ -23,6 +23,8 @@ namespace Core
         public string RssFeedUrl => $"{WebSiteUrl}rss";
         
         public string SupportEmail { get; set; }
+
+        public string FbAppId { get; set; }
         
         #region Current
 
@@ -37,7 +39,8 @@ namespace Core
                 WebSiteTitle = configuration["WebSiteTitle"],                
                 DefaultDescription = WebUtility.HtmlDecode(configuration["DefaultDescription"]),
                 DefaultKeywords = WebUtility.HtmlDecode(configuration["DefaultKeywords"]),
-                SupportEmail = "dncuug@agi.net.ua"
+                SupportEmail = "dncuug@agi.net.ua",
+                FbAppId = "112150392810181",
             };
         }
 

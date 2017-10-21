@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
+    
+
     <meta charset="utf-8" />    
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densityDpi=device-dpi" />
     <meta name="msvalidate.01" content="13285491122FD93E71050B4D568B72FA" />
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />    
-    <title>@ViewData["Title"] - .NET Core Ukrainian User Group</title>
-
+    
+    <meta property="fb:app_id" content="@Core.Settings.Current.FbAppId" />
+    <meta property="og:site_name" content="@Core.Settings.Current.WebSiteTitle" />
+    <meta property="author" content="@Core.Settings.Current.WebSiteTitle" />
+    <meta property="article:author" content="https://www.facebook.com/dncuug/">
+    
     @RenderSection("head",  required: false)
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">    
@@ -34,6 +40,8 @@
         enable_page_level_ads: true
         });
     </script>
+
+    <title>@ViewData["Title"] - .NET Core Ukrainian User Group</title>
 
 </head>
 <body>
