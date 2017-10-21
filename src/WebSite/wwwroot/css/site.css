@@ -112,6 +112,10 @@ footer a {
 
 .publication-preview .image-block {}
 
+.image-block.inner {
+    margin-bottom: 10px;
+}
+
 .publication-preview .image-block img {
     width: 100%;
     border: 1px solid #EEE;

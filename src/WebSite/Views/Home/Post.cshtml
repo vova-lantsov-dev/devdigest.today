@@ -21,7 +21,7 @@
 </div>    
 
 @if (string.IsNullOrEmpty(Model.EmbededPlayerCode)) {
-    <div class="image-block">
+    <div class="image-block inner">
         @if (string.IsNullOrEmpty(Model.Image)) {
             <img class="img-responsive" alt="@Model.Title" src="@Core.Settings.Current.DefaultPublicationImage" />
         }
