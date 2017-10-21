@@ -8,6 +8,9 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using X.PagedList;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using System;
 
 namespace WebSite.Controllers
 {
@@ -15,11 +18,13 @@ namespace WebSite.Controllers
     {
         private readonly PublicationManager _publicationManager;
         private readonly VacancyManager _vacancyManager;
+        private readonly IHostingEnvironment _env;
 
-        public HomeController(IMemoryCache cache)
+        public HomeController(IMemoryCache cache, IHostingEnvironment env)
         {
             _publicationManager = new PublicationManager(Core.Settings.Current.ConnectionString, cache);
             _vacancyManager = new VacancyManager(Core.Settings.Current.ConnectionString, cache);
+            _env = env;
         }
 
         public async Task<IActionResult> Index()
@@ -70,7 +75,11 @@ namespace WebSite.Controllers
                 return StatusCode((int)HttpStatusCode.NotFound);
             }
 
-            var model = new VacancyViewModel(vacancy, Settings.Current.WebSiteUrl);
+            var path = Path.Combine(_env.WebRootPath, "images/vacancy");
+            var file = Directory.GetFiles(path).OrderBy(o => Guid.NewGuid()).Select(o => Path.GetFileName(o)).FirstOrDefault();            
+            var image = $"{Settings.Current.WebSiteUrl}images/vacancy/{file}";
+            
+            var model = new VacancyViewModel(vacancy, Settings.Current.WebSiteUrl, image);
             ViewData["Title"] = model.Title;
 
             return View("~/Views/Home/Vacancy.cshtml", model);

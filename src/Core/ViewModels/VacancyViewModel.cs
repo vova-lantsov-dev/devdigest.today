@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Core.ViewModels
 {
@@ -6,12 +8,12 @@ namespace Core.ViewModels
     {
         private readonly string _websiteUrl;
 
-        public VacancyViewModel(DAL.Vacancy vacancy, string webSiteUrl)
+        public VacancyViewModel(DAL.Vacancy vacancy, string webSiteUrl, string fallbackImage = null)
         {
             _websiteUrl = webSiteUrl;
             Id = vacancy.Id;
             Title = vacancy.Title;
-            Image = vacancy.Image;
+            Image = vacancy.Image ?? fallbackImage;
             Description = vacancy.Description;
             Content = vacancy.Content;
             Contact = vacancy.Contact;
