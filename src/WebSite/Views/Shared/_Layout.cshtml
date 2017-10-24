@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    
-
     <meta charset="utf-8" />    
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densityDpi=device-dpi" />
     <meta name="msvalidate.01" content="13285491122FD93E71050B4D568B72FA" />
@@ -42,7 +40,6 @@
     </script>
 
     <title>@ViewData["Title"] - .NET Core Ukrainian User Group</title>
-
 </head>
 <body>
 
@@ -60,17 +57,28 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-left">
-                    <li class="mobile-hidden"><a>|</a></li>
-                    <li><a href="/page/1?categoryId=1">.NET Core</a></li>
-                    <li><a href="/page/1?categoryId=2">Xamarin</a></li>
+                    <!-- <li class="mobile-hidden"><a>|</a></li> -->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Streams <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/page/1?categoryId=1">.NET Core</a></li>
+                             <li><a href="/page/1?categoryId=2">Xamarin</a></li>
+                        </ul>
+                    </li>  
                     <li><a href="/vacancies/1">Job&nbsp;<span class="label label-danger">New!</span></a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="https://facebook.com/groups/dncuug/">Facebook</a></li>
                     <li><a href="https://github.com/dncuug">GitHub</a></li>
-                    <li><a href="https://telegram.me/dncuug">Telegram</a></li>           
-                    <li><a href="/partners">@Core.Pages.Partners</a></li>
-                    <li><a href="/about">@Core.Pages.AboutUs</a></li>           
+                    <li><a href="https://telegram.me/dncuug">Telegram</a></li>      
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/partners">@Core.Pages.Partners</a></li>
+                            <li><a href="/about">@Core.Pages.AboutUs</a></li>   
+                        </ul>
+                    </li>                            
                 </ul>
             </div><!--/.navbar-collapse -->
         </div>
