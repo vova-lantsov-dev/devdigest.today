@@ -1,3 +1,6 @@
+@{
+    var vacancies = ViewData["vacancies"] as IList<Core.ViewModels.VacancyViewModel>;
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -103,6 +106,18 @@
                     <a href="https://github.com/HowProgrammingWorks">
                         <img alt="How Programming Works" src="/images/banners/hpw.png" />
                     </a>
+                </div>
+
+                <div class="vacancies">
+                    <h3>Hot Vacancies</h3>
+                    @foreach(var v in vacancies) {
+                        <div>
+                            <h4>@v.Title</h4>
+                            <span>@v.Description</span>
+                            <a class="btn btn-xs btn-default" href="@v.ShareUrl">Details...</a>
+                        </div>                    
+                    }
+                    <a href="/vacancies/1"> View all vacancies</a>.
                 </div>
             </div>
         </div>

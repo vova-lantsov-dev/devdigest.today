@@ -11,20 +11,49 @@ using X.PagedList;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System;
+using System.Collections.Generic;
 
 namespace WebSite.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : Core.ControllerBase
     {
         private readonly PublicationManager _publicationManager;
         private readonly VacancyManager _vacancyManager;
         private readonly IHostingEnvironment _env;
+        private readonly IMemoryCache _cache;
 
         public HomeController(IMemoryCache cache, IHostingEnvironment env)
         {
+            _cache = cache;
             _publicationManager = new PublicationManager(Core.Settings.Current.ConnectionString, cache);
             _vacancyManager = new VacancyManager(Core.Settings.Current.ConnectionString, cache);
             _env = env;
+        }
+
+        public override void OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext context)
+        {
+            base.OnActionExecuted(context);
+
+            LoadHotVacanciesToViewData();
+        }
+
+        private void LoadHotVacanciesToViewData()
+        {
+            var key = "vacancies";
+            
+            var vacancies = _cache.Get<IList<VacancyViewModel>>(key);
+
+            if (vacancies == null)
+            {
+                vacancies = _vacancyManager
+                                     .GetHotVacancies()
+                                     .Select(o => new VacancyViewModel(o, Settings.Current.WebSiteTitle))
+                                     .ToList();
+
+                _cache.Set(key, vacancies, new DateTimeOffset(DateTime.Now.AddMinutes(5)));
+            }
+
+            ViewData[key] = vacancies;
         }
 
         public async Task<IActionResult> Index()
@@ -76,9 +105,9 @@ namespace WebSite.Controllers
             }
 
             var path = Path.Combine(_env.WebRootPath, "images/vacancy");
-            var file = Directory.GetFiles(path).OrderBy(o => Guid.NewGuid()).Select(o => Path.GetFileName(o)).FirstOrDefault();            
+            var file = Directory.GetFiles(path).OrderBy(o => Guid.NewGuid()).Select(o => Path.GetFileName(o)).FirstOrDefault();
             var image = $"{Settings.Current.WebSiteUrl}images/vacancy/{file}";
-            
+
             var model = new VacancyViewModel(vacancy, Settings.Current.WebSiteUrl, image);
             ViewData["Title"] = model.Title;
 

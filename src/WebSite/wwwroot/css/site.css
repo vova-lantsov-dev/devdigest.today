@@ -11,6 +11,7 @@ h1,
 h2,
 h3,
 h4,
+h5,
 .navbar-inverse .navbar-brand,
 .navbar-inverse .navbar-nav>li>a,
 footer,
@@ -319,4 +320,24 @@ footer ul {
 
 .gitter-chat-embed {
     z-index: 9999;
+}
+
+.vacancies {}
+
+.vacancies div {
+    font-size: 10pt;
+    padding: 20px;
+    border: 1px solid #EEE;
+    margin-bottom: 10px;
+    color: #AAA;
+}
+
+.vacancies div:hover {
+    color: #000;
+}
+
+.vacancies div a {
+    display: block;
+    margin-top: 5px;
+    margin-top: 10px;
 }
