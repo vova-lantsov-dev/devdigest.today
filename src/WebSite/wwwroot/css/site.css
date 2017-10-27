@@ -329,15 +329,12 @@ footer ul {
     padding: 20px;
     border: 1px solid #EEE;
     margin-bottom: 10px;
-    color: #AAA;
-}
-
-.vacancies div:hover {
-    color: #000;
+    text-align: justify;
 }
 
 .vacancies div a {
     display: block;
     margin-top: 5px;
     margin-top: 10px;
+    margin-left: 50%;
 }
