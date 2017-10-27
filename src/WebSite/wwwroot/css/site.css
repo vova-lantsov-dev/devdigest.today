@@ -93,9 +93,9 @@ footer a {
 }
 
 .publication-preview,
-.vacancy-preview {
-    /*box-shadow: 1px 1px 10px #CCC;*/
+.vacancy-preview {    
     margin-bottom: 40px;
+    text-align: justify;
 }
 
 .publication-preview h3 {}
