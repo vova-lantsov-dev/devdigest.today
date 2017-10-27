@@ -41,7 +41,7 @@ namespace WebSite.Controllers
         {
             var vacancies = _vacancyManager
                                 .GetHotVacancies()
-                                .Select(o => new VacancyViewModel(o, Settings.Current.WebSiteTitle))
+                                .Select(o => new VacancyViewModel(o, Settings.Current.WebSiteUrl))
                                 .ToList();
 
             ViewData["vacancies"] = vacancies;
