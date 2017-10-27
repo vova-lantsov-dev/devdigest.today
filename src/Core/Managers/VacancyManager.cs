@@ -44,8 +44,23 @@ namespace Core.Managers
 
         public IList<DAL.Vacancy> GetHotVacancies()
         {
-               var pagedResult = GetVacancies().GetAwaiter().GetResult();
-            return pagedResult.ToList();
+            var key = $"hot_vacancies";
+            var size = 5;
+
+            var result = _cache.Get(key) as IList<DAL.Vacancy>;
+
+            if (result == null)
+            {
+                result = _database
+                    .Vacancy
+                    .Where(o => o.Active)
+                    .OrderByDescending(o => o.Id)
+                    .Take(size).ToList();
+                
+                _cache.Set(key, result, GetMemoryCacheEntryOptions());
+            }
+
+            return result;
         }
 
         public async Task<DAL.Vacancy> Get(int id)

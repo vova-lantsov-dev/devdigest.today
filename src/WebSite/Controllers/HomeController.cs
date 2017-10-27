@@ -15,7 +15,7 @@ using System.Collections.Generic;
 
 namespace WebSite.Controllers
 {
-    public class HomeController : Core.ControllerBase
+    public class HomeController : Controller
     {
         private readonly PublicationManager _publicationManager;
         private readonly VacancyManager _vacancyManager;
@@ -39,21 +39,12 @@ namespace WebSite.Controllers
 
         private void LoadHotVacanciesToViewData()
         {
-            var key = "vacancies";
-            
-            var vacancies = _cache.Get<IList<VacancyViewModel>>(key);
+            var vacancies = _vacancyManager
+                                .GetHotVacancies()
+                                .Select(o => new VacancyViewModel(o, Settings.Current.WebSiteTitle))
+                                .ToList();
 
-            if (vacancies == null)
-            {
-                vacancies = _vacancyManager
-                                     .GetHotVacancies()
-                                     .Select(o => new VacancyViewModel(o, Settings.Current.WebSiteTitle))
-                                     .ToList();
-
-                _cache.Set(key, vacancies, new DateTimeOffset(DateTime.Now.AddMinutes(5)));
-            }
-
-            ViewData[key] = vacancies;
+            ViewData["vacancies"] = vacancies;
         }
 
         public async Task<IActionResult> Index()
