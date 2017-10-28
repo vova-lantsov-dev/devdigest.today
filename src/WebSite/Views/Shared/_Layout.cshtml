@@ -1,3 +1,4 @@
+﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
 @{
     var vacancies = ViewData["vacancies"] as IList<Core.ViewModels.VacancyViewModel>;
 }
@@ -54,6 +55,7 @@
     window.appInsights=appInsights;
     appInsights.trackPageView();
     </script>
+    @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body>
 
