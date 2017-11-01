@@ -93,7 +93,7 @@ footer a {
 }
 
 .publication-preview,
-.vacancy-preview {    
+.vacancy-preview {
     margin-bottom: 40px;
     text-align: justify;
 }
@@ -232,6 +232,8 @@ footer ul {
     overflow: hidden;
     margin-top: 20px;
     margin-bottom: 20px;
+    border: 1px solid #EEE;
+    padding: 20px;
 }
 
 .ad img {
@@ -337,4 +339,9 @@ footer ul {
     margin-top: 5px;
     margin-top: 10px;
     margin-left: 50%;
+}
+
+.in-feed-ad {
+    border: 1px solid #EEE;
+    margin-bottom: 40px;
 }

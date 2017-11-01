@@ -35,10 +35,11 @@
     </div>
 }
 
+@for (var i=1; i<Model.Count(); i++)
+{    
+    @Html.Partial("_Publication", Model[i])
 
-@foreach (var p in Model)
-{
-    @Html.Partial("_Publication", p)
+    @if (i == 2) { @Html.Partial("_InFeedAd") }
 }
 
 @Html.PagedListPager(Model, page => $"/page/{page}")

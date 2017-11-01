@@ -17,10 +17,11 @@
     <meta name="description" content="@Core.Settings.Current.DefaultDescription" />
 }
 
+@for (var i=1; i<Model.Count(); i++)
+{    
+    @Html.Partial("_Publication", Model[i])
 
-@foreach (var p in Model)
-{
-    @Html.Partial("_Publication", p)
+    @if (i == 2) { @Html.Partial("_InFeedAd") }
 }
 
 @if (categoryId != null){
