@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using DAL;
 using Telegram.Bot.Types.Enums;
 
 namespace Core.Managers
@@ -38,6 +40,11 @@ namespace Core.Managers
             }
 
             return true;
+        }
+
+        public IEnumerable<Channel> GetTelegramChannels()
+        {
+            return _database.Channel.ToList();
         }
 
         public async Task<bool> SendToFacebook(int categoryId, string comment, string link)

@@ -1,11 +1,22 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Core;
+using Core.Managers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace WebSite.Controllers
 {
     public class ContentController : Controller
     {
+        private readonly CrossPostManager _crossPostManager;
+
+        public ContentController(IMemoryCache cache)
+        {
+            _crossPostManager = new CrossPostManager(Settings.Current.ConnectionString);
+        }
+
         [Route("content/partners")]
         public async Task<IActionResult> Partners()
         {
@@ -27,7 +38,15 @@ namespace WebSite.Controllers
         {
             ViewData["Title"] = Core.Pages.Telegram;
 
-            var channels = new List<Core.ViewModels.TelegramViewModel>();
+            var channels = _crossPostManager
+                .GetTelegramChannels()
+                .Select(o => new Core.ViewModels.TelegramViewModel(o.Name)
+                {
+                    Title = o.Title,
+                    Description = o.Description,                    
+                    Logo = o.Logo
+                }).ToList();
+
 
             return View("~/Views/Content/Telegram.cshtml", channels);
         }

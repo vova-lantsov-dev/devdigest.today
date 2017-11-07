@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Core.ViewModels.TelegramViewModel>
+﻿@model System.Collections.Generic.IList<Core.ViewModels.TelegramViewModel>
 
 @section head {
     <meta property="og:title" content="@ViewData["Title"]" />
@@ -15,11 +15,13 @@
 
 <div class="row">
     <section class="col-md-12">
+        
+        Here you can find our telegrams. We strongly recommend subscribing to them!
+
+        <br /><br />
 
         @for (var i=0; i<Model.Count(); i++)
-        {    
-            @Html.Partial("_Publication", Model[i])
-
+        {   
             <div class="publication-preview">
                 <div class="image-block">       
                     <img class="img-responsive" alt="@Model[i].Title" src="@Model[i].Logo" />
@@ -37,7 +39,7 @@
                         <div class="col-md-4">                
                         </div>
                         <div class="col-md-8 text-right">
-                            <a class="btn btn-default" href="@Model[i].Link">Open channel&nbsp;<i class="glyphicon glyphicon-info-sign"></i></a>
+                            <a class="btn btn-default" href="@Model[i].Link">Open channel&nbsp;<i class="glyphicon glyphicon-send"></i></a>
                         </div>
                     </div>
                 </section>

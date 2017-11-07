@@ -64,6 +64,8 @@ namespace DAL
 
                 entity.Property(e => e.Description).HasColumnType("text");
 
+                entity.Property(e => e.Logo).HasMaxLength(100);
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
