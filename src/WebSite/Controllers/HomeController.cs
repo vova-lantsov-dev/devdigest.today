@@ -105,22 +105,6 @@ namespace WebSite.Controllers
             return View("~/Views/Home/Vacancy.cshtml", model);
         }
 
-        [Route("partners")]
-        public async Task<IActionResult> Partners()
-        {
-            ViewData["Title"] = Core.Pages.Partners;
-
-            return View("~/Views/Home/Partners.cshtml");
-        }
-
-        [Route("about")]
-        public async Task<IActionResult> About()
-        {
-            ViewData["Title"] = Core.Pages.AboutUs;
-
-            return View("~/Views/Home/About.cshtml");
-        }
-
         [Route("post/{id}")]
         public async Task<IActionResult> Post(int id)
         {
