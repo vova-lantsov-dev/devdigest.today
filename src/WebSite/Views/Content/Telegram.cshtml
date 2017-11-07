@@ -1,4 +1,6 @@
-﻿@section head {
+﻿@model IEnumerable<Core.ViewModels.TelegramViewModel>
+
+@section head {
     <meta property="og:title" content="@ViewData["Title"]" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="@Core.Settings.Current.WebSiteUrl" />
@@ -13,6 +15,34 @@
 
 <div class="row">
     <section class="col-md-12">
+
+        @for (var i=0; i<Model.Count(); i++)
+        {    
+            @Html.Partial("_Publication", Model[i])
+
+            <div class="publication-preview">
+                <div class="image-block">       
+                    <img class="img-responsive" alt="@Model[i].Title" src="@Model[i].Logo" />
+                </div>
+                <section>
+
+                    <h3 class="text-left">@Model[i].Title</h3>
+
+                    <div class="row">
+                        <div class="col-md-12 description">
+                            @Model[i].Description
+                        </div>    
+                    </div>
+                    <div class="row share">
+                        <div class="col-md-4">                
+                        </div>
+                        <div class="col-md-8 text-right">
+                            <a class="btn btn-default" href="@Model[i].Link">Open channel&nbsp;<i class="glyphicon glyphicon-info-sign"></i></a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        }
       
     </section>
 </div>

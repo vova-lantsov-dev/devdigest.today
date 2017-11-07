@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,7 +27,9 @@ namespace WebSite.Controllers
         {
             ViewData["Title"] = Core.Pages.Telegram;
 
-            return View("~/Views/Content/Telegram.cshtml");
+            var channels = new List<Core.ViewModels.TelegramViewModel>();
+
+            return View("~/Views/Content/Telegram.cshtml", channels);
         }
 
 

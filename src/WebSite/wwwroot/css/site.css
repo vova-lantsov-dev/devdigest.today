@@ -320,8 +320,16 @@ footer ul {
     }
 }
 
+.panel-default {
+    border-radius: 0px;
+}
+
 .gitter-chat-embed {
     z-index: 9999;
+}
+
+.founder {
+    border: none;
 }
 
 .vacancies {}

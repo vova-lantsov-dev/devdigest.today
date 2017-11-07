@@ -10,6 +10,7 @@ namespace DAL
         public virtual DbSet<Channel> Channel { get; set; }
         public virtual DbSet<Event> Event { get; set; }
         public virtual DbSet<FacebookPage> FacebookPage { get; set; }
+        public virtual DbSet<Language> Language { get; set; }
         public virtual DbSet<Publication> Publication { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<Vacancy> Vacancy { get; set; }
@@ -20,12 +21,12 @@ namespace DAL
         {
             _connectionString = connectionString;
         }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("Server=server2.agi.net.ua;User Id=db_root;Password=KP342qnw;Database=dot_net_in_ua;CharSet=utf8;");
+                optionsBuilder.UseMySql(_connectionString);
             }
         }
 
@@ -61,9 +62,13 @@ namespace DAL
 
                 entity.Property(e => e.CategoryId).HasColumnType("int(11)");
 
+                entity.Property(e => e.Description).HasColumnType("text");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+
+                entity.Property(e => e.Title).HasMaxLength(100);
 
                 entity.Property(e => e.Token)
                     .IsRequired()
@@ -89,7 +94,7 @@ namespace DAL
 
                 entity.Property(e => e.CategoryId)
                     .HasColumnType("int(11)")
-                    .HasDefaultValueSql("1");
+                    .HasDefaultValueSql("'1'");
 
                 entity.Property(e => e.Description)
                     .IsRequired()
@@ -154,10 +159,26 @@ namespace DAL
                     .HasConstraintName("FacebookPage_Category_Id_fk");
             });
 
+            modelBuilder.Entity<Language>(entity =>
+            {
+                entity.HasIndex(e => e.Id)
+                    .HasName("Language_Id_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Name).HasMaxLength(25);
+            });
+
             modelBuilder.Entity<Publication>(entity =>
             {
                 entity.HasIndex(e => e.CategoryId)
                     .HasName("Publication_Category_Id_fk");
+
+                entity.HasIndex(e => e.LanguageId)
+                    .HasName("Publication_Language_Id_fk");
 
                 entity.HasIndex(e => e.Link)
                     .HasName("Publication_Link_uindex")
@@ -186,6 +207,8 @@ namespace DAL
 
                 entity.Property(e => e.Image).HasMaxLength(250);
 
+                entity.Property(e => e.LanguageId).HasColumnType("int(11)");
+
                 entity.Property(e => e.Link).HasMaxLength(250);
 
                 entity.Property(e => e.Title)
@@ -200,6 +223,11 @@ namespace DAL
                     .WithMany(p => p.Publication)
                     .HasForeignKey(d => d.CategoryId)
                     .HasConstraintName("Publication_Category_Id_fk");
+
+                entity.HasOne(d => d.Language)
+                    .WithMany(p => p.Publication)
+                    .HasForeignKey(d => d.LanguageId)
+                    .HasConstraintName("Publication_Language_Id_fk");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Publication)
@@ -249,6 +277,8 @@ namespace DAL
                 entity.Property(e => e.Active).HasColumnType("bit(1)");
 
                 entity.Property(e => e.CategoryId).HasColumnType("int(11)");
+
+                entity.Property(e => e.Company).HasMaxLength(100);
 
                 entity.Property(e => e.Contact)
                     .IsRequired()
