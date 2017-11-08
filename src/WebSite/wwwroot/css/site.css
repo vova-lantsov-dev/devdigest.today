@@ -334,7 +334,13 @@ footer ul {
 
 .vacancies {}
 
-.vacancies>div {
+.vacancy-preview.hot {}
+
+.vacancy-preview.fresh {
+    /* background-color: #ffa7001a; */
+}
+
+.vacancy-preview {
     font-size: 10pt;
     padding: 20px;
     border: 1px solid #EEE;

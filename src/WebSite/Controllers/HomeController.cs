@@ -39,11 +39,9 @@ namespace WebSite.Controllers
 
         private void LoadHotVacanciesToViewData()
         {
-            var categories = _vacancyManager.GetCategories();
-
             var vacancies = _vacancyManager
                                 .GetHotVacancies()
-                                .Select(o => new VacancyViewModel(o, categories.FirstOrDefault(c => c.Id == o.CategoryId), Settings.Current.WebSiteUrl))
+                                .Select(o => new VacancyViewModel(o, Settings.Current.WebSiteUrl))
                                 .ToList();
 
             ViewData["vacancies"] = vacancies;

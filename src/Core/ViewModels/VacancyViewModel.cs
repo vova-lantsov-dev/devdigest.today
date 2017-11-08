@@ -9,11 +9,6 @@ namespace Core.ViewModels
         private readonly string _websiteUrl;
 
         public VacancyViewModel(DAL.Vacancy vacancy, string webSiteUrl, string fallbackImage = null)
-            : this(vacancy, null, webSiteUrl, fallbackImage)
-        {
-        }
-
-        public VacancyViewModel(DAL.Vacancy vacancy, DAL.Category category, string webSiteUrl, string fallbackImage = null)
         {
             _websiteUrl = webSiteUrl;
             Id = vacancy.Id;
@@ -27,10 +22,10 @@ namespace Core.ViewModels
             Url = string.IsNullOrWhiteSpace(vacancy.Url) ? null : new Uri(vacancy.Url);
             Category = new CategoryViewModel();
 
-            if (category != null)
+            if (vacancy.Category != null)
             {
-                this.Category.Id = category.Id;
-                this.Category.Name = category.Name;
+                Category.Id = vacancy.Category.Id;
+                Category.Name = vacancy.Category.Name;
             }
         }
 

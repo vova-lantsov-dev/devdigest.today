@@ -1,6 +1,11 @@
 ﻿@model Core.ViewModels.VacancyViewModel
+@{
+    var cssClass = "";
+    if (Model.Hot) {cssClass = "hot"; }
+    if (Model.Fresh) {cssClass = "fresh"; }
+}
 
-<div>
+<div class="vacancy-preview @cssClass">
     <h4>@Model.Title</h4>
     <span>@Model.Description</span>
     <br /><br />
