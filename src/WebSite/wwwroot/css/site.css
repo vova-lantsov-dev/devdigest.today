@@ -334,7 +334,7 @@ footer ul {
 
 .vacancies {}
 
-.vacancies div {
+.vacancies>div {
     font-size: 10pt;
     padding: 20px;
     border: 1px solid #EEE;
@@ -343,10 +343,17 @@ footer ul {
 }
 
 .vacancies div a {
-    display: block;
+    /* display: block;
     margin-top: 5px;
+    margin-top: 10px; */
+    /* margin-left: 50%; */
+    vertical-align: middle;
+}
+
+.vacancies .label {
+    vertical-align: middle;
+    display: inline-block;
     margin-top: 10px;
-    margin-left: 50%;
 }
 
 .in-feed-ad {

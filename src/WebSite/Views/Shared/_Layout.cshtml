@@ -133,11 +133,7 @@
                 <div class="vacancies">
                     <h3>Hot Vacancies</h3>
                     @foreach(var v in vacancies) {
-                        <div>
-                            <h4>@v.Title</h4>
-                            <span>@v.Description</span>
-                            <a class="btn btn-default" href="@v.ShareUrl">Details...&nbsp;<i class="glyphicon glyphicon-eur"></i></a>
-                        </div>                    
+                        @Html.Partial("_VacancyPreview", v)                                    
                     }
                     <a href="/vacancies/1"> View all vacancies</a>.
                 </div>

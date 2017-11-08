@@ -9,6 +9,11 @@ namespace Core.ViewModels
         private readonly string _websiteUrl;
 
         public VacancyViewModel(DAL.Vacancy vacancy, string webSiteUrl, string fallbackImage = null)
+            : this(vacancy, null, webSiteUrl, fallbackImage)
+        {
+        }
+
+        public VacancyViewModel(DAL.Vacancy vacancy, DAL.Category category, string webSiteUrl, string fallbackImage = null)
         {
             _websiteUrl = webSiteUrl;
             Id = vacancy.Id;
@@ -20,11 +25,19 @@ namespace Core.ViewModels
             Active = vacancy.Active;
             Date = vacancy.Date;
             Url = string.IsNullOrWhiteSpace(vacancy.Url) ? null : new Uri(vacancy.Url);
+            Category = new CategoryViewModel();
+
+            if (category != null)
+            {
+                this.Category.Id = category.Id;
+                this.Category.Name = category.Name;
+            }
         }
 
         public int Id { get; set; }
         public string Title { get; set; }
         public string Image { get; set; }
+        public CategoryViewModel Category { get; set; }
         public DateTime Date { get; set; }
         public string Description { get; set; }
         public string ShareUrl => $"{_websiteUrl}vacancy/{Id}";
@@ -32,6 +45,16 @@ namespace Core.ViewModels
         public string Contact { get; set; }
         public bool Active { get; set; }
         public Uri Url { get; set; }
+
+        /// <summary>
+        /// Vacancy posted today
+        /// </summary>
+        public bool Fresh => Date.Date == DateTime.Now.Date;
+
+        /// <summary>
+        /// Vacancy posted on this week
+        /// </summary>
+        public bool Hot => Date.Date.AddDays(7) > DateTime.Now.Date;
 
         public ContactType ContactType
         {

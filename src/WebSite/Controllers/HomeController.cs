@@ -39,9 +39,11 @@ namespace WebSite.Controllers
 
         private void LoadHotVacanciesToViewData()
         {
+            var categories = _vacancyManager.GetCategories();
+
             var vacancies = _vacancyManager
                                 .GetHotVacancies()
-                                .Select(o => new VacancyViewModel(o, Settings.Current.WebSiteUrl))
+                                .Select(o => new VacancyViewModel(o, categories.FirstOrDefault(c => c.Id == o.CategoryId), Settings.Current.WebSiteUrl))
                                 .ToList();
 
             ViewData["vacancies"] = vacancies;
@@ -80,7 +82,6 @@ namespace WebSite.Controllers
             var pagedResult = await _vacancyManager.GetVacancies(page);
 
             var model = new StaticPagedList<VacancyViewModel>(pagedResult.Select(o => new VacancyViewModel(o, Settings.Current.WebSiteUrl)), pagedResult);
-
 
             return View("~/Views/Home/Vacancies.cshtml", model);
         }

@@ -63,6 +63,15 @@ namespace Core.Managers
             return result;
         }
 
+        /// <summary>
+        /// Return categories for vacancies
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<DAL.Category> GetCategories()
+        {
+            return _database.Category.ToList();
+        }
+
         public async Task<DAL.Vacancy> Get(int id)
         {
             var key = $"vacancy_{id}";
