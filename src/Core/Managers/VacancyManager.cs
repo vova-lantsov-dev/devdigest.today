@@ -28,6 +28,7 @@ namespace Core.Managers
 
                 var items = _database
                     .Vacancy
+                    .Include(o => o.Category)
                     .Where(o => o.Active)
                     .OrderByDescending(o => o.Id)
                     .Skip(skip)
@@ -53,11 +54,11 @@ namespace Core.Managers
             {
                 result = _database
                     .Vacancy
-                    .Include( o => o.Category)
+                    .Include(o => o.Category)
                     .Where(o => o.Active)
                     .OrderByDescending(o => o.Id)
                     .Take(size).ToList();
-                
+
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());
             }
 
