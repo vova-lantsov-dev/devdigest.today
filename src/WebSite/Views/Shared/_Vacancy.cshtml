@@ -1,18 +1,10 @@
 ﻿@model Core.ViewModels.VacancyViewModel
 
 <div class="vacancy-preview">
-    <!-- <div class="image-block">
-            @if (string.IsNullOrEmpty(Model.Image)) {
-                <img class="img-responsive" alt="@Model.Title" src="@Core.Settings.Current.DefaultPublicationImage" />
-            }
-            else{
-                <img class="img-responsive" alt="@Model.Title" src="@Model.Image" />
-            }
-    </div> -->
     <section>
 
         <h3 class="text-left">
-            @Model.Title           
+            @Model.Title
         </h3>
 
         <div class="date">
@@ -28,11 +20,9 @@
                 @Html.Partial("_SocialButtons", new Core.Link(Model.Title, Model.ShareUrl))
             </div>
             <div class="col-md-8 text-right">
-               
-                @if (Model.Url != null) {
-                    <a class="btn btn-default" target="blank" href="@Model.Url">Go to original publication&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>
-                }
-                <a class="btn btn-default" href="/vacancy/@Model.Id">Read&nbsp;<i class="glyphicon glyphicon-info-sign"></i></a>
+                <span class="label category-label label-default">@Model.Category.Name</span> 
+
+                <a class="btn btn-default" href="@Model.ShareUrl">View details...&nbsp;<i class="glyphicon glyphicon-eur"></i></a>
             </div>
         </div>
     </section>
