@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceRoot}/src/WebSite/bin/Debug/netcoreapp2.0/WebSite.dll",
+            "program": "${workspaceFolder}/src/WebSite/bin/Debug/netcoreapp2.0/WebSite.dll",
             "args": [],
-            "cwd": "${workspaceRoot}/src/WebSite",
+            "cwd": "${workspaceFolder}/src/WebSite",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart",
             "launchBrowser": {
@@ -33,7 +33,7 @@
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
             "sourceFileMap": {
-                "/Views": "${workspaceRoot}/Views"
+                "/Views": "${workspaceFolder}/Views"
             }
         },
         {
