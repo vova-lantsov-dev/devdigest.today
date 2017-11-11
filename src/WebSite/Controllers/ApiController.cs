@@ -65,7 +65,8 @@ namespace WebSite.Controllers
                     DateTime = DateTime.Now,
                     UserId = user.Id,
                     CategoryId = request.CategoryId,
-                    Comment = request.Comment
+                    Comment = request.Comment,
+                    LanguageId = Core.Language.EnglishId
                 };
 
                 if (Core.EmbededPlayer.GetPlayerSoure(request.Link) != null)
