@@ -2,8 +2,24 @@ namespace Core
 {
     public class Language
     {
-        public const int English = 1;
-        public const int Russian = 2;
-        public const int Ukrainian = 3;
+        public const int EnglishId = 1;
+
+        public const string English = "en";
+        public const string Russian = "ru";
+        public const string Ukrainian = "uk";
+
+        public static int? GetLanguageId(string language)
+        {
+            if (string.Equals(English, language.Trim().ToLower()))
+                return EnglishId;
+
+            if (string.Equals(Russian, language.Trim().ToLower()))
+                return 2;
+
+            if (string.Equals(Ukrainian, language.Trim().ToLower()))
+                return 3;
+
+            return null;
+        }
     }
 }

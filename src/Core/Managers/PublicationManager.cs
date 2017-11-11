@@ -15,7 +15,7 @@ namespace Core.Managers
         {
         }
 
-        public async Task<IPagedList<Publication>> GetPublications(int? categoryId = null, int page = 1, int pageSize = 10)
+        public async Task<IPagedList<Publication>> GetPublications(int? categoryId = null, int page = 1, int pageSize = 10, int languageId = Core.Language.EnglishId)
         {
             var key = $"page_{page}_{pageSize}_{categoryId}";
 
@@ -28,6 +28,7 @@ namespace Core.Managers
                 var items = _database
                                 .Publication
                                 .Where(o => o.CategoryId == categoryId || categoryId == null)
+                                .Where(o => o.LanguageId == languageId)
                                 .OrderByDescending(o => o.DateTime)
                                 .Skip(skip)
                                 .Take(pageSize).ToList();
@@ -41,7 +42,7 @@ namespace Core.Managers
 
             return result;
         }
-
+        
         public IEnumerable<Category> GetCategories()
         {
             return _database.Category;
