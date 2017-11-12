@@ -4,9 +4,21 @@ namespace Core.CognitiveServices
 {
     public class Query
     {
-        public IEnumerable<dynamic> Documents { get; set; }
+        public IEnumerable<RequestDocument> Documents { get; set; }
     }
-    
+
+    public class RequestDocument
+    {
+        public RequestDocument(string id, string text)
+        {
+            Id = id;
+            Text = text;
+        }
+
+        public string Id { get; set; }
+        public string Text { get; set; }
+    }
+
     public class DetectedLanguage
     {
         public string Name { get; set; }
@@ -25,5 +37,4 @@ namespace Core.CognitiveServices
         public IList<ResponseDocument> Documents { get; set; }
         public IList<object> Errors { get; set; }
     }
-
 }

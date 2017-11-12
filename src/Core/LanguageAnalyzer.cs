@@ -28,14 +28,7 @@ namespace Core
 
             var body = new Query
             {
-                Documents = new[]
-                {
-                    new
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Text = text
-                    }
-                }
+                Documents = new[] {new RequestDocument(Guid.NewGuid().ToString(), text)}
             };
 
             var json = JsonConvert.SerializeObject(body, new JsonSerializerSettings
@@ -49,7 +42,8 @@ namespace Core
             {
                 IRestResponse response = _client.Execute(request);
                 var apiResponse = JsonConvert.DeserializeObject<Response>(response.Content);
-                var language = apiResponse.Documents?.Select(o => o.DetectedLanguages).FirstOrDefault()?.FirstOrDefault();
+                var language = apiResponse.Documents?.Select(o => o.DetectedLanguages).FirstOrDefault()
+                    ?.FirstOrDefault();
                 return language?.Iso6391Name;
             }
             catch
