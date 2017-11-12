@@ -50,11 +50,15 @@ namespace WebSite.Controllers
             }
 
             var extractor = new X.Web.MetaExtractor.Extractor();
-
+            var languageAnalyzer = new LanguageAnalyzer(Settings.Current.CognitiveServicesTextAnalyticsKey);
+            
             try
             {
                 var metadata = await extractor.Extract(new Uri(request.Link));
 
+                var languageCode = languageAnalyzer.GetTextLanguage(metadata.Description);
+                var languageId = Language.GetLanguageId(languageCode) ?? Language.EnglishId;
+                
                 var publication = new DAL.Publication
                 {
                     Title = metadata.Title,
@@ -66,12 +70,12 @@ namespace WebSite.Controllers
                     UserId = user.Id,
                     CategoryId = request.CategoryId,
                     Comment = request.Comment,
-                    LanguageId = Core.Language.EnglishId
+                    LanguageId = languageId
                 };
 
-                if (Core.EmbededPlayer.GetPlayerSoure(request.Link) != null)
+                if (EmbededPlayer.GetPlayerSoure(request.Link) != null)
                 {
-                    var player = new Core.EmbededPlayer(request.Link);
+                    var player = new EmbededPlayer(request.Link);
                     publication.EmbededPlayerCode = player.Render();
                 }
 

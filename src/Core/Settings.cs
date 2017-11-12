@@ -26,6 +26,8 @@ namespace Core
 
         public string FbAppId { get; set; }
         
+        public string CognitiveServicesTextAnalyticsKey { get; set; }
+        
         #region Current
 
         public static Settings Current { get; private set; }
@@ -37,6 +39,7 @@ namespace Core
                 ConnectionString = configuration.GetConnectionString("DefaultConnection"),
                 WebSiteUrl = configuration["WebSiteUrl"],
                 WebSiteTitle = configuration["WebSiteTitle"],                
+                CognitiveServicesTextAnalyticsKey = configuration["CS-Text-Analytics-Key"],                
                 DefaultDescription = WebUtility.HtmlDecode(configuration["DefaultDescription"]),
                 DefaultKeywords = WebUtility.HtmlDecode(configuration["DefaultKeywords"]),
                 SupportEmail = "dncuug@agi.net.ua",

@@ -10,6 +10,9 @@ namespace Core
 
         public static int? GetLanguageId(string language)
         {
+            if (string.IsNullOrEmpty(language))
+                return null;
+            
             if (string.Equals(English, language.Trim().ToLower()))
                 return EnglishId;
 
