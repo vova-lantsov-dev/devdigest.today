@@ -39,7 +39,7 @@ namespace Core
                 ConnectionString = configuration.GetConnectionString("DefaultConnection"),
                 WebSiteUrl = configuration["WebSiteUrl"],
                 WebSiteTitle = configuration["WebSiteTitle"],                
-                CognitiveServicesTextAnalyticsKey = configuration["CS-Text-Analytics-Key"],                
+                CognitiveServicesTextAnalyticsKey = configuration["CognitiveServicesTextAnalyticsKey"],                
                 DefaultDescription = WebUtility.HtmlDecode(configuration["DefaultDescription"]),
                 DefaultKeywords = WebUtility.HtmlDecode(configuration["DefaultKeywords"]),
                 SupportEmail = "dncuug@agi.net.ua",
