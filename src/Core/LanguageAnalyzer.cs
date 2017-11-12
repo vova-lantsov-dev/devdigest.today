@@ -22,7 +22,7 @@ namespace Core
 
         public string GetTextLanguage(string text)
         {
-            var request = new RestRequest("language", Method.POST);
+            var request = new RestRequest("languages", Method.POST);
 
             request.RequestFormat = DataFormat.Json;
 

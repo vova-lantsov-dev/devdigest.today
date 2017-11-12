@@ -16,6 +16,7 @@ namespace WebSite.Controllers
         private readonly VacancyManager _vacancyManager;
         private readonly UserManager _userManager;
         private readonly CrossPostManager _crossPostManager;
+        private readonly LocalizationManager _localizationManager;
 
         public ApiController(IMemoryCache cache)
         {
@@ -23,6 +24,7 @@ namespace WebSite.Controllers
             _userManager = new UserManager(Settings.Current.ConnectionString);
             _vacancyManager = new VacancyManager(Settings.Current.ConnectionString, cache);
             _crossPostManager = new CrossPostManager(Settings.Current.ConnectionString);
+            _localizationManager = new LocalizationManager(Settings.Current.ConnectionString, cache);
         }
 
         [HttpGet]
@@ -42,7 +44,7 @@ namespace WebSite.Controllers
         [Route("api/publications/new")]
         public async Task<IActionResult> AddPublicaton(NewPostRequest request)
         {
-            DAL.User user = _userManager.GetBySecretKey(request.Key);
+            var user = _userManager.GetBySecretKey(request.Key);
 
             if (user == null)
             {
@@ -57,7 +59,7 @@ namespace WebSite.Controllers
                 var metadata = await extractor.Extract(new Uri(request.Link));
 
                 var languageCode = languageAnalyzer.GetTextLanguage(metadata.Description);
-                var languageId = Language.GetLanguageId(languageCode) ?? Language.EnglishId;
+                var languageId = _localizationManager.GetLanguageId(languageCode) ?? Language.EnglishId;
                 
                 var publication = new DAL.Publication
                 {
