@@ -19,7 +19,7 @@ namespace Core.Managers
             
             code = code.Trim().ToLower();
 
-            var language = _database.Language.FirstOrDefault(o => o.Name == code);
+            var language = _database.Language.FirstOrDefault(o => o.Code == code);
             return language?.Id;
         }
     }
