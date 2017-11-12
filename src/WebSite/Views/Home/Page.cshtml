@@ -21,7 +21,7 @@
 {    
     @Html.Partial("_Publication", Model[i])
 
-    @if (i == 2) { @Html.Partial("_InFeedAd") }
+    if (i == 2) { @Html.Partial("_InFeedAd") }
 }
 
 @if (categoryId != null){

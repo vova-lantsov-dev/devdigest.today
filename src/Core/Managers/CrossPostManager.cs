@@ -16,6 +16,11 @@ namespace Core.Managers
             : base(connectionString)
         {
         }
+        
+        public IEnumerable<Channel> GetTelegramChannels()
+        {
+            return _database.Channel.ToList();
+        }
 
         public async Task<bool> Send(int categoryId, string comment, string link)
         {
@@ -40,11 +45,6 @@ namespace Core.Managers
             }
 
             return true;
-        }
-
-        public IEnumerable<Channel> GetTelegramChannels()
-        {
-            return _database.Channel.ToList();
         }
 
         public async Task<bool> SendToFacebook(int categoryId, string comment, string link)

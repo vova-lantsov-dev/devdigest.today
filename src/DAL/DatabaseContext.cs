@@ -172,6 +172,8 @@ namespace DAL
                     .ValueGeneratedNever();
 
                 entity.Property(e => e.Name).HasMaxLength(25);
+                
+                entity.Property(e => e.Code).HasMaxLength(2);
             });
 
             modelBuilder.Entity<Publication>(entity =>

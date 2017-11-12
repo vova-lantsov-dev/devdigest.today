@@ -10,7 +10,7 @@ namespace Core.Managers
 
     public abstract class ManagerBase : IManager
     {
-        protected readonly DAL.DatabaseContext _database;
+        protected readonly DatabaseContext _database;
         protected readonly IMemoryCache _cache;
 
         protected ManagerBase(string connectionString, IMemoryCache cache = null)
