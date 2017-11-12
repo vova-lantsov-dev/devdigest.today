@@ -1,0 +1,81 @@
+﻿@model Core.ViewModels.VacancyViewModel
+
+@section head {
+    <meta property="og:title" content="@Model.Title" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@Model.ShareUrl" />
+    <meta property="og:image" content="@Model.Image" />
+    <meta property="og:description" content="@Model.Description" />    
+
+    <meta name="description" content="@Model.Description" />
+}
+
+<h1>Vacancy</h1>
+
+<h3>@Model.Title
+@if (!Model.Active) {
+    <span class="label label-default">Archived</span>
+}
+</h3>
+
+
+
+<div class="date">
+    @Model.Date.ToString("MMMM dd, yyyy") 
+</div>    
+
+<div class="row">
+    <article class="col-md-12">
+        @if (string.IsNullOrEmpty(@Model.Content)) {
+            @Model.Description
+        } else {
+            @Html.Raw(@Model.Content)
+        }
+        <br />
+        <br />
+        <b>Contact details:</b> @Model.Contact
+    </article>    
+        
+</div>
+
+<div class="row share">
+    <div class="col-md-6">
+        @Html.Partial("_SocialButtons", new Core.Link(Model.Title, Model.ShareUrl))
+    </div>
+    <div class="col-md-6 text-right">        
+        @if(Model.ContactType == Core.ContactType.Facebook)
+        {	
+            <a class="btn btn-success btn-contact"  target="_contact" href="@Model.Contact"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;View on Facebook</a>	
+        }
+
+        @if(Model.ContactType == Core.ContactType.LinkedIn)
+        {
+            <a class="btn btn-success btn-contact"  target="_contact" href="@Model.Contact"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;View on LinkedIn</a>	
+        }
+
+        @if(Model.ContactType == Core.ContactType.WebSite)
+        {	
+            <a class="btn btn-success btn-contact"  target="_contact" href="@Model.Contact"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;Go To Website</a>
+        }
+
+        @if(Model.ContactType == Core.ContactType.Email)
+        {
+            <a class="btn btn-success btn-contact"  target="_contact" href="mailto:@Model.Contact"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;Send Email</a>	
+        }
+
+        @if(Model.ContactType == Core.ContactType.Phone)
+        {
+
+            <a class="btn btn-success btn-contact"  target="_contact" href="tel:"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;Call Now</a>
+        }
+
+        @if(Model.ContactType == Core.ContactType.Default)
+        {
+            
+        }
+    </div>
+</div>   
+
+<section class="col-md-12 comments">
+    <div class="fb-comments" data-href="@Model.ShareUrl" data-width="100%" data-numposts="10"></div>     
+</section>

@@ -17,15 +17,17 @@ namespace Core
         public string DefaultKeywords { get; private set; }
 
         public string FacebookImage => $"{WebSiteUrl}images/fb_logo.png";
+        
+        public string DefaultPublicationImage => $"{WebSiteUrl}images/news.jpg";
 
         public string RssFeedUrl => $"{WebSiteUrl}rss";
         
         public string SupportEmail { get; set; }
+
+        public string FbAppId { get; set; }
         
-        public string TelegramToken { get; set; }
-
-        public string TelegramChannelId { get; set; }
-
+        public string CognitiveServicesTextAnalyticsKey { get; set; }
+        
         #region Current
 
         public static Settings Current { get; private set; }
@@ -36,12 +38,12 @@ namespace Core
             {
                 ConnectionString = configuration.GetConnectionString("DefaultConnection"),
                 WebSiteUrl = configuration["WebSiteUrl"],
-                WebSiteTitle = configuration["WebSiteTitle"],
-                TelegramToken = configuration["TelegramToken"],
-                TelegramChannelId = configuration["TelegramChannelId"],
+                WebSiteTitle = configuration["WebSiteTitle"],                
+                CognitiveServicesTextAnalyticsKey = configuration["CS-Text-Analytics-Key"],                
                 DefaultDescription = WebUtility.HtmlDecode(configuration["DefaultDescription"]),
                 DefaultKeywords = WebUtility.HtmlDecode(configuration["DefaultKeywords"]),
-                SupportEmail = "dncuug@agi.net.ua"
+                SupportEmail = "dncuug@agi.net.ua",
+                FbAppId = "112150392810181",
             };
         }
 

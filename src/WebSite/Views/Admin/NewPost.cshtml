@@ -1,30 +1,30 @@
 ﻿@model Core.ViewModels.PublicationViewModel
 @{
-    ViewData["Title"] = "Добавить публикацию";
+    ViewData["Title"] = "Add new publication";
 }
 
-<h1>Добавить ссылку</h1>
+<h1>@ViewData["Title"]</h1>
 
 <form>
     <div class="form-group">
-        <label for="link">Ссылка</label>
-        <input type="url" class="form-control" id="link" placeholder="Url">
+        <label for="link">Link</label>
+        <input type="url" class="form-control" id="link" placeholder="Link">
     </div>
     <div class="form-group">
-        <label for="security-key">Ключ</label>
+        <label for="security-key">Security Key</label>
         <input type="password" class="form-control" id="security-key" placeholder="Security Key">
     </div>
     <div class="form-group">
-        <label for="security-key">Сообщение для Telegram</label>
-        <input type="text" class="form-control" id="post-comment" placeholder="Telegram message">
+        <label for="post-comment">Comment (Facebook, Telegram)</label>
+        <input type="text" class="form-control" id="post-comment" placeholder="Telegram Comment">
     </div>
     <div class="form-group">
-        <label for="category-id">Категория</label>
+        <label for="category-id">Category</label>
         <select class="form-control" id="category-id">
         </select>
     </div>
 
-    <button type="button" id="add-post" class="btn btn-primary">Добавить</button>                
+    <button type="button" id="add-post" class="btn btn-primary">Add</button>                
 </form>
 
 <br />

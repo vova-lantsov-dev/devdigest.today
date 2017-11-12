@@ -9,6 +9,7 @@ namespace DAL
         {
             Event = new HashSet<Event>();
             Publication = new HashSet<Publication>();
+            Vacancy = new HashSet<Vacancy>();
         }
 
         public int Id { get; set; }
@@ -17,5 +18,6 @@ namespace DAL
 
         public ICollection<Event> Event { get; set; }
         public ICollection<Publication> Publication { get; set; }
+        public ICollection<Vacancy> Vacancy { get; set; }
     }
 }

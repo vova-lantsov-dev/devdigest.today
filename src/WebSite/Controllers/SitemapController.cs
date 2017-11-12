@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Core;
+using Core.Managers;
 using Core.ViewModels;
 using DAL;
 using Microsoft.AspNetCore.Mvc;
@@ -18,13 +19,15 @@ namespace WebSite.Controllers
 {
     public class SitemapController : Controller
     {
-        private readonly PublicationManager _manager;
+        private readonly PublicationManager _publicationManager;
+        private readonly VacancyManager _vacancyManager;
         private readonly IMemoryCache _cache;
 
         public SitemapController(IMemoryCache cache)
         {
             _cache = cache;
-            _manager = new PublicationManager(Core.Settings.Current.ConnectionString, cache);
+            _publicationManager = new PublicationManager(Core.Settings.Current.ConnectionString, cache);
+            _vacancyManager = new VacancyManager(Core.Settings.Current.ConnectionString, cache);
         }
 
         [HttpGet]
@@ -33,31 +36,51 @@ namespace WebSite.Controllers
         {
             var page = 1;
             var key = "sitemap";
-            IPagedList<Publication> pagedResult;
+
 
             var xml = _cache.Get(key)?.ToString();
 
             if (string.IsNullOrEmpty(xml))
             {
+                IPagedList<Publication> publications;
+                IPagedList<Vacancy> vacancies;
+
                 var sitemap = new Sitemap();
                 sitemap.Add(CreateUrl(Settings.Current.WebSiteUrl));
                 sitemap.Add(CreateUrl(Settings.Current.WebSiteUrl + "partners/"));
 
+                page = 1;
+
                 do
                 {
-                    pagedResult = await _manager.GetPublications(null, page);
+                    publications = await _publicationManager.GetPublications(null, page);
                     page++;
 
-                    foreach (var p in pagedResult)
+                    foreach (var p in publications)
                     {
                         var publication = new PublicationViewModel(p, Settings.Current.WebSiteUrl);
                         sitemap.Add(CreateUrl(publication.ShareUrl));
                     }
                 }
-                while (pagedResult.HasNextPage);
+                while (publications.HasNextPage);
 
-                 xml = sitemap.ToXml();
-                 _cache.Set(key, xml, TimeSpan.FromMinutes(10));
+                page = 1;
+
+                do
+                {
+                    vacancies = await _vacancyManager.GetVacancies(page);
+                    page++;
+
+                    foreach (var v in vacancies)
+                    {
+                        var vacancy = new VacancyViewModel(v, Settings.Current.WebSiteUrl);
+                        sitemap.Add(CreateUrl(vacancy.ShareUrl));
+                    }
+                }
+                while (vacancies.HasNextPage);
+
+                xml = sitemap.ToXml();
+                _cache.Set(key, xml, TimeSpan.FromMinutes(10));
             }
 
             return Content(xml, Sitemap.MimeType);

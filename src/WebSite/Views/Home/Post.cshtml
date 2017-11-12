@@ -1,21 +1,15 @@
 ﻿@model Core.ViewModels.PublicationViewModel
 
 @section head {
-    <meta property="og:site_name" content=".NET Core Ukrainian User Group" />
     <meta property="og:title" content="@Model.Title" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="article" />
     <meta property="og:url" content="@Model.ShareUrl" />
     <meta property="og:image" content="@Model.Image" />
     <meta property="og:description" content="@Model.Description" />    
 
-    <meta property="author" content="@Core.Settings.Current.WebSiteTitle" />
-    <meta property="article:author" content="https://www.facebook.com/dncuug/">
-    
     <meta name="keywords" content="@Model.Keywords" />
     <meta name="description" content="@Model.Description" />
 }
-
-
 
 <h1>@Model.Title</h1>
 <div class="date">
@@ -23,9 +17,9 @@
 </div>    
 
 @if (string.IsNullOrEmpty(Model.EmbededPlayerCode)) {
-    <div class="image-block">
+    <div class="image-block inner">
         @if (string.IsNullOrEmpty(Model.Image)) {
-            <img class="img-responsive" alt="@Model.Title" src="http://dot-net.in.ua/images/news.jpg" />
+            <img class="img-responsive" alt="@Model.Title" src="@Core.Settings.Current.DefaultPublicationImage" />
         }
         else{
             <img class="img-responsive" alt="@Model.Title" src="@Model.Image" />
@@ -43,26 +37,23 @@
 }
 
 <div class="row">
-    <article class="col-md-12 content">
+    <article class="col-md-12">
         @if (string.IsNullOrEmpty(@Model.Content)) {
             @Model.Description
         } else {
             @Html.Raw(@Model.Content)
         }
-        <a  target="blank" href="@Model.Url">Читать полностью</a>
     </article>    
 </div>
 
 <div class="row share">
     <div class="col-md-6">
-        <a class="btn btn-social-icon btn-twitter" target="blank" href="https://twitter.com/home?status=@Model.ShareUrl"><span class="fa fa-twitter"></span></a>
-        <a class="btn btn-social-icon btn-facebook" target="blank" href="https://www.facebook.com/sharer/sharer.php?u=@Model.ShareUrl"><span class="fa fa-facebook"></span></a>
-        <a class="btn btn-social-icon btn-google" target="blank" href="https://plus.google.com/share?url=@Model.ShareUrl"><span class="fa fa-google"></span></a>
-        <a class="btn btn-social-icon btn-linkedin" target="blank" href="https://www.linkedin.com/shareArticle?mini=true&url=@Model.ShareUrl&title=@Model.Title"><span class="fa fa-linkedin"></span></a>
-        <a class="btn btn-social-icon btn-vk" target="blank" href="https://vk.com/share.php?url=@Model.ShareUrl"><span class="fa fa-vk"></span></a>
+        @Html.Partial("_SocialButtons", new Core.Link(Model.Title, Model.ShareUrl))
     </div>
     <div class="col-md-6 text-right">
-        <a class="btn btn-default" target="blank" href="@Model.Url">Перейти к оригиналу&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>
+        @if (Model.Url != null) {        
+            <a class="btn btn-default" target="blank" href="@Model.Url">Go to original publication&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>
+        }
     </div>
 </div>   
 

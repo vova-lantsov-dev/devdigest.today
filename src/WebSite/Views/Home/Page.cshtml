@@ -7,25 +7,21 @@
 }
 
 @section head {
-
-    <meta property="og:site_name" content="@Core.Settings.Current.WebSiteTitle" />
     <meta property="og:title" content="@Core.Settings.Current.WebSiteTitle" />
     <meta property="og:type" content="website" />
     
     <meta property="og:image" content="@Core.Settings.Current.FacebookImage" />
     <meta property="og:description" content="@Core.Settings.Current.DefaultDescription" />
 
-    <meta property="author" content="@Core.Settings.Current.WebSiteTitle" />
-    <meta property="article:author" content="https://www.facebook.com/dncuug/">
-    
     <meta name="keywords" content="@Core.Settings.Current.DefaultKeywords" />
     <meta name="description" content="@Core.Settings.Current.DefaultDescription" />
 }
 
+@for (var i=0; i<Model.Count(); i++)
+{    
+    @Html.Partial("_Publication", Model[i])
 
-@foreach (var p in Model)
-{
-    @Html.Partial("_Publication", p)
+    if (i == 2) { @Html.Partial("_InFeedAd") }
 }
 
 @if (categoryId != null){

@@ -41,7 +41,7 @@ function addNewPost() {
             window.location.replace(response.shareUrl);
         }).fail(function (err) {
             if (!!err && err.status == 403)
-                alert('Неверный ключ');
+                alert('Access denied');
             else
                 console.error(err);
         });

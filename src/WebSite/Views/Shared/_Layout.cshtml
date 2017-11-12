@@ -1,24 +1,32 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+@{
+    var vacancies = ViewData["vacancies"] as IList<Core.ViewModels.VacancyViewModel> ?? new List<Core.ViewModels.VacancyViewModel>();
+}
+<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <meta charset="utf-8" />    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta name="msvalidate.01" content="13285491122FD93E71050B4D568B72FA" />
+    <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />    
     
-    <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
-
-    <title>@ViewData["Title"] - .NET Core Ukrainian User Group</title>
-
+    <meta property="fb:app_id" content="@Core.Settings.Current.FbAppId" />
+    <meta property="og:site_name" content="@Core.Settings.Current.WebSiteTitle" />
+    <meta property="author" content="@Core.Settings.Current.WebSiteTitle" />
+    <meta property="article:author" content="https://www.facebook.com/dncuug/">
+    
     @RenderSection("head",  required: false)
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,700&amp;subset=cyrillic" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400&amp;subset=cyrillic" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&amp;subset=cyrillic" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />        
         <link rel="stylesheet" href="~/css/site.css" />
         <link rel="stylesheet" href="~/lib/bootstrap-social/bootstrap-social.css" />
     </environment>
+    
     <environment exclude="Development">
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
@@ -26,32 +34,69 @@
         <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
         <link rel="stylesheet" href="~/lib/bootstrap-social/bootstrap-social.css" asp-append-version="true" />
     </environment>
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-9091710548216122",
+        enable_page_level_ads: true
+        });
+    </script>
+
+    <title>@ViewData["Title"] - .NET Core Ukrainian User Group</title>
+    
+    <!--  Application Insights -->
+    <script type="text/javascript">
+    var appInsights=window.appInsights||function(config){
+    function i(config){t[config]=function(){var i=arguments;t.queue.push(function(){t[config].apply(t,i)})}}var t={config:config},u=document,e=window,o="script",s="AuthenticatedUserContext",h="start",c="stop",l="Track",a=l+"Event",v=l+"Page",y=u.createElement(o),r,f;y.src=config.url||"https://az416426.vo.msecnd.net/scripts/a/ai.0.js";u.getElementsByTagName(o)[0].parentNode.appendChild(y);try{t.cookie=u.cookie}catch(p){}for(t.queue=[],t.version="1.0",r=["Event","Exception","Metric","PageView","Trace","Dependency"];r.length;)i("track"+r.pop());return i("set"+s),i("clear"+s),i(h+a),i(c+a),i(h+v),i(c+v),i("flush"),config.disableExceptionTracking||(r="onerror",i("_"+r),f=e[r],e[r]=function(config,i,u,e,o){var s=f&&f(config,i,u,e,o);return s!==!0&&t["_"+r](config,i,u,e,o),s}),t
+    }({
+        instrumentationKey:"b2d69ef6-7cfa-4791-baa9-1bc0d9e66c7e"
+    });       
+    window.appInsights=appInsights;
+    appInsights.trackPageView();
+    </script>
+    @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body>
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <div class="navbar-header">
+            <!-- <div class="navbar-header"> -->
+            <div>
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">.NET Core Ukrainian User Group</a>
+                <a class="navbar-brand" href="/">Developers Digest</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-left">
-                    <li class="mobile-hidden"><a>|</a></li>
-                    <li><a href="/page/1?categoryId=1">.NET Core</a></li>
-                    <li><a href="/page/1?categoryId=2">Xamarin</a></li>
+                    <!-- <li class="mobile-hidden"><a>|</a></li> -->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Streams <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/page/1?categoryId=1">.NET Core</a></li>
+                            <li><a href="/page/1?categoryId=2">Xamarin</a></li>
+                            <li><a href="/page/1?categoryId=3">Azure</a></li>
+                        </ul>
+                    </li>  
+                    <li><a href="/vacancies/1">Job&nbsp;<span class="label label-danger">New!</span></a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="https://facebook.com/groups/dncuug/">Facebook</a></li>
                     <li><a href="https://github.com/dncuug">GitHub</a></li>
-                    <li><a href="https://telegram.me/dncuug">Telegram</a></li>           
-                    <li><a href="/partners">Партнеры</a></li>
-                    <li><a href="/about">О проекте</a></li>           
+                    <li><a href="https://telegram.me/dncuug">Telegram</a></li>      
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/content/partners">@Core.Pages.Partners</a></li>
+                            <li><a href="/content/about">@Core.Pages.AboutUs</a></li>   
+                            <li><a href="/content/Telegram">@Core.Pages.Telegram</a></li>   
+                        </ul>
+                    </li>                            
                 </ul>
             </div><!--/.navbar-collapse -->
         </div>
@@ -67,15 +112,30 @@
             <div class="col-md-4">
 
                 <div class="fb-page" 
-                    data-href="https://www.facebook.com/dncuug"
+                    data-href="https://facebook.com/dncuug"
                     data-width="380" 
                     data-hide-cover="false"
                     data-show-facepile="false"></div>
 
                 <div class="ad">
-                    <a href="https://github.com/HowProgrammingWorks">
-                        <img alt="Azure Day 2017" src="/images/banners/hpw.png" />
-                    </a>
+                    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                    <!-- dot-net.in.ua right side ad -->
+                    <ins class="adsbygoogle"
+                        style="display:block"
+                        data-ad-client="ca-pub-9437162291368173"
+                        data-ad-slot="5581239879"
+                        data-ad-format="auto"></ins>
+                    <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+
+                <div class="vacancies">
+                    <h3>Hot Vacancies</h3>
+                    @foreach(var v in vacancies) {
+                        @Html.Partial("_VacancySmallPreview", v)                                    
+                    }
+                    <a href="/vacancies/1"> View all vacancies</a>.
                 </div>
             </div>
         </div>
@@ -84,37 +144,31 @@
 
     <footer class="container-fluid">
         <section class="container">
-            <div class="col-md-2">
-                <img style="max-width: 125px;" src="https://avatars1.githubusercontent.com/u/20752893" alt=".NET Core" />
-            </div>
-            <div class="col-md-2">
-                <h4>Комьюнити</h4>
+            <div class="col-md-2 col-sm-3">
+                <h4>Community</h4>
                 <ul>
-                    <li><a href="https://www.facebook.com/groups/dncuug/">Facebook</a></li>
+                    <li><a href="https://facebook.com/groups/dncuug/">Facebook</a></li>
                     <li><a href="https://github.com/dncuug">GitHub</a></li>
                     <li><a href="https://telegram.me/dncuug">Telegram</a></li>
-                    <li><a href="https://gitter.im/dncuug/Lobby">gitter</a></li>			
                     <li><a href="https://twitter.com/dncuug">Twitter</a></li>			
                 </ul>
             </div>
-            <div class="col-md-2">
-                <h4>Платформа</h4>
+            <div class="col-md-3 col-sm-3">
+                <h4>Platform</h4>
                 <ul>
-                    <li><a href="https://www.microsoft.com/net/core">.NET Core</a></li>
+                    <li><a href="https://microsoft.com/net/core">.NET Core</a></li>
                     <li><a href="https://docs.microsoft.com/en-us/aspnet/core/">ASP.NET Core</a></li>
-                    <li><a href="https://docs.microsoft.com/en-us/dotnet/">Документация</a></li>
+                    <li><a href="https://docs.microsoft.com/en-us/dotnet/">Documentation</a></li>
                     <li><a href="https://github.com/dncuug/awesome-dotnet-core">Awesome .NET Core</a></li>			
                 </ul>
             </div>
-            <div class="col-md-3">
-                <h4>Концепция</h4>
-                Сообщество посвящено технологии .NET Core – кроссплатформенной реализации платформы .NET Framework, с открытым исходным кодом.
-                
+            <div class="col-md-4 col-sm-3">
+                <h4>Concept</h4>
+                Our community is a union of developers, who use .NET Core technology stack – the free open source cross platform framework.
             </div>
-            <div class="col-md-3 text-right">
+            <div class="col-md-3 col-sm-3 text-right">
                 <br />
-
-                <p>.NET Core Ukrainian User Group &copy; 2017</p>
+                <p>Developers Digest &copy; 2017</p>
             </div>            
         </section>    
     </footer>
@@ -159,8 +213,14 @@
 
     ga('create', 'UA-5273549-33', 'auto');
     ga('send', 'pageview');
-
     </script>
-
+    
+    <script>
+    ((window.gitter = {}).chat = {}).options = {
+        room: 'dncuug/Lobby'
+    };
+    </script>
+    <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
+    
 </body>
 </html>

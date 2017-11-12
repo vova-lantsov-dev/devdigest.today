@@ -1,28 +1,23 @@
-using System;
+using DAL;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
 using X.PagedList;
-using DAL;
-using Microsoft.EntityFrameworkCore;
 
-namespace Core
+namespace Core.Managers
 {
     public class PublicationManager : ManagerBase
     {
-
-        private readonly IMemoryCache _cache;
-
         public PublicationManager(string connectionString, IMemoryCache cache)
-            : base(connectionString)
+            : base(connectionString, cache)
         {
-            _cache = cache;
         }
 
-        public async Task<IPagedList<Publication>> GetPublications(int? categoryId = null, int page = 1, int pageSize = 10)
+        public async Task<IPagedList<Publication>> GetPublications(int? categoryId = null, int page = 1, int pageSize = 10, int languageId = Core.Language.EnglishId)
         {
-            var key = $"page_{page}_{pageSize}";
+            var key = $"page_{page}_{pageSize}_{categoryId}";
 
             var result = _cache.Get(key) as IPagedList<Publication>;
 
@@ -32,12 +27,14 @@ namespace Core
 
                 var items = _database
                                 .Publication
-                                .Where( o => o.CategoryId == categoryId || categoryId == null)
+                                .Where(o => o.CategoryId == categoryId || categoryId == null)
+                                .Where(o => o.LanguageId == languageId)
                                 .OrderByDescending(o => o.DateTime)
                                 .Skip(skip)
                                 .Take(pageSize).ToList();
-                                
-                var totalItemsCount = await _database.Publication.CountAsync();
+
+                var totalItemsCount = await _database.Publication
+                    .Where(o => o.CategoryId == categoryId || categoryId == null).CountAsync();
 
                 result = new StaticPagedList<Publication>(items, page, pageSize, totalItemsCount);
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());
@@ -45,7 +42,7 @@ namespace Core
 
             return result;
         }
-
+        
         public IEnumerable<Category> GetCategories()
         {
             return _database.Category;
@@ -70,17 +67,9 @@ namespace Core
         {
             _database.Add(publication);
             await _database.SaveChangesAsync();
-            publication = _database.Publication.LastOrDefault(); //for some reasons SaveAsync work not properly and do not update publication Id
+            publication = _database.Publication.LastOrDefault();
 
             return publication;
-        }
-
-        private static MemoryCacheEntryOptions GetMemoryCacheEntryOptions()
-        {
-            return new MemoryCacheEntryOptions
-            {
-                AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1)
-            };
         }
     }
 }

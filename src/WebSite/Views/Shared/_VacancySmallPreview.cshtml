@@ -1,0 +1,29 @@
+﻿@model Core.ViewModels.VacancyViewModel
+@{
+    var cssClass = "";
+    if (Model.Hot) {cssClass = "hot"; }
+    if (Model.Fresh) {cssClass = "fresh"; }
+}
+
+<div class="vacancy-small-preview @cssClass">
+    <h4>@Model.Title</h4>
+    <div>
+        <span class="label category-label label-default">@Model.Category.Name</span> 
+
+        @if (Model.Hot){
+            <span class="label label-warning">This week</span> 
+        }
+
+        @if (Model.Fresh){
+            <span class="label label-danger">Hot!</span> 
+        }  
+    </div>
+    <br />
+    <span>
+        @Model.Description
+    </span>
+    <br /><br />
+    <div class="text-right">
+            <a class="btn btn-default" href="@Model.ShareUrl">View details...&nbsp;<i class="glyphicon glyphicon-eur"></i></a>
+    </div>
+</div>        
