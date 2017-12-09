@@ -1,0 +1,37 @@
+﻿@model Core.ViewModels.PublicationViewModel
+
+<script type="application/ld+json">
+{
+  "@@context": "http://schema.org",
+  "@@type": "NewsArticle",
+  "mainEntityOfPage":{
+    "@@type":"WebPage",
+    "@@id": "@Model.ShareUrl"
+  },
+  "headline": "@Model.Title",
+  "image": {
+    "@@type": "ImageObject",
+    "url": "@Model.Image",
+    "height": "480",
+    "width": "750"
+  },
+  "datePublished": "@Model.DateTime.ToString("yyyy-MM-dd")",
+  "dateModified": "@Model.DateTime.ToString("yyyy-MM-dd")",
+  "author": {
+    "@@type": "Person",
+    "name": "devdigest"
+  },
+   "publisher": {
+    "@@type": "Organization",
+    "name": "devdigest",
+    "logo": {
+      "@@type": "ImageObject",
+      "url": "https://devdigest.today/images/logo.png",
+      "width": "1024",
+      "height": "576"
+    }
+  },
+  "description": "@Model.Description",
+    "articleBody": "@Model.Description"
+}
+</script>
