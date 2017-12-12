@@ -33,6 +33,15 @@ namespace WebSite.Controllers
             return View("~/Views/Content/About.cshtml");
         }
 
+        [Route("search")]
+        public async Task<IActionResult> Search()
+        {
+            ViewData["Title"] = Core.Pages.Search;
+
+            return View("~/Views/Content/Search.cshtml");
+        }
+
+
         [Route("content/telegram")]
         public async Task<IActionResult> Telegram()
         {

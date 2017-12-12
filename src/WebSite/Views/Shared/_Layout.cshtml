@@ -80,7 +80,8 @@
                             <li><a href="/page/1?categoryId=3">Azure</a></li>
                         </ul>
                     </li>  
-                    <li><a href="/vacancies/1">Job&nbsp;<span class="label label-danger">New!</span></a></li>
+                        <li><a href="/vacancies/1">Job</a></li>
+                    <li><a href="/search">Search</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     
@@ -146,13 +147,15 @@
                     </script>
                 </div>
 
-                <div class="vacancies">
-                    <h3>Hot Vacancies</h3>
-                    @foreach(var v in vacancies) {
-                        @Html.Partial("_VacancySmallPreview", v)                                    
-                    }
-                    <a href="/vacancies/1"> View all vacancies</a>.
-                </div>
+                @if(vacancies != null && vacancies.Any()) {
+                    <div class="vacancies">
+                        <h3>Hot Vacancies</h3>
+                        @foreach(var v in vacancies) {
+                            @Html.Partial("_VacancySmallPreview", v)                                    
+                        }
+                        <a href="/vacancies/1"> View all vacancies</a>.
+                    </div>
+                }
             </div>
         </div>
     </div>

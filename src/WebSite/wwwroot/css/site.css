@@ -300,6 +300,10 @@
         .label {
             display: none;
         }
+        .fb-page,
+        .fb_iframe_widget_fluid {
+            display: none !important;
+        }
         .nav>li.mobile-hidden {
             display: none;
         }

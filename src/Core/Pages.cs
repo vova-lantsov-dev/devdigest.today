@@ -7,5 +7,6 @@ namespace Core
         public const string Page = "Page";
         public const string Vacancies = "Vacancies";
         public const string Telegram = "Our Telegram channels";
+        public const string Search = "Search";
     }
 }
