@@ -169,6 +169,11 @@
     .gsc-cursor-current-page {
         color: #FFF;        
     }
+
+    .cse form.gsc-search-box, form.gsc-search-box,
+    .cse .gsc-control-cse, .gsc-control-cse {
+        padding: 0;           
+    }
     
     footer {
         color: #FFF;
