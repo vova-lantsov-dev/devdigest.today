@@ -152,6 +152,23 @@
     .publication-preview section {
         border-top: none;
     }
+
+    .gsc-cursor-page {        
+        height: 34px;
+        display: inline-block;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        padding-left: 12px;
+        padding-right: 12px;
+        font-family: "Open Sans", sans-serif;
+        font-size: 16px;
+        font-weight: normal;
+        text-decoration: none;
+    }
+
+    .gsc-cursor-current-page {
+        color: #FFF;        
+    }
     
     footer {
         color: #FFF;
