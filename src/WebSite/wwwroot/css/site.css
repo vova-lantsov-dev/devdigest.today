@@ -154,25 +154,25 @@
     }
 
     .gsc-cursor-page {        
-        height: 34px;
-        display: inline-block;
-        padding-top: 6px;
-        padding-bottom: 6px;
-        padding-left: 12px;
-        padding-right: 12px;
-        font-family: "Open Sans", sans-serif;
-        font-size: 16px;
-        font-weight: normal;
-        text-decoration: none;
+        height: 34px !important;
+        display: inline-block !important;
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+        font-family: "Open Sans", sans-serif !important;
+        font-size: 16px !important;
+        font-weight: normal !important;
+        text-decoration: none !important;
     }
 
     .gsc-cursor-current-page {
-        color: #FFF;        
+        color: #FFF !important;
     }
 
     .cse form.gsc-search-box, form.gsc-search-box,
     .cse .gsc-control-cse, .gsc-control-cse {
-        padding: 0;           
+        padding: 0 !important;           
     }
     
     footer {
