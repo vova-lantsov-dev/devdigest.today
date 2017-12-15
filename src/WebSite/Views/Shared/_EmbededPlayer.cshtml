@@ -1,6 +1,12 @@
 @model string
 
-<div class="youtube-container">
-    <iframe class="video" src="@Model" frameborder="0" allowfullscreen>
-    </iframe>
-</div>
+@if(Model.Contains("iframe")) {
+    <section>
+        @Html.Raw(Model)
+    </section>
+} else {
+    <div class="youtube-container">
+        <iframe class="video" src="@Model" frameborder="0" allowfullscreen>
+        </iframe>
+    </div>
+}
