@@ -8,6 +8,7 @@ namespace DAL
         public Language()
         {
             Publication = new HashSet<Publication>();
+            Vacancy = new HashSet<Vacancy>();
         }
 
         public int Id { get; set; }
@@ -15,5 +16,6 @@ namespace DAL
         public string Code { get; set; }
 
         public ICollection<Publication> Publication { get; set; }
+        public ICollection<Vacancy> Vacancy { get; set; }
     }
 }
