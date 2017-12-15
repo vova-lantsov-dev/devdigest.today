@@ -38,9 +38,7 @@ namespace DAL
                     .HasName("Category_Name_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -56,15 +54,13 @@ namespace DAL
                     .HasName("Channel_Name_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.CategoryId).HasColumnType("int(11)");
 
                 entity.Property(e => e.Description).HasColumnType("text");
 
-                entity.Property(e => e.Logo).HasMaxLength(100);
+                entity.Property(e => e.Logo).HasMaxLength(256);
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -90,9 +86,7 @@ namespace DAL
                 entity.HasIndex(e => e.UserId)
                     .HasName("Event_User_Id_fk");
 
-                entity.Property(e => e.Id)
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.CategoryId)
                     .HasColumnType("int(11)")
@@ -140,9 +134,7 @@ namespace DAL
                     .HasName("FacebookPages_Token_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.CategoryId).HasColumnType("int(11)");
 
@@ -167,13 +159,11 @@ namespace DAL
                     .HasName("Language_Id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.Code).HasMaxLength(2);
 
                 entity.Property(e => e.Name).HasMaxLength(25);
-                
-                entity.Property(e => e.Code).HasMaxLength(2);
             });
 
             modelBuilder.Entity<Publication>(entity =>
@@ -191,9 +181,7 @@ namespace DAL
                 entity.HasIndex(e => e.UserId)
                     .HasName("Publication_User_Id_fk");
 
-                entity.Property(e => e.Id)
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.CategoryId).HasColumnType("int(11)");
 
@@ -245,9 +233,7 @@ namespace DAL
                     .HasName("User_Key_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.Key)
                     .IsRequired()
@@ -271,12 +257,13 @@ namespace DAL
                     .HasName(" Vacancy_Image_uindex")
                     .IsUnique();
 
+                entity.HasIndex(e => e.LanguageId)
+                    .HasName("Vacancy_Language_Id_fk");
+
                 entity.HasIndex(e => e.UserId)
                     .HasName("Vacancy_User_Id_fk");
 
-                entity.Property(e => e.Id)
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.Active).HasColumnType("bit(1)");
 
@@ -298,6 +285,10 @@ namespace DAL
 
                 entity.Property(e => e.Image).HasMaxLength(500);
 
+                entity.Property(e => e.LanguageId)
+                    .HasColumnType("int(11)")
+                    .HasDefaultValueSql("'1'");
+
                 entity.Property(e => e.Title)
                     .IsRequired()
                     .HasMaxLength(300);
@@ -311,6 +302,11 @@ namespace DAL
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Vacancy_Category_Id_fk");
+
+                entity.HasOne(d => d.Language)
+                    .WithMany(p => p.Vacancy)
+                    .HasForeignKey(d => d.LanguageId)
+                    .HasConstraintName("Vacancy_Language_Id_fk");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Vacancy)

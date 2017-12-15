@@ -17,8 +17,10 @@ namespace DAL
         public int UserId { get; set; }
         public int CategoryId { get; set; }
         public string Company { get; set; }
+        public int? LanguageId { get; set; }
 
         public Category Category { get; set; }
+        public Language Language { get; set; }
         public User User { get; set; }
     }
 }

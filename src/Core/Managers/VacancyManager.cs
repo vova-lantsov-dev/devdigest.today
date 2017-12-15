@@ -29,7 +29,7 @@ namespace Core.Managers
                 var items = _database
                     .Vacancy
                     .Include(o => o.Category)
-                    .Where(o => o.Active)
+                    .Where(o => o.Active && o.LanguageId == Core.Language.EnglishId)
                     .OrderByDescending(o => o.Id)
                     .Skip(skip)
                     .Take(pageSize).ToList();
@@ -55,7 +55,7 @@ namespace Core.Managers
                 result = _database
                     .Vacancy
                     .Include(o => o.Category)
-                    .Where(o => o.Active)
+                    .Where(o => o.Active && o.LanguageId == Core.Language.EnglishId)
                     .OrderByDescending(o => o.Id)
                     .Take(size).ToList();
 
