@@ -7,16 +7,19 @@
 
 <div class="vacancy-small-preview @cssClass">
     <h4>@Model.Title</h4>
+    <h5>@Model.Company</h5>
     <div>
-        <span class="label category-label label-default">@Model.Category.Name</span> 
+        <span class="label category-label label-default">@Model.Category.Name</span>
 
-        @if (Model.Hot){
-            <span class="label label-warning">This week</span> 
+        @if (Model.Hot)
+        {
+            <span class="label label-warning">This week</span>
         }
 
-        @if (Model.Fresh){
-            <span class="label label-danger">Hot!</span> 
-        }  
+        @if (Model.Fresh)
+        {
+            <span class="label label-danger">Hot!</span>
+        }
     </div>
     <br />
     <span>
@@ -24,6 +27,6 @@
     </span>
     <br /><br />
     <div class="text-right">
-            <a class="btn btn-default" href="@Model.ShareUrl">View details...&nbsp;<i class="glyphicon glyphicon-eur"></i></a>
+        <a class="btn btn-default" href="@Model.ShareUrl">View details...&nbsp;<i class="glyphicon glyphicon-eur"></i></a>
     </div>
 </div>        
