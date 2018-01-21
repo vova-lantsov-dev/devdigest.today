@@ -33,6 +33,14 @@ namespace WebSite.Controllers
             return View("~/Views/Content/About.cshtml");
         }
 
+        [Route("content/developex-tech-club")]
+        public async Task<IActionResult> DevelopexTechClub()
+        {
+            ViewData["Title"] = Core.Pages.DevelopexTechClub;
+
+            return View("~/Views/Content/DevelopexTechClub.cshtml");
+        }
+
         [Route("search")]
         public async Task<IActionResult> Search()
         {

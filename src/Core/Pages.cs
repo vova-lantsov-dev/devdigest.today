@@ -8,5 +8,6 @@ namespace Core
         public const string Vacancies = "Vacancies";
         public const string Telegram = "Our Telegram channels";
         public const string Search = "Search";
+        public const string DevelopexTechClub = "Developex Tech Club";
     }
 }
