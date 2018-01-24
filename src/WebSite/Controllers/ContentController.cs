@@ -49,6 +49,12 @@ namespace WebSite.Controllers
             return View("~/Views/Content/Search.cshtml");
         }
 
+        [Route("privacy")]
+        public async Task<IActionResult> Privacy()
+        {
+            return View("~/Views/Content/Privacy.cshtml");
+        }
+
 
         [Route("content/telegram")]
         public async Task<IActionResult> Telegram()
