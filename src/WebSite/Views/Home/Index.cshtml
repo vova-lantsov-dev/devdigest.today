@@ -36,7 +36,9 @@
 {    
     @Html.Partial("_Publication", Model[i])
 
-    if (i == 2) { @Html.Partial("_InFeedAd") }
+    if (i == 0) { @Html.Partial("_InFeedAd") }
+
+    if (i == 2) { @Html.Partial("_SmartContent") }    
 }
 
 @Html.PagedListPager(Model, page => $"/page/{page}")
