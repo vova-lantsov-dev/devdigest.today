@@ -49,7 +49,7 @@ namespace WebSite.Controllers
             return View("~/Views/Content/Search.cshtml");
         }
 
-        [Route("privacy")]
+        [Route("content/privacy")]
         public async Task<IActionResult> Privacy()
         {
             return View("~/Views/Content/Privacy.cshtml");
