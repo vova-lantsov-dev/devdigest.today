@@ -25,7 +25,7 @@
 }
 
 @if (categoryId != null){
-    @Html.PagedListPager(Model, page => $"/page/{page}?categoryId={categoryId}")
+    @Html.PagedListPager(Model, page => $"/vacancies/{page}?categoryId={categoryId}")
 } else {
-    @Html.PagedListPager(Model, page => $"/page/{page}")
+    @Html.PagedListPager(Model, page => $"/vacancies/{page}")
 }
