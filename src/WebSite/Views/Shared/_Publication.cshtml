@@ -28,10 +28,10 @@
                 @Html.Partial("_SocialButtons", new Core.Link(Model.Title, Model.ShareUrl))
             </div>
             <div class="col-md-8 text-right">
-                @if(@Model.Category != null) {
+                @if(Model.Category != null) {
                     <span class="label category-label label-default">@Model.Category.Name</span>
                 }
-                @if (Model.Url != null) {
+                @if (Model.Url != null  && string.IsNullOrEmpty(Model.EmbededPlayerCode)) {
                     <a class="btn btn-default" target="blank" href="@Model.Url">Go to original publication&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>
                 }
                 <a class="btn btn-default" href="/post/@Model.Id">Read&nbsp;<i class="glyphicon glyphicon-info-sign"></i></a>
