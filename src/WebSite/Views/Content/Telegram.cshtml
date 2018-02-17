@@ -16,36 +16,26 @@
 <div class="row">
     <section class="col-md-12">
         
-        Here you can find our telegrams. We strongly recommend subscribing to them!
+        Here you can find our Telegram channels. We strongly recommend subscribe to them!
 
         <br /><br />
-
+        <div class="container-fluid">
         @for (var i=0; i<Model.Count(); i++)
         {   
-            <div class="publication-preview">
-                <div class="image-block">       
-                    <img class="img-responsive" alt="@Model[i].Title" src="@Model[i].Logo" />
+            <div class="channel-preview row">
+                <div class="col-md-3">
+                    <img class="" style="width: 100%" alt="@Model[i].Title" src="@Model[i].Logo" />
                 </div>
-                <section>
-
+                <div class="col-md-9">
                     <h3 class="text-left">@Model[i].Title</h3>
-
-                    <div class="row">
-                        <div class="col-md-12 description">
-                            @Model[i].Description
-                        </div>    
+                    @Model[i].Description
+                    <div class="text-right">
+                        <a class="btn btn-default" href="@Model[i].Link">Open channel&nbsp;<i class="glyphicon glyphicon-send"></i></a>
                     </div>
-                    <div class="row share">
-                        <div class="col-md-4">                
-                        </div>
-                        <div class="col-md-8 text-right">
-                            <a class="btn btn-default" href="@Model[i].Link">Open channel&nbsp;<i class="glyphicon glyphicon-send"></i></a>
-                        </div>
-                    </div>
-                </section>
+                </div>                
             </div>
         }
-      
+        </div>
     </section>
 </div>
       

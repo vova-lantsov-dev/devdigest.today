@@ -312,6 +312,21 @@
         border-radius: 0;
     }
     
+    .channel-preview {
+        border: 1px solid #EEE;
+        margin-bottom: 20px;
+    }
+    
+    .channel-preview .col-md-3 {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .channel-preview .text-right {
+        padding-top: 35px;
+        padding-bottom: 10px;
+    }
+    
     @media only screen and (max-width: 414px) {
         .share .btn-default,
         .share .btn-success {
