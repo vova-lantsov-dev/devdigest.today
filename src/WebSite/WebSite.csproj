@@ -1,13 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <ApplicationInsightsResourceId>/subscriptions/76422c13-a381-4ceb-a866-e7c7c09e638c/resourcegroups/www/providers/microsoft.insights/components/dot-net-in-ua</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/76422c13-a381-4ceb-a866-e7c7c09e638c/resourcegroups/www/providers/microsoft.insights/components/dot-net-in-ua</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.1.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
-    <PackageReference Include="X.PagedList.Mvc.Core" Version="7.2.0" />    
+    <PackageReference Include="Microsoft.NETCore.App" Version="2.0.5" />
+    <PackageReference Include="X.PagedList.Mvc.Core" Version="7.2.0" />
     <PackageReference Include="xwebrss" Version="2.2.0" />
     <PackageReference Include="xsitemap" Version="2.0.0" />
   </ItemGroup>
