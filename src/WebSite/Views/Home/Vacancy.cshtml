@@ -57,15 +57,19 @@
             <a class="btn btn-success btn-contact"  target="_contact" href="@Model.Contact"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;Go To Website</a>
         }
 
+        @if(Model.ContactType == Core.ContactType.Skype)
+        {
+            <a class="btn btn-success btn-contact"  target="_contact" href="skype:@Model.Contact"><i class="glyphicon glyphicon-headphones"></i>&nbsp;Send Email</a>	
+        }
+
         @if(Model.ContactType == Core.ContactType.Email)
         {
-            <a class="btn btn-success btn-contact"  target="_contact" href="mailto:@Model.Contact"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;Send Email</a>	
+            <a class="btn btn-success btn-contact"  target="_contact" href="mailto:@Model.Contact"><i class="glyphicon glyphicon-envelope"></i>&nbsp;Send Email</a>	
         }
 
         @if(Model.ContactType == Core.ContactType.Phone)
         {
-
-            <a class="btn btn-success btn-contact"  target="_contact" href="tel:"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;Call Now</a>
+            <a class="btn btn-success btn-contact"  target="_contact" href="tel:"><i class="glyphicon glyphicon-earphone"></i>&nbsp;Call Now</a>
         }
 
         @if(Model.ContactType == Core.ContactType.Default)

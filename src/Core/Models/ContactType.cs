@@ -7,6 +7,7 @@ namespace Core
         WebSite,
         Email,
         Phone,
+        Skype,
         Default
     }
 }

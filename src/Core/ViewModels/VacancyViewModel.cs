@@ -57,7 +57,7 @@ namespace Core.ViewModels
 			{
 				var contact = Contact.Trim().ToLower();
 
-				if (contact.Contains("facbook.com"))
+				if (contact.Contains("facebook.com"))
 					return ContactType.Facebook;
 
 				if (contact.Contains("linkedin.com"))
@@ -66,8 +66,8 @@ namespace Core.ViewModels
 				if (contact.Contains("http://") || contact.Contains("https://"))
 					return ContactType.WebSite;
 
-				if (contact.Contains("@"))
-					return ContactType.Email;
+				if (contact.Contains("skype:"))
+					return ContactType.Skype;
 
 				if (contact.Contains("@"))
 					return ContactType.Email;
