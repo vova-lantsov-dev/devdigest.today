@@ -88,6 +88,7 @@ namespace WebSite.Controllers
         public async Task<IActionResult> Vacancy(int id)
         {
             var vacancy = await _vacancyManager.Get(id);
+            await _vacancyManager.IncreaseViewCount(id);
 
             if (vacancy == null)
             {
@@ -108,6 +109,7 @@ namespace WebSite.Controllers
         public async Task<IActionResult> Post(int id)
         {
             var publication = await _publicationManager.Get(id);
+            await _publicationManager.IncreaseViewCount(id);
 
             if (publication == null)
             {
