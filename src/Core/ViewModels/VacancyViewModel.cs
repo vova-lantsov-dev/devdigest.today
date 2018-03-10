@@ -20,6 +20,9 @@ namespace Core.ViewModels
 			Url = string.IsNullOrWhiteSpace(vacancy.Url) ? null : new Uri(vacancy.Url);
 			Category = new CategoryViewModel();
 			Company = vacancy.Company;
+			ViewsCount = vacancy.Views;
+			
+			//ViewsCount = new Random((int)DateTime.Now.Ticks).Next(10, 915);
 
 			if (vacancy.Category != null)
 			{
@@ -28,6 +31,7 @@ namespace Core.ViewModels
 			}
 		}
 
+		public int ViewsCount { get; set; }
 		public int Id { get; set; }
 		public string Title { get; set; }
 		public string Image { get; set; }
