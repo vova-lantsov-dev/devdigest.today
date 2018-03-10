@@ -18,6 +18,12 @@
         <div class="date">
             @Model.DateTime.ToString("MMMM dd, yyyy") 
         </div>    
+        <div class="views" title="Views count">
+            <i class="glyphicon glyphicon-stats"></i>&nbsp; @Model.ViewsCount
+        </div>
+        
+        <div class="clear"></div>
+        
         <div class="row">
             <div class="col-md-12 description">
                 @Model.Description
@@ -32,7 +38,7 @@
                     <span class="label category-label label-default">@Model.Category.Name</span>
                 }
                 @if (Model.Url != null  && string.IsNullOrEmpty(Model.EmbededPlayerCode)) {
-                    <a class="btn btn-default" target="blank" href="@Model.Url">Go to original publication&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>
+                    <a class="btn btn-default" target="blank" href="@Model.Url">Original publication&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>
                 }
                 <a class="btn btn-default" href="/post/@Model.Id">Read&nbsp;<i class="glyphicon glyphicon-info-sign"></i></a>
             </div>

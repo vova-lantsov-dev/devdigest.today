@@ -6,11 +6,18 @@
         <h3 class="text-left">
             @Model.Title
         </h3>
+        
         <h4>@Model.Company</h4>
 
         <div class="date">
             @Model.Date.ToString("MMMM dd, yyyy")
         </div>
+        <div class="views" title="Views count">
+            <i class="glyphicon glyphicon-stats"></i>&nbsp; @Model.ViewsCount
+        </div>
+        
+        <div class="clear"></div>
+        
         <div class="row">
             <div class="col-md-12 description">
                 @Model.Description

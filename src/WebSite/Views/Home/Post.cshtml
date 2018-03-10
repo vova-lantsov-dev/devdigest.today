@@ -12,9 +12,15 @@
 }
 
 <h1>@Model.Title</h1>
+
 <div class="date">
     @Model.DateTime.ToString("MMMM dd, yyyy") 
 </div>    
+<div class="views" title="Views count">
+    <i class="glyphicon glyphicon-stats"></i>&nbsp; @Model.ViewsCount
+</div>
+
+<div class="clear"></div>
 
 @if (string.IsNullOrEmpty(Model.EmbededPlayerCode)) {
     <div class="image-block inner">
@@ -60,7 +66,7 @@
     </div>
     <div class="col-md-6 text-right">
         @if (Model.Url != null) {        
-            <a class="btn btn-default" target="blank" href="@Model.Url">Go to original publication&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>
+            <a class="btn btn-default" target="blank" href="@Model.Url">Original publication&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>
         }
     </div>
 </div>   
