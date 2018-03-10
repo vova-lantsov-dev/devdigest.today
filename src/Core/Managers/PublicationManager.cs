@@ -15,7 +15,8 @@ namespace Core.Managers
         {
         }
 
-        public async Task<IPagedList<Publication>> GetPublications(int? categoryId = null, int page = 1, int pageSize = 10, int languageId = Core.Language.EnglishId)
+        public async Task<IPagedList<Publication>> GetPublications(int? categoryId = null, int page = 1,
+            int pageSize = 10, int languageId = Core.Language.EnglishId)
         {
             var key = $"page_{page}_{pageSize}_{categoryId}";
 
@@ -26,12 +27,12 @@ namespace Core.Managers
                 var skip = (page - 1) * pageSize;
 
                 var items = _database
-                                .Publication
-                                .Where(o => o.CategoryId == categoryId || categoryId == null)
-                                .Where(o => o.LanguageId == languageId)
-                                .OrderByDescending(o => o.DateTime)
-                                .Skip(skip)
-                                .Take(pageSize).ToList();
+                    .Publication
+                    .Where(o => o.CategoryId == categoryId || categoryId == null)
+                    .Where(o => o.LanguageId == languageId)
+                    .OrderByDescending(o => o.DateTime)
+                    .Skip(skip)
+                    .Take(pageSize).ToList();
 
                 var totalItemsCount = await _database.Publication
                     .Where(o => o.CategoryId == categoryId || categoryId == null).CountAsync();
@@ -42,7 +43,7 @@ namespace Core.Managers
 
             return result;
         }
-        
+
         public IEnumerable<Category> GetCategories()
         {
             return _database.Category;
@@ -70,6 +71,17 @@ namespace Core.Managers
             publication = _database.Publication.LastOrDefault();
 
             return publication;
+        }
+
+        public async Task IncreaseViewCount(int id)
+        {
+            var publication = _database.Publication.SingleOrDefault(o => o.Id == id);
+
+            if (publication != null)
+            {
+                publication.Views++;
+                await _database.SaveChangesAsync();
+            }
         }
     }
 }

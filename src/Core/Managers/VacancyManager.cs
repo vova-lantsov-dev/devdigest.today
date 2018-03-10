@@ -89,5 +89,16 @@ namespace Core.Managers
 
             return vacancy;
         }
+
+        public async Task IncreaseViewCount(int id)
+        {
+            var vacancy = _database.Vacancy.SingleOrDefault(o => o.Id == id);
+            
+            if (vacancy != null)
+            {
+                vacancy.Views++;
+                await _database.SaveChangesAsync();
+            }
+        }
     }
 }
