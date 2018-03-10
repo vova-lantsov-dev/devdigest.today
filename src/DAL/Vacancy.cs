@@ -18,6 +18,7 @@ namespace DAL
         public int CategoryId { get; set; }
         public string Company { get; set; }
         public int? LanguageId { get; set; }
+        public int Views { get; set; }
 
         public Category Category { get; set; }
         public Language Language { get; set; }
