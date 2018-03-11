@@ -4,6 +4,7 @@
 
 @{
     var categoryId = ViewBag.CategoryId as int?;
+    var category = categoryId.HasValue ? Model.Select(o => o.Category.Name).FirstOrDefault() : string.Empty;
 }
 
 @section head {
@@ -15,6 +16,12 @@
 
     <meta name="keywords" content="@Core.Settings.Current.DefaultKeywords" />
     <meta name="description" content="@Core.Settings.Current.DefaultDescription" />
+}
+
+@if (categoryId.HasValue)
+{
+    <h1>stream://&nbsp;@category</h1>
+    <br />
 }
 
 @for (var i=0; i<Model.Count(); i++)
