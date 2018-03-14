@@ -40,7 +40,7 @@
                 @if (Model.Url != null  && string.IsNullOrEmpty(Model.EmbededPlayerCode)) {
                     <a class="btn btn-default" target="blank" href="@Model.Url">Original publication&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>
                 }
-                <a class="btn btn-default" href="/post/@Model.Id">Read&nbsp;<i class="glyphicon glyphicon-info-sign"></i></a>
+                <a class="btn btn-default" href="@Model.ShareUrl">Read&nbsp;<i class="glyphicon glyphicon-info-sign"></i></a>
             </div>
         </div>
     </section>

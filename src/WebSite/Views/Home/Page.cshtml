@@ -4,7 +4,7 @@
 
 @{
     var categoryId = ViewBag.CategoryId as int?;
-    var category = categoryId.HasValue ? Model.Select(o => o.Category.Name).FirstOrDefault() : string.Empty;
+    var category = categoryId.HasValue ? Model.Select(o => o.Category.Name).FirstOrDefault()?.ToLower() : string.Empty;
 }
 
 @section head {

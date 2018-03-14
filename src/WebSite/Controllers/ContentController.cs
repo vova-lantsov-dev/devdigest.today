@@ -54,6 +54,12 @@ namespace WebSite.Controllers
         {
             return View("~/Views/Content/Privacy.cshtml");
         }
+        
+        [Route("content/how-to-post-vacancy")]
+        public async Task<IActionResult> HowToPostVacancy()
+        {
+            return View("~/Views/Content/HowToPostVacancy.cshtml");
+        }
 
 
         [Route("content/telegram")]

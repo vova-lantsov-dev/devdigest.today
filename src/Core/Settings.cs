@@ -16,7 +16,7 @@ namespace Core
 
         public string DefaultKeywords { get; private set; }
 
-        public string FacebookImage => $"{WebSiteUrl}images/fb_logo.png";
+        public string FacebookImage => $"{WebSiteUrl}images/logo.png";
         
         public string DefaultPublicationImage => $"{WebSiteUrl}images/news.jpg";
 

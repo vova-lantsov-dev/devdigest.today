@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System;
 using System.Collections.Generic;
+using DAL;
 
 namespace WebSite.Controllers
 {
@@ -116,7 +117,8 @@ namespace WebSite.Controllers
                 return StatusCode((int)HttpStatusCode.NotFound);
             }
 
-            var model = new PublicationViewModel(publication, Settings.Current.WebSiteUrl);
+            var categories = _publicationManager.GetCategories();
+            var model = new PublicationViewModel(publication, Settings.Current.WebSiteUrl, categories);
             ViewData["Title"] = model.Title;
 
             return View("~/Views/Home/Post.cshtml", model);
