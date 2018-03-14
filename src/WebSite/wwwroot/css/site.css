@@ -35,6 +35,9 @@ footer a {
     border-color: #777;
 }
 
+.protocol{
+    color: #5e5e5e;
+}
 .navbar-inverse .navbar-brand {
     color: #FFF;
 }

@@ -10,13 +10,12 @@
     <meta name="description" content="@Model.Description" />
 }
 
-<h1>Vacancy</h1>
+<h1>
+    <span class="protocol">job://&nbsp;</span>@Model.Title
+    @if (!Model.Active)
+        <span class="label label-default">Archived</span>
+</h1>
 
-<h3>@Model.Title
-@if (!Model.Active) {
-    <span class="label label-default">Archived</span>
-}
-</h3>
 <h2>@Model.Company</h2>
 
 <div class="date">
