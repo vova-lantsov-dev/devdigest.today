@@ -12,12 +12,13 @@
 
 <h1>Vacancy</h1>
 
-<h3>@Model.Title
+<h2>@Model.Title
 @if (!Model.Active) {
     <span class="label label-default">Archived</span>
 }
-</h3>
-<h2>@Model.Company</h2>
+</h2>
+
+<h4>@Model.Company</h4>
 
 <div class="date">
     @Model.Date.ToString("MMMM dd, yyyy") 
