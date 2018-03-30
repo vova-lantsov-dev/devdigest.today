@@ -60,6 +60,14 @@ namespace WebSite.Controllers
         {
             return View("~/Views/Content/HowToPostVacancy.cshtml");
         }
+        
+        [Route("content/microsoft-tech-summit-warsaw")]
+        public async Task<IActionResult> MicrosoftTechSummitWarsaw()
+        {
+            ViewData["Title"] = Core.Pages.MicrosoftTechSummitWarsaw;
+            
+            return View("~/Views/Content/MicrosoftTechSummitWarsaw.cshtml");
+        }
 
 
         [Route("content/telegram")]
