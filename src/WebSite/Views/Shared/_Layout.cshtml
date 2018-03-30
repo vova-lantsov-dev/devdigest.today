@@ -62,7 +62,7 @@
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <div>
+            <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
@@ -71,6 +71,7 @@
                 </button>
                 <a class="navbar-brand" style="font-weight: bold" href="/">//devdigest</a>
             </div>
+            
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-left">
                     <li class="dropdown">
@@ -83,32 +84,37 @@
                         </ul>
                     </li>  
                     <li><a href="/vacancies/1">Job</a></li>
+                    
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Events &nbsp;<span class="label label-danger">Hot!</span><span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/content/developex-tech-club">Developex Tech Club</a></li>
+                            <li><a href="/content/microsoft-tech-summit-warsaw">Microsoft Tech Summit Warsaw</a></li>
+                        </ul>
+                    </li>  
+                    
                     <li><a href="/search">Search</a></li>
-                    <li><a href="/content/developex-tech-club">Developex Tech Club&nbsp;<span class="label label-danger">New!</span></a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Facebook <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Social networks<span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                            <li class="dropdown-header">Facebook</li>
                             <li><a href="https://facebook.com/groups/dncuug">.NET Core User Group</a></li>
                             <li><a href="https://facebook.com/groups/azure.ua/">Azure User Group</a></li>
                             <li><a href="https://facebook.com/groups/xamarin.ua/">Xamarin User Group</a></li>
-                        </ul>
-                    </li> 
-                    
-                    <li><a href="https://github.com/dncuug">GitHub</a></li>
-                    
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Telegram <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
+                            <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">Telegram</li>
                             <li><a href="https://telegram.me/dncuug">devdigest // net core</a></li>
                             <li><a href="https://telegram.me/xamarin_ua">devdigest // xamarin</a></li>
                             <li><a href="https://telegram.me/azure_digest">devdigest // azure</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="/content/Telegram">All channels</a></li>
                         </ul>
-                    </li>  
+                    </li> 
+                    
+                    <li><a href="https://github.com/dncuug">GitHub</a></li>
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About <span class="caret"></span></a>
@@ -141,25 +147,33 @@
                     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
                     <!-- dot-net.in.ua right side ad -->
                     <ins class="adsbygoogle"
-                        style="display:block"
-                        data-ad-client="ca-pub-9437162291368173"
-                        data-ad-slot="5581239879"
-                        data-ad-format="auto"></ins>
+                         style="display:block"
+                         data-ad-client="ca-pub-9437162291368173"
+                         data-ad-slot="5581239879"
+                         data-ad-format="auto"></ins>
                     <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
+                        (adsbygoogle = window.adsbygoogle || []).push({});
                     </script>
                 </div>
+                
+                <div class="ad">
+                    <a href="/content/microsoft-tech-summit-warsaw">
+                        <img src="/images/banners/mts2018.png"/>
+                    </a>
+                </div>
 
-                @if(vacancies.Any()) {
-                    <div class="vacancies">
-                        <h3>Hot Vacancies</h3>
-                        @foreach(var v in vacancies) {
-                            @Html.Partial("_VacancySmallPreview", v)                                    
-                        }
-                        <a href="/vacancies/1"> View all vacancies</a>.
-                    </div>
-                }
-            </div>
+                    @if (vacancies.Any())
+                    {
+                        <div class="vacancies">
+                            <h3>Hot Vacancies</h3>
+                            @foreach (var v in vacancies)
+                            {
+                                @Html.Partial("_VacancySmallPreview", v)
+                            }
+                            <a href="/vacancies/1"> View all vacancies</a>.
+                        </div>
+                    }
+                </div>
         </div>
     </div>
 

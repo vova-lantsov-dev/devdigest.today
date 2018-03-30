@@ -24,20 +24,35 @@ footer a {
     font-size: 10pt;
 }
 
-.navbar-header,
+.navbar-header {
+    background: none;
+}
+
 .navbar-inverse {
     background: url(/images/bar_bg.jpg);
     background-color: transparent;
     background-position: center center;
 }
 
+.dropdown-header {
+    font-weight: bold;
+}
+
+@media (max-width: 767px) {
+    .dropdown-header,
+    .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {
+        color: #FFF;
+    }
+}
+
 .navbar-inverse {
     border-color: #777;
 }
 
-.protocol{
+.protocol {
     color: #AeAeAe;
 }
+
 .navbar-inverse .navbar-brand {
     color: #FFF;
 }
@@ -59,7 +74,7 @@ footer a {
     padding-bottom: 15px;
 }
 
-.partner .btn-xs{
+.partner .btn-xs {
     margin-top: 10px;
     display: inline-block;
 }
