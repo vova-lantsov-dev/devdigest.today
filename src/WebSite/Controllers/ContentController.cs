@@ -68,6 +68,14 @@ namespace WebSite.Controllers
             
             return View("~/Views/Content/MicrosoftTechSummitWarsaw.cshtml");
         }
+        
+        [Route("content/cloud-developers-days")]
+        public async Task<IActionResult> CloudDevelopersDaysPoland()
+        {
+            ViewData["Title"] = Core.Pages.CloudDevelopersDays;
+            
+            return View("~/Views/Content/CloudDevelopersDaysPoland.cshtml");
+        }
 
 
         [Route("content/telegram")]
