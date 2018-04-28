@@ -5,12 +5,12 @@
     <ApplicationInsightsAnnotationResourceId>/subscriptions/76422c13-a381-4ceb-a866-e7c7c09e638c/resourcegroups/www/providers/microsoft.insights/components/dot-net-in-ua</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.2.1" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.7" />
     <PackageReference Include="Microsoft.NETCore.App" Version="2.0.5" />
-    <PackageReference Include="X.PagedList.Mvc.Core" Version="7.2.0" />
+    <PackageReference Include="X.PagedList.Mvc.Core" Version="7.2.4" />
     <PackageReference Include="xwebrss" Version="2.2.0" />
-    <PackageReference Include="xsitemap" Version="2.0.0" />
+    <PackageReference Include="xsitemap" Version="2.0.5" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />

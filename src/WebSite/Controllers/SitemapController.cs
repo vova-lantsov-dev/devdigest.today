@@ -83,7 +83,8 @@ namespace WebSite.Controllers
                 _cache.Set(key, xml, TimeSpan.FromMinutes(10));
             }
 
-            return Content(xml, Sitemap.MimeType);
+            
+            return Content(xml, "application/xml");
         }
 
         private static Url CreateUrl(string url)
