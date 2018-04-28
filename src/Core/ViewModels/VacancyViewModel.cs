@@ -9,6 +9,7 @@ namespace Core.ViewModels
 		public VacancyViewModel(DAL.Vacancy vacancy, string webSiteUrl, string fallbackImage = null)
 		{
 			_websiteUrl = webSiteUrl;
+			
 			Id = vacancy.Id;
 			Title = vacancy.Title;
 			Image = vacancy.Image ?? fallbackImage;
@@ -21,6 +22,7 @@ namespace Core.ViewModels
 			Category = new CategoryViewModel();
 			Company = vacancy.Company;
 			ViewsCount = vacancy.Views;
+			Location = vacancy.Location;
 			
 			//ViewsCount = new Random((int)DateTime.Now.Ticks).Next(10, 915);
 
@@ -44,6 +46,7 @@ namespace Core.ViewModels
 		public bool Active { get; set; }
 		public Uri Url { get; set; }
 		public string Company { get; set; }
+		public string Location { get; set; }
 
 		/// <summary>
 		/// Vacancy posted today
