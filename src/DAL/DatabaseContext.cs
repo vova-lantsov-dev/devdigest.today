@@ -40,6 +40,8 @@ namespace DAL
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
+                entity.Property(e => e.Description).HasMaxLength(500);
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
@@ -211,6 +213,10 @@ namespace DAL
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
 
+                entity.Property(e => e.Views)
+                    .HasColumnType("int(11)")
+                    .HasDefaultValueSql("'1'");
+
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Publication)
                     .HasForeignKey(d => d.CategoryId)
@@ -289,6 +295,8 @@ namespace DAL
                     .HasColumnType("int(11)")
                     .HasDefaultValueSql("'1'");
 
+                entity.Property(e => e.Location).HasMaxLength(200);
+
                 entity.Property(e => e.Title)
                     .IsRequired()
                     .HasMaxLength(300);
@@ -296,6 +304,10 @@ namespace DAL
                 entity.Property(e => e.Url).HasMaxLength(5000);
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
+
+                entity.Property(e => e.Views)
+                    .HasColumnType("int(11)")
+                    .HasDefaultValueSql("'1'");
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Vacancy)
