@@ -56,7 +56,7 @@ namespace WebSite.Controllers
             
             try
             {
-                var metadata = await extractor.Extract(new Uri(request.Link));
+                var metadata = await extractor.ExtractAsync(new Uri(request.Link));
 
                 var languageCode = languageAnalyzer.GetTextLanguage(metadata.Description);
                 var languageId = _localizationManager.GetLanguageId(languageCode) ?? Language.EnglishId;
@@ -66,8 +66,8 @@ namespace WebSite.Controllers
                     Title = metadata.Title,
                     Description = metadata.Description,
                     Link = metadata.Url,
-                    Image = metadata.Image.FirstOrDefault(),
-                    Type = metadata.Type,
+                    Image = metadata.Images.FirstOrDefault(),
+                    Type = "article",
                     DateTime = DateTime.Now,
                     UserId = user.Id,
                     CategoryId = request.CategoryId,
