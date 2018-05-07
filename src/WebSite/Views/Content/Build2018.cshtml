@@ -2,6 +2,20 @@
     Layout = "_GeneralLayout";
 }
 
+@section head {
+    <meta property="og:title" content="@ViewData["Title"]" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://127fc3e2e552.blob.core.windows.net/devdigest/build2018.png" />
+    
+    <meta property="og:description" content="Microsoft Build is an annual conference event held by Microsoft, aimed towards 
+            software engineers and web developers using Windows, Windows Phone, Microsoft Azure and other Microsoft 
+            technologies." />
+
+    <meta name="description" content="Microsoft Build is an annual conference event held by Microsoft, aimed towards 
+            software engineers and web developers using Windows, Windows Phone, Microsoft Azure and other Microsoft 
+            technologies." />
+}
+
 <h1>@ViewData["Title"]</h1>
 
 <div class="row">
@@ -18,7 +32,7 @@
         
         <h2>About conference</h2>
         <div style="text-align: justify;">
-            Microsoft Build (often stylised as //build/) is an annual conference event held by Microsoft, aimed towards 
+            <strong>//build/</strong> is an annual conference event held by Microsoft, aimed towards 
             software engineers and web developers using Windows, Windows Phone, Microsoft Azure and other Microsoft 
             technologies.<br />
             The 2018 Build conference is being held at the Washington State Convention Center in Downtown Seattle, 
