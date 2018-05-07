@@ -48,7 +48,7 @@ namespace WebSite.Controllers
 
             if (user == null)
             {
-                return StatusCode((int)HttpStatusCode.Forbidden);
+                return StatusCode((int)HttpStatusCode.Forbidden, "Incorrect security key");
             }
 
             var extractor = new X.Web.MetaExtractor.Extractor();
@@ -57,6 +57,15 @@ namespace WebSite.Controllers
             try
             {
                 var metadata = await extractor.ExtractAsync(new Uri(request.Link));
+
+                var existingPublication =  _publicationManager.Get(new Uri(metadata.Url));
+
+                if (existingPublication != null)
+                {
+                    return StatusCode((int)HttpStatusCode.Forbidden, "Incorrect security key");
+                }
+                
+                
 
                 var languageCode = languageAnalyzer.GetTextLanguage(metadata.Description);
                 var languageId = _localizationManager.GetLanguageId(languageCode) ?? Language.EnglishId;
@@ -94,10 +103,9 @@ namespace WebSite.Controllers
 
                     return Created(new Uri(model.ShareUrl), model);
                 }
-                else
-                {
-                    throw new Exception("Can't save publication to databse");
-                }
+
+                
+                throw new Exception("Can't save publication to databse");
             }
             catch (Exception ex)
             {

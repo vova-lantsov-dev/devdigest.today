@@ -75,6 +75,14 @@ namespace WebSite.Controllers
             ViewData["Title"] = Core.Pages.CloudDevelopersDays;
             
             return View("~/Views/Content/CloudDevelopersDaysPoland.cshtml");
+        } 
+        
+        [Route("content/build-2018")]
+        public async Task<IActionResult> Build2018()
+        {
+            ViewData["Title"] = Core.Pages.Build2018;
+            
+            return View("~/Views/Content/Build2018.cshtml");
         }
 
 

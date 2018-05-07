@@ -1,3 +1,4 @@
+using System;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -82,6 +83,11 @@ namespace Core.Managers
                 publication.Views++;
                 await _database.SaveChangesAsync();
             }
+        }
+
+        public Publication Get(Uri uri)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -11,5 +11,6 @@ namespace Core
         public const string DevelopexTechClub = "Developex Tech Club";
         public const string MicrosoftTechSummitWarsaw = "Microsoft Tech Summit Warsaw";
         public const string CloudDevelopersDays = "Cloud Developers Days";
+        public const string Build2018 = "Build 2018";
     }
 }
