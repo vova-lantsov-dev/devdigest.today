@@ -62,7 +62,7 @@ namespace WebSite.Controllers
 
                 if (existingPublication != null)
                 {
-                    return StatusCode((int)HttpStatusCode.Forbidden, "Incorrect security key");
+                    return StatusCode((int)HttpStatusCode.Conflict, "Publication with this URL already exist");
                 }
                 
                 
