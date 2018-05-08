@@ -87,7 +87,7 @@ namespace Core.Managers
 
         public Publication Get(Uri uri)
         {
-            throw new NotImplementedException();
+            return _database.Publication.SingleOrDefault(o => o.Link.ToLower() == uri.ToString().ToLower());
         }
     }
 }
