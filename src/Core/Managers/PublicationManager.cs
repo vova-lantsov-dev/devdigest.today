@@ -32,10 +32,14 @@ namespace Core.Managers
                     .Where(o => o.LanguageId == languageId)
                     .OrderByDescending(o => o.DateTime)
                     .Skip(skip)
-                    .Take(pageSize).ToList();
+                    .Take(pageSize)
+                    .ToList();
 
-                var totalItemsCount = await _database.Publication
-                    .Where(o => o.CategoryId == categoryId || categoryId == null).CountAsync();
+                var totalItemsCount = await _database
+                    .Publication
+                    .Where(o => o.CategoryId == categoryId || categoryId == null)
+                    .Where(o => o.LanguageId == languageId)
+                    .CountAsync();
 
                 result = new StaticPagedList<Publication>(items, page, pageSize, totalItemsCount);
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());
@@ -44,10 +48,7 @@ namespace Core.Managers
             return result;
         }
 
-        public IEnumerable<Category> GetCategories()
-        {
-            return _database.Category;
-        }
+        public IEnumerable<Category> GetCategories() => _database.Category;
 
         public async Task<Publication> Get(int id)
         {
