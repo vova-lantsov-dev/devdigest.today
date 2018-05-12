@@ -16,8 +16,11 @@ namespace Core.Managers
         {
         }
 
-        public async Task<IPagedList<Publication>> GetPublications(int? categoryId = null, int page = 1,
-            int pageSize = 10, int languageId = Core.Language.EnglishId)
+        public async Task<IPagedList<Publication>> GetPublications(
+            int? categoryId = null, 
+            int page = 1,
+            int pageSize = 10, 
+            int languageId = Core.Language.EnglishId)
         {
             var key = $"page_{page}_{pageSize}_{categoryId}";
 
@@ -36,7 +39,9 @@ namespace Core.Managers
                     .Take(pageSize).ToList();
 
                 var totalItemsCount = await _database.Publication
-                    .Where(o => o.CategoryId == categoryId || categoryId == null).CountAsync();
+                    .Where(o => o.CategoryId == categoryId || categoryId == null)
+                    .Where(o => o.LanguageId == languageId)
+                    .CountAsync();
 
                 result = new StaticPagedList<Publication>(items, page, pageSize, totalItemsCount);
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());
