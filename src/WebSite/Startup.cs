@@ -18,7 +18,7 @@ namespace WebSite
 {
     public class Startup
     {
-        private readonly Core.Settings _settings;
+        private readonly Settings _settings;
         
         public IConfiguration Configuration { get; }
         

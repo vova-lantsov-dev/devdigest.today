@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System;
 using System.Collections.Generic;
-using DAL;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace WebSite.Controllers
@@ -29,12 +28,14 @@ namespace WebSite.Controllers
             IMemoryCache cache, 
             IHostingEnvironment env, 
             IVacancyManager vacancyManager, 
-            IPublicationManager publicationManager)
+            IPublicationManager publicationManager, 
+            Settings settings)
         {
             _cache = cache;
             _env = env;
             _vacancyManager = vacancyManager;
             _publicationManager = publicationManager;
+            _settings = settings;
         }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -59,8 +60,10 @@ namespace WebSite.Controllers
             ViewData["Title"] = "Welcome!";
 
             var pagedResult = await _publicationManager.GetPublications();
-            var categories = _publicationManager.GetCategories();
-            var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories)), pagedResult);
+            var categories = await _publicationManager.GetCategories();
+            var publications = pagedResult.Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories));
+            
+            var model = new StaticPagedList<PublicationViewModel>(publications, pagedResult);
 
             return View(model);
         }
@@ -71,8 +74,10 @@ namespace WebSite.Controllers
             ViewData["Title"] = $"{Core.Pages.Page} {page}";
 
             var pagedResult = await _publicationManager.GetPublications(categoryId, page);
-            var categories = _publicationManager.GetCategories();
-            var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories)), pagedResult);
+            var categories = await _publicationManager.GetCategories();
+            var pages = pagedResult.Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories));
+            
+            var model = new StaticPagedList<PublicationViewModel>(pages, pagedResult);
 
             ViewBag.CategoryId = categoryId;
 
@@ -123,7 +128,7 @@ namespace WebSite.Controllers
                 return StatusCode((int)HttpStatusCode.NotFound);
             }
 
-            var categories = _publicationManager.GetCategories();
+            var categories = await _publicationManager.GetCategories();
             var model = new PublicationViewModel(publication, _settings.WebSiteUrl, categories);
             ViewData["Title"] = model.Title;
 

@@ -44,7 +44,7 @@ namespace WebSite.Controllers
         [Route("api/categories")]
         public async Task<IActionResult> GetCategories()
         {
-            var categories = _publicationManager.GetCategories().Select(o => new
+            var categories = (await _publicationManager.GetCategories()).Select(o => new
             {
                 o.Id,
                 o.Name

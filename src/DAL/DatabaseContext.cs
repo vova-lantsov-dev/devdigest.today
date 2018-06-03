@@ -6,6 +6,15 @@ namespace DAL
 {
     public partial class DatabaseContext : DbContext
     {
+        public DatabaseContext()
+        {
+        }
+
+        public DatabaseContext(DbContextOptions<DatabaseContext> options)
+            : base(options)
+        {
+        }
+
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<Channel> Channel { get; set; }
         public virtual DbSet<Event> Event { get; set; }

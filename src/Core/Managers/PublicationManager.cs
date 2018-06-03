@@ -17,7 +17,7 @@ namespace Core.Managers
             int pageSize = 10, 
             int languageId = Core.Language.EnglishId);
 
-        IEnumerable<Category> GetCategories();
+        Task<IReadOnlyCollection<Category>> GetCategories();
         Task<Publication> Get(int id);
         Task<Publication> Save(Publication publication);
         Task IncreaseViewCount(int id);
@@ -69,7 +69,7 @@ namespace Core.Managers
             return result;
         }
         
-        public IEnumerable<Category> GetCategories() => _database.Category;
+        public async Task<IReadOnlyCollection<Category>> GetCategories() => await _database.Category.ToListAsync();
 
         public async Task<Publication> Get(int id)
         {
