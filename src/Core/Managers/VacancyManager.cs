@@ -9,11 +9,23 @@ using System.Collections.Generic;
 
 namespace Core.Managers
 {
-    public class VacancyManager : ManagerBase
+    public interface IVacancyManager
     {
-        public VacancyManager(string connectionString, IMemoryCache cache)
-            : base(connectionString, cache)
+        Task<IPagedList<DAL.Vacancy>> GetVacancies(int page = 1, int pageSize = 10);
+        IList<DAL.Vacancy> GetHotVacancies();
+        Task<DAL.Vacancy> Get(int id);
+        Task<Vacancy> Save(Vacancy vacancy);
+        Task IncreaseViewCount(int id);
+    }
+
+    public class VacancyManager : ManagerBase, IVacancyManager
+    {
+        private readonly DAL.DatabaseContext _database;
+
+        public VacancyManager(IMemoryCache cache, DatabaseContext database)
+            : base(cache)
         {
+            _database = database;
         }
 
         public async Task<IPagedList<DAL.Vacancy>> GetVacancies(int page = 1, int pageSize = 10)

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core;
 using Core.Managers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -10,11 +9,11 @@ namespace WebSite.Controllers
 {
     public class ContentController : Controller
     {
-        private readonly CrossPostManager _crossPostManager;
+        private readonly ICrossPostManager _crossPostManager;
 
-        public ContentController(IMemoryCache cache)
+        public ContentController(IMemoryCache cache, ICrossPostManager crossPostManager)
         {
-            _crossPostManager = new CrossPostManager(Settings.Current.ConnectionString);
+            _crossPostManager = crossPostManager;
         }
 
         [Route("content/partners")]

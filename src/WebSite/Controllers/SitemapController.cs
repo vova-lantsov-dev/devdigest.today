@@ -19,15 +19,21 @@ namespace WebSite.Controllers
 {
     public class SitemapController : Controller
     {
-        private readonly PublicationManager _publicationManager;
-        private readonly VacancyManager _vacancyManager;
+        private readonly IPublicationManager _publicationManager;
+        private readonly IVacancyManager _vacancyManager;
         private readonly IMemoryCache _cache;
-
-        public SitemapController(IMemoryCache cache)
+        private readonly Settings _settings;
+        
+        public SitemapController(
+            IMemoryCache cache, 
+            IVacancyManager vacancyManager, 
+            IPublicationManager publicationManager, 
+            Settings settings)
         {
             _cache = cache;
-            _publicationManager = new PublicationManager(Core.Settings.Current.ConnectionString, cache);
-            _vacancyManager = new VacancyManager(Core.Settings.Current.ConnectionString, cache);
+            _vacancyManager = vacancyManager;
+            _publicationManager = publicationManager;
+            _settings = settings;
         }
 
         [HttpGet]
@@ -46,8 +52,8 @@ namespace WebSite.Controllers
                 IPagedList<Vacancy> vacancies;
 
                 var sitemap = new Sitemap();
-                sitemap.Add(CreateUrl(Settings.Current.WebSiteUrl));
-                sitemap.Add(CreateUrl(Settings.Current.WebSiteUrl + "partners/"));
+                sitemap.Add(CreateUrl(_settings.WebSiteUrl));
+                sitemap.Add(CreateUrl(_settings.WebSiteUrl + "partners/"));
 
                 page = 1;
 
@@ -58,7 +64,7 @@ namespace WebSite.Controllers
 
                     foreach (var p in publications)
                     {
-                        var publication = new PublicationViewModel(p, Settings.Current.WebSiteUrl);
+                        var publication = new PublicationViewModel(p, _settings.WebSiteUrl);
                         sitemap.Add(CreateUrl(publication.ShareUrl));
                     }
                 }
@@ -73,7 +79,7 @@ namespace WebSite.Controllers
 
                     foreach (var v in vacancies)
                     {
-                        var vacancy = new VacancyViewModel(v, Settings.Current.WebSiteUrl);
+                        var vacancy = new VacancyViewModel(v, _settings.WebSiteUrl);
                         sitemap.Add(CreateUrl(vacancy.ShareUrl));
                     }
                 }

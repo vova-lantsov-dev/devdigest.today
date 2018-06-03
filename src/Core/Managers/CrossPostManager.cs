@@ -10,11 +10,21 @@ using Telegram.Bot.Types.Enums;
 
 namespace Core.Managers
 {
-    public class CrossPostManager : ManagerBase
+    public interface ICrossPostManager
     {
-        public CrossPostManager(string connectionString)
-            : base(connectionString)
+        IEnumerable<Channel> GetTelegramChannels();
+        Task<bool> Send(int categoryId, string comment, string link);
+        Task<bool> SendToTelegram(int categoryId, string comment, string link);
+        Task<bool> SendToFacebook(int categoryId, string comment, string link);
+    }
+
+    public class CrossPostManager : ManagerBase, ICrossPostManager
+    {
+        private readonly DAL.DatabaseContext _database;
+
+        public CrossPostManager(DatabaseContext database)
         {
+            _database = database;
         }
         
         public IEnumerable<Channel> GetTelegramChannels()

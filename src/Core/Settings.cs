@@ -5,47 +5,50 @@ namespace Core
 {
     public class Settings
     {
-        public string ConnectionString { get; private set; }
+        public Settings(IConfiguration configuration)
+        {
+            ConnectionString = configuration.GetConnectionString("DefaultConnection");
+            WebSiteUrl = configuration["WebSiteUrl"];
+            WebSiteTitle = configuration["WebSiteTitle"];
+            CognitiveServicesTextAnalyticsKey = configuration["CognitiveServicesTextAnalyticsKey"];
+            DefaultDescription = WebUtility.HtmlDecode(configuration["DefaultDescription"]);
+            DefaultKeywords = WebUtility.HtmlDecode(configuration["DefaultKeywords"]);
+            SupportEmail = "dncuug@agi.net.ua";
+            FbAppId = "112150392810181";
+        }
 
-        public string WebSiteTitle { get; private set; }
+        public string ConnectionString { get; }
 
-        public string WebSiteUrl { get; private set; }
+        public string WebSiteTitle { get; }
 
-        public string DefaultDescription { get; private set; }
+        public string WebSiteUrl { get; }
 
-        public string DefaultKeywords { get; private set; }
+        public string DefaultDescription { get; }
+
+        public string DefaultKeywords { get; }
 
         public string FacebookImage => $"{WebSiteUrl}images/logo.png";
-        
+
         public string DefaultPublicationImage => $"{WebSiteUrl}images/news.jpg";
 
         public string RssFeedUrl => $"{WebSiteUrl}rss";
-        
-        public string SupportEmail { get; set; }
 
-        public string FbAppId { get; set; }
-        
-        public string CognitiveServicesTextAnalyticsKey { get; set; }
-        
+        public string SupportEmail { get; }
+
+        public string FbAppId { get; }
+
+        public string CognitiveServicesTextAnalyticsKey { get; }
+
         #region Current
+        
+        /// <summary>
+        /// Settings.Current will be used in views
+        /// </summary>
+        /// <param name="settings"></param>
+        public static void Initialize(Settings settings) => Current = settings;
 
         public static Settings Current { get; private set; }
         
-        public static void Initialize(IConfiguration configuration)
-        {
-            Current = new Settings
-            {
-                ConnectionString = configuration.GetConnectionString("DefaultConnection"),
-                WebSiteUrl = configuration["WebSiteUrl"],
-                WebSiteTitle = configuration["WebSiteTitle"],                
-                CognitiveServicesTextAnalyticsKey = configuration["CognitiveServicesTextAnalyticsKey"],                
-                DefaultDescription = WebUtility.HtmlDecode(configuration["DefaultDescription"]),
-                DefaultKeywords = WebUtility.HtmlDecode(configuration["DefaultKeywords"]),
-                SupportEmail = "dncuug@agi.net.ua",
-                FbAppId = "112150392810181",
-            };
-        }
-
         #endregion
     }
 }

@@ -4,11 +4,19 @@ using DAL;
 
 namespace Core.Managers
 {
-    public class UserManager : ManagerBase
+    public interface IUserManager
     {
-        public UserManager(string connectionString)
-            : base(connectionString)
+        User GetBySecretKey(Guid key);
+    }
+
+    public class UserManager : ManagerBase, IUserManager
+    {
+        private readonly DAL.DatabaseContext _database;
+
+        public UserManager(DatabaseContext database)
+            : base()
         {
+            _database = database;
         }
 
         public User GetBySecretKey(Guid key)

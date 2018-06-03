@@ -18,17 +18,22 @@ namespace WebSite.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly PublicationManager _publicationManager;
-        private readonly VacancyManager _vacancyManager;
+        private readonly IPublicationManager _publicationManager;
+        private readonly IVacancyManager _vacancyManager;
         private readonly IHostingEnvironment _env;
         private readonly IMemoryCache _cache;
+        private readonly Settings _settings;
 
-        public HomeController(IMemoryCache cache, IHostingEnvironment env)
+        public HomeController(
+            IMemoryCache cache, 
+            IHostingEnvironment env, 
+            IVacancyManager vacancyManager, 
+            IPublicationManager publicationManager)
         {
             _cache = cache;
-            _publicationManager = new PublicationManager(Core.Settings.Current.ConnectionString, cache);
-            _vacancyManager = new VacancyManager(Core.Settings.Current.ConnectionString, cache);
             _env = env;
+            _vacancyManager = vacancyManager;
+            _publicationManager = publicationManager;
         }
 
         public override void OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext context)
@@ -42,7 +47,7 @@ namespace WebSite.Controllers
         {
             var vacancies = _vacancyManager
                                 .GetHotVacancies()
-                                .Select(o => new VacancyViewModel(o, Settings.Current.WebSiteUrl))
+                                .Select(o => new VacancyViewModel(o, _settings.WebSiteUrl))
                                 .ToList();
 
             ViewData["vacancies"] = vacancies;
@@ -54,7 +59,7 @@ namespace WebSite.Controllers
 
             var pagedResult = await _publicationManager.GetPublications();
             var categories = _publicationManager.GetCategories();
-            var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, Settings.Current.WebSiteUrl, categories)), pagedResult);
+            var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories)), pagedResult);
 
             return View(model);
         }
@@ -66,7 +71,7 @@ namespace WebSite.Controllers
 
             var pagedResult = await _publicationManager.GetPublications(categoryId, page);
             var categories = _publicationManager.GetCategories();
-            var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, Settings.Current.WebSiteUrl, categories)), pagedResult);
+            var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories)), pagedResult);
 
             ViewBag.CategoryId = categoryId;
 
@@ -80,7 +85,7 @@ namespace WebSite.Controllers
 
             var pagedResult = await _vacancyManager.GetVacancies(page);
 
-            var model = new StaticPagedList<VacancyViewModel>(pagedResult.Select(o => new VacancyViewModel(o, Settings.Current.WebSiteUrl)), pagedResult);
+            var model = new StaticPagedList<VacancyViewModel>(pagedResult.Select(o => new VacancyViewModel(o, _settings.WebSiteUrl)), pagedResult);
 
             return View("~/Views/Home/Vacancies.cshtml", model);
         }
@@ -98,9 +103,9 @@ namespace WebSite.Controllers
 
             var path = Path.Combine(_env.WebRootPath, "images/vacancy");
             var file = Directory.GetFiles(path).OrderBy(o => Guid.NewGuid()).Select(o => Path.GetFileName(o)).FirstOrDefault();
-            var image = $"{Settings.Current.WebSiteUrl}images/vacancy/{file}";
+            var image = $"{_settings.WebSiteUrl}images/vacancy/{file}";
 
-            var model = new VacancyViewModel(vacancy, Settings.Current.WebSiteUrl, image);
+            var model = new VacancyViewModel(vacancy, _settings.WebSiteUrl, image);
             ViewData["Title"] = model.Title;
 
             return View("~/Views/Home/Vacancy.cshtml", model);
@@ -118,7 +123,7 @@ namespace WebSite.Controllers
             }
 
             var categories = _publicationManager.GetCategories();
-            var model = new PublicationViewModel(publication, Settings.Current.WebSiteUrl, categories);
+            var model = new PublicationViewModel(publication, _settings.WebSiteUrl, categories);
             ViewData["Title"] = model.Title;
 
             return View("~/Views/Home/Post.cshtml", model);

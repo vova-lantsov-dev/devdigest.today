@@ -10,27 +10,45 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.WebEncoders;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
+using Core.Managers;
+using DAL;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace WebSite
 {
     public class Startup
     {
+        private readonly Core.Settings _settings;
+        
+        public IConfiguration Configuration { get; }
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
-            Settings.Initialize(Configuration);
+            _settings = new Settings(configuration);
+            
+            Settings.Initialize(_settings);
         }
 
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
+        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
 
             services.AddMemoryCache();
 
+            services.AddSingleton<Settings>(_ => _settings);
+            services.AddSingleton<DatabaseContext>(_ => new DatabaseContext(_settings.ConnectionString));
+            
+            services.AddScoped(typeof(ICrossPostManager), typeof(CrossPostManager));
+            services.AddScoped(typeof(ILocalizationManager), typeof(LocalizationManager));
+            services.AddScoped(typeof(IPublicationManager), typeof(PublicationManager));
+            services.AddScoped(typeof(IUserManager), typeof(UserManager));
+            services.AddScoped(typeof(IVacancyManager), typeof(VacancyManager));
+            
             services.Configure<WebEncoderOptions>(options =>
             {
                 options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);

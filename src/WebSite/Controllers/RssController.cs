@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -21,13 +20,15 @@ namespace WebSite.Controllers
 {
     public class RssController : Controller
     {
-        private readonly PublicationManager _manager;
+        private readonly IPublicationManager _publicationManager;
         private readonly IMemoryCache _cache;
+        private readonly Settings _settings;
 
-        public RssController(IMemoryCache cache)
+        public RssController(IMemoryCache cache, IPublicationManager publicationManager, Settings settings)
         {
             _cache = cache;
-            _manager = new PublicationManager(Core.Settings.Current.ConnectionString, cache);
+            _publicationManager = publicationManager;
+            _settings = settings;
         }
 
         [HttpGet]
@@ -40,7 +41,7 @@ namespace WebSite.Controllers
             if (string.IsNullOrEmpty(xml))
             {
                 int? categoryId = null;
-                var pagedResult = await _manager.GetPublications(categoryId, 1, 50);
+                var pagedResult = await _publicationManager.GetPublications(categoryId, 1, 50);
                 var lastUpdateDate = pagedResult.Select(o => o.DateTime).DefaultIfEmpty().Max();
 
                 var rss = new RssDocument
@@ -48,28 +49,28 @@ namespace WebSite.Controllers
                     Channel =
                     new RssChannel
                     {
-                        Copyright = Settings.Current.WebSiteTitle,
-                        Description = Settings.Current.DefaultDescription,
+                        Copyright = _settings.WebSiteTitle,
+                        Description = _settings.DefaultDescription,
                         SkipDays = new List<Day>(),
                         SkipHours = new List<Hour>(),
-                        AtomLink = new RssLink(Settings.Current.RssFeedUrl),
+                        AtomLink = new RssLink(_settings.RssFeedUrl),
                         Image = new RssImage
                         {
-                            Description = Settings.Current.WebSiteTitle,
+                            Description = _settings.WebSiteTitle,
                             Height = 100,
                             Width = 100,
-                            Link = new RssUrl(Settings.Current.FacebookImage),
-                            Title = Settings.Current.WebSiteTitle,
-                            Url = new RssUrl(Settings.Current.FacebookImage)
+                            Link = new RssUrl(_settings.FacebookImage),
+                            Title = _settings.WebSiteTitle,
+                            Url = new RssUrl(_settings.FacebookImage)
                         },
                         Language = new CultureInfo("ru"),
                         LastBuildDate = lastUpdateDate,
-                        Link = new RssUrl(Settings.Current.RssFeedUrl),
-                        ManagingEditor = new RssPerson("Andrew G.", Settings.Current.SupportEmail),
+                        Link = new RssUrl(_settings.RssFeedUrl),
+                        ManagingEditor = new RssPerson("Andrew G.", _settings.SupportEmail),
                         PubDate = lastUpdateDate,
-                        Title = Settings.Current.WebSiteTitle,
+                        Title = _settings.WebSiteTitle,
                         TTL = 10,
-                        WebMaster = new RssPerson("Andrew G.", Settings.Current.SupportEmail),
+                        WebMaster = new RssPerson("Andrew G.", _settings.SupportEmail),
                         Items = new List<RssItem> { }
                     }
                 };
@@ -89,7 +90,7 @@ namespace WebSite.Controllers
 
         private RssItem CreateRssItem(DAL.Publication publication)
         {
-            var p = new Core.ViewModels.PublicationViewModel(publication, Settings.Current.WebSiteUrl);
+            var p = new PublicationViewModel(publication, _settings.WebSiteUrl);
 
             return new RssItem
             {

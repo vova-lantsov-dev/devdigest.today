@@ -12,19 +12,28 @@ namespace WebSite.Controllers
 {
     public class ApiController : Controller
     {
-        private readonly PublicationManager _publicationManager;
-        private readonly VacancyManager _vacancyManager;
-        private readonly UserManager _userManager;
-        private readonly CrossPostManager _crossPostManager;
-        private readonly LocalizationManager _localizationManager;
+        private readonly IPublicationManager _publicationManager;
+        private readonly IVacancyManager _vacancyManager;
+        private readonly IUserManager _userManager;
+        private readonly ICrossPostManager _crossPostManager;
+        private readonly ILocalizationManager _localizationManager;
+        private readonly Settings _settings;
 
-        public ApiController(IMemoryCache cache)
+        public ApiController(
+            IMemoryCache cache, 
+            IPublicationManager publicationManager, 
+            IVacancyManager vacancyManager, 
+            IUserManager userManager, 
+            ICrossPostManager crossPostManager, 
+            ILocalizationManager localizationManager, 
+            Settings settings)
         {
-            _publicationManager = new PublicationManager(Settings.Current.ConnectionString, cache);
-            _userManager = new UserManager(Settings.Current.ConnectionString);
-            _vacancyManager = new VacancyManager(Settings.Current.ConnectionString, cache);
-            _crossPostManager = new CrossPostManager(Settings.Current.ConnectionString);
-            _localizationManager = new LocalizationManager(Settings.Current.ConnectionString, cache);
+            _publicationManager = publicationManager;
+            _vacancyManager = vacancyManager;
+            _userManager = userManager;
+            _crossPostManager = crossPostManager;
+            _localizationManager = localizationManager;
+            _settings = settings;
         }
 
         [HttpGet]
@@ -52,7 +61,7 @@ namespace WebSite.Controllers
             }
 
             var extractor = new X.Web.MetaExtractor.Extractor();
-            var languageAnalyzer = new LanguageAnalyzer(Settings.Current.CognitiveServicesTextAnalyticsKey);
+            var languageAnalyzer = new LanguageAnalyzer(_settings.CognitiveServicesTextAnalyticsKey);
             
             try
             {
@@ -65,8 +74,6 @@ namespace WebSite.Controllers
                     return StatusCode((int)HttpStatusCode.Conflict, "Publication with this URL already exist");
                 }
                 
-                
-
                 var languageCode = languageAnalyzer.GetTextLanguage(metadata.Description);
                 var languageId = _localizationManager.GetLanguageId(languageCode) ?? Language.EnglishId;
                 
@@ -94,7 +101,7 @@ namespace WebSite.Controllers
 
                 if (publication != null)
                 {
-                    var model = new PublicationViewModel(publication, Settings.Current.WebSiteUrl);
+                    var model = new PublicationViewModel(publication, _settings.WebSiteUrl);
 
                     //If we can embed main content into site page, so we can share this page.
                     var url = string.IsNullOrEmpty(model.EmbededPlayerCode) ? model.Link : model.ShareUrl;
@@ -142,7 +149,7 @@ namespace WebSite.Controllers
 
             if (vacancy != null)
             {
-                var model = new VacancyViewModel(vacancy, Settings.Current.WebSiteUrl);
+                var model = new VacancyViewModel(vacancy, _settings.WebSiteUrl);
 
                 await _crossPostManager.Send(request.CategoryId, request.Comment, model.ShareUrl);
 

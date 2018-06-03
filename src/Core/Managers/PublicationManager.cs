@@ -9,11 +9,29 @@ using X.PagedList;
 
 namespace Core.Managers
 {
-    public class PublicationManager : ManagerBase
+    public interface IPublicationManager
     {
-        public PublicationManager(string connectionString, IMemoryCache cache)
-            : base(connectionString, cache)
+        Task<IPagedList<Publication>> GetPublications(
+            int? categoryId = null, 
+            int page = 1,
+            int pageSize = 10, 
+            int languageId = Core.Language.EnglishId);
+
+        IEnumerable<Category> GetCategories();
+        Task<Publication> Get(int id);
+        Task<Publication> Save(Publication publication);
+        Task IncreaseViewCount(int id);
+        Publication Get(Uri uri);
+    }
+
+    public class PublicationManager : ManagerBase, IPublicationManager
+    {
+        private readonly DAL.DatabaseContext _database;
+
+        public PublicationManager(IMemoryCache cache, DatabaseContext database)
+            : base(cache)
         {
+            _database = database;
         }
 
         public async Task<IPagedList<Publication>> GetPublications(

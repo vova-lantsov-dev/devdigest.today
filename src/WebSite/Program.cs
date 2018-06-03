@@ -8,24 +8,22 @@ namespace WebSite
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseApplicationInsights()
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     var env = hostingContext.HostingEnvironment;
 
-                    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                          .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
-                          .AddJsonFile($"/Users/andrew/pub/devdigest.today/appsettings.json", optional: true, reloadOnChange: true)
-                          .AddJsonFile($"c:/pub/devdigest.today/appsettings.json", optional: true, reloadOnChange: true)
-                          .AddEnvironmentVariables();
-
+                    config.AddJsonFile("appsettings.json", true, true)
+                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true)
+                        .AddJsonFile($"/Users/andrew/pub/devdigest.today/appsettings.json", true, true)
+                        .AddJsonFile($"c:/pub/devdigest.today/appsettings.json", true, true)
+                        .AddEnvironmentVariables();
                 })
-                .UseStartup<Startup>()
-                .Build();
+                .UseStartup<Startup>();
     }
 }
