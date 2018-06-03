@@ -9,11 +9,16 @@ namespace WebSite.Controllers
 {
     public class ContentController : Controller
     {
-        private readonly ICrossPostManager _crossPostManager;
+        private readonly FacebookCrosspostManager _facebookCrosspostCrosspostManager;
+        private readonly TelegramCrosspostManager _telegramCrosspostCrosspostManager;
 
-        public ContentController(IMemoryCache cache, ICrossPostManager crossPostManager)
+        public ContentController(
+            IMemoryCache cache, 
+            FacebookCrosspostManager facebookCrosspostCrosspostManager, 
+            TelegramCrosspostManager telegramCrosspostCrosspostManager)
         {
-            _crossPostManager = crossPostManager;
+            _facebookCrosspostCrosspostManager = facebookCrosspostCrosspostManager;
+            _telegramCrosspostCrosspostManager = telegramCrosspostCrosspostManager;
         }
 
         [Route("content/partners")]
@@ -90,7 +95,7 @@ namespace WebSite.Controllers
         {
             ViewData["Title"] = Core.Pages.Telegram;
 
-            var channels = _crossPostManager
+            var channels = _telegramCrosspostCrosspostManager
                 .GetTelegramChannels()
                 .Select(o => new Core.ViewModels.TelegramViewModel(o.Name)
                 {

@@ -15,8 +15,9 @@ namespace WebSite.Controllers
         private readonly IPublicationManager _publicationManager;
         private readonly IVacancyManager _vacancyManager;
         private readonly IUserManager _userManager;
-        private readonly ICrossPostManager _crossPostManager;
         private readonly ILocalizationManager _localizationManager;
+        private readonly FacebookCrosspostManager _facebookCrosspostManager;
+        private readonly TelegramCrosspostManager _telegramCrosspostManager;
         private readonly Settings _settings;
 
         public ApiController(
@@ -26,14 +27,17 @@ namespace WebSite.Controllers
             IUserManager userManager, 
             ICrossPostManager crossPostManager, 
             ILocalizationManager localizationManager, 
-            Settings settings)
+            Settings settings, 
+            FacebookCrosspostManager facebookCrosspostManager, 
+            TelegramCrosspostManager telegramCrosspostManager)
         {
             _publicationManager = publicationManager;
             _vacancyManager = vacancyManager;
             _userManager = userManager;
-            _crossPostManager = crossPostManager;
             _localizationManager = localizationManager;
             _settings = settings;
+            _facebookCrosspostManager = facebookCrosspostManager;
+            _telegramCrosspostManager = telegramCrosspostManager;
         }
 
         [HttpGet]
@@ -106,7 +110,8 @@ namespace WebSite.Controllers
                     //If we can embed main content into site page, so we can share this page.
                     var url = string.IsNullOrEmpty(model.EmbededPlayerCode) ? model.Link : model.ShareUrl;
 
-                    await _crossPostManager.Send(request.CategoryId, request.Comment, url);
+                    await _telegramCrosspostManager.Send(request.CategoryId, request.Comment, url);
+                    await _facebookCrosspostManager.Send(request.CategoryId, request.Comment, url);
 
                     return Created(new Uri(model.ShareUrl), model);
                 }
@@ -151,7 +156,8 @@ namespace WebSite.Controllers
             {
                 var model = new VacancyViewModel(vacancy, _settings.WebSiteUrl);
 
-                await _crossPostManager.Send(request.CategoryId, request.Comment, model.ShareUrl);
+                await _facebookCrosspostManager.Send(request.CategoryId, request.Comment, model.ShareUrl);
+                await _telegramCrosspostManager.Send(request.CategoryId, request.Comment, model.ShareUrl);
 
                 return Created(new Uri(model.ShareUrl), model);
             }

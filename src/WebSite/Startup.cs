@@ -43,7 +43,9 @@ namespace WebSite
             services.AddSingleton<Settings>(_ => _settings);
             services.AddSingleton<DatabaseContext>(_ => new DatabaseContext(_settings.ConnectionString));
             
-            services.AddScoped(typeof(ICrossPostManager), typeof(CrossPostManager));
+            services.AddScoped(typeof(TelegramCrosspostManager));
+            services.AddScoped(typeof(FacebookCrosspostManager));
+            
             services.AddScoped(typeof(ILocalizationManager), typeof(LocalizationManager));
             services.AddScoped(typeof(IPublicationManager), typeof(PublicationManager));
             services.AddScoped(typeof(IUserManager), typeof(UserManager));

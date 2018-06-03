@@ -8,21 +8,20 @@ namespace Core.Managers
     {
     }
 
-    public abstract class ManagerBase : IManager
-    {
-        protected readonly IMemoryCache _cache;
-
-        protected ManagerBase(IMemoryCache cache = null)
-        {
-            _cache = cache;
-        }
-
-        protected static MemoryCacheEntryOptions GetMemoryCacheEntryOptions()
-        {
-            return new MemoryCacheEntryOptions
-            {
-                AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1)
-            };
-        }
-    }
+//    public abstract class ManagerBase : IManager
+//    {
+//        
+//        protected ManagerBase()
+//        {
+//            _cache = cache;
+//        }
+//
+//        protected static MemoryCacheEntryOptions GetMemoryCacheEntryOptions()
+//        {
+//            return new MemoryCacheEntryOptions
+//            {
+//                AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1)
+//            };
+//        }
+//    }
 }

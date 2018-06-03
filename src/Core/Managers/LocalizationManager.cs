@@ -9,14 +9,13 @@ namespace Core.Managers
         int? GetLanguageId(string code);
     }
 
-    public class LocalizationManager : ManagerBase, ILocalizationManager
+    public class LocalizationManager : IManager, ILocalizationManager
     {
         private readonly DatabaseContext _database;
 
-        public LocalizationManager(DAL.DatabaseContext database, IMemoryCache cache = null) 
-            : base(cache)
+        public LocalizationManager(DAL.DatabaseContext database) 
         {
-            this._database = database;
+            _database = database;
         }
 
         public int? GetLanguageId(string code)

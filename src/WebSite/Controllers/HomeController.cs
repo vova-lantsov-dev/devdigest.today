@@ -13,6 +13,7 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using DAL;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace WebSite.Controllers
 {
@@ -36,17 +37,17 @@ namespace WebSite.Controllers
             _publicationManager = publicationManager;
         }
 
-        public override void OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext context)
+        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            base.OnActionExecuted(context);
+            await LoadHotVacanciesToViewData();
 
-            LoadHotVacanciesToViewData();
+            await base.OnActionExecutionAsync(context, next);
         }
 
-        private void LoadHotVacanciesToViewData()
+        private async Task LoadHotVacanciesToViewData()
         {
-            var vacancies = _vacancyManager
-                                .GetHotVacancies()
+            var vacancies = (await _vacancyManager
+                                .GetHotVacancies())
                                 .Select(o => new VacancyViewModel(o, _settings.WebSiteUrl))
                                 .ToList();
 

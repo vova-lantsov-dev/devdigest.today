@@ -9,12 +9,11 @@ namespace Core.Managers
         User GetBySecretKey(Guid key);
     }
 
-    public class UserManager : ManagerBase, IUserManager
+    public class UserManager : IManager, IUserManager
     {
         private readonly DAL.DatabaseContext _database;
 
         public UserManager(DatabaseContext database)
-            : base()
         {
             _database = database;
         }

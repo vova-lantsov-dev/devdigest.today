@@ -12,19 +12,20 @@ namespace Core.Managers
     public interface IVacancyManager
     {
         Task<IPagedList<DAL.Vacancy>> GetVacancies(int page = 1, int pageSize = 10);
-        IList<DAL.Vacancy> GetHotVacancies();
+        Task<IReadOnlyCollection<DAL.Vacancy>> GetHotVacancies();
         Task<DAL.Vacancy> Get(int id);
         Task<Vacancy> Save(Vacancy vacancy);
         Task IncreaseViewCount(int id);
     }
 
-    public class VacancyManager : ManagerBase, IVacancyManager
+    public class VacancyManager : IManager, IVacancyManager
     {
+        private readonly IMemoryCache _cache;
         private readonly DAL.DatabaseContext _database;
 
         public VacancyManager(IMemoryCache cache, DatabaseContext database)
-            : base(cache)
         {
+            _cache = cache;
             _database = database;
         }
 
@@ -55,21 +56,22 @@ namespace Core.Managers
             return result;
         }
 
-        public IList<DAL.Vacancy> GetHotVacancies()
+        public async Task<IReadOnlyCollection<Vacancy>> GetHotVacancies()
         {
             var key = $"hot_vacancies";
             var size = 5;
 
-            var result = _cache.Get(key) as IList<DAL.Vacancy>;
+            var result = _cache.Get(key) as IReadOnlyCollection<DAL.Vacancy>;
 
             if (result == null)
             {
-                result = _database
+                result = await _database
                     .Vacancy
                     .Include(o => o.Category)
                     .Where(o => o.Active && o.LanguageId == Core.Language.EnglishId)
                     .OrderByDescending(o => o.Id)
-                    .Take(size).ToList();
+                    .Take(size)
+                    .ToListAsync();
 
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());
             }
@@ -82,15 +84,14 @@ namespace Core.Managers
             var key = $"vacancy_{id}";
 
             var result = _cache.Get(key) as Vacancy;
-            result = null;
 
             if (result == null)
             {
-                result = _database.Vacancy.SingleOrDefault(o => o.Id == id);
+                result = await _database.Vacancy.SingleOrDefaultAsync(o => o.Id == id);
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());
             }
 
-            return await Task.FromResult(result);
+            return result;
         }
 
         public async Task<Vacancy> Save(Vacancy vacancy)
@@ -112,5 +113,10 @@ namespace Core.Managers
                 await _database.SaveChangesAsync();
             }
         }
+        
+        private static MemoryCacheEntryOptions GetMemoryCacheEntryOptions() => new MemoryCacheEntryOptions
+        {
+            AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1)
+        };
     }
 }

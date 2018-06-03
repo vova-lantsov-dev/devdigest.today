@@ -24,13 +24,14 @@ namespace Core.Managers
         Publication Get(Uri uri);
     }
 
-    public class PublicationManager : ManagerBase, IPublicationManager
+    public class PublicationManager : IManager, IPublicationManager
     {
+        private readonly IMemoryCache _cache;
         private readonly DAL.DatabaseContext _database;
 
         public PublicationManager(IMemoryCache cache, DatabaseContext database)
-            : base(cache)
         {
+            _cache = cache;
             _database = database;
         }
 
@@ -67,7 +68,7 @@ namespace Core.Managers
 
             return result;
         }
-
+        
         public IEnumerable<Category> GetCategories() => _database.Category;
 
         public async Task<Publication> Get(int id)
@@ -109,5 +110,10 @@ namespace Core.Managers
         {
             return _database.Publication.SingleOrDefault(o => o.Link.ToLower() == uri.ToString().ToLower());
         }
+        
+        private static MemoryCacheEntryOptions GetMemoryCacheEntryOptions() => new MemoryCacheEntryOptions
+        {
+            AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1)
+        };
     }
 }
