@@ -2,42 +2,49 @@
 using Core.Managers;
 using Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace WebSite.Controllers
 {
-    public class ApiController : Controller
+    public class ApiController : ControllerBase
     {
         private readonly IPublicationManager _publicationManager;
         private readonly IVacancyManager _vacancyManager;
         private readonly IUserManager _userManager;
         private readonly ILocalizationManager _localizationManager;
-        private readonly FacebookCrosspostManager _facebookCrosspostManager;
-        private readonly TelegramCrosspostManager _telegramCrosspostManager;
+        private readonly IReadOnlyCollection<ICrossPostManager> _crossPostManagers;
         private readonly Settings _settings;
 
-        public ApiController(
-            IMemoryCache cache, 
-            IPublicationManager publicationManager, 
+        public ApiController(IPublicationManager publicationManager, 
             IVacancyManager vacancyManager, 
             IUserManager userManager, 
-            ICrossPostManager crossPostManager, 
             ILocalizationManager localizationManager, 
             Settings settings, 
             FacebookCrosspostManager facebookCrosspostManager, 
             TelegramCrosspostManager telegramCrosspostManager)
         {
-            _publicationManager = publicationManager;
-            _vacancyManager = vacancyManager;
-            _userManager = userManager;
-            _localizationManager = localizationManager;
             _settings = settings;
-            _facebookCrosspostManager = facebookCrosspostManager;
-            _telegramCrosspostManager = telegramCrosspostManager;
+            _userManager = userManager;
+            _vacancyManager = vacancyManager;
+            _localizationManager = localizationManager;
+            _publicationManager = publicationManager;
+
+            _crossPostManagers = new List<ICrossPostManager>
+            {
+                facebookCrosspostManager,
+                telegramCrosspostManager
+            };
+        }
+        
+        [HttpGet]
+        [Route("api")]
+        public async Task<ActionResult<string>> GetApiVersion()
+        {
+            return await Task.FromResult($"//devdigest API v{_settings.Version}");
         }
 
         [HttpGet]
@@ -110,8 +117,10 @@ namespace WebSite.Controllers
                     //If we can embed main content into site page, so we can share this page.
                     var url = string.IsNullOrEmpty(model.EmbededPlayerCode) ? model.Link : model.ShareUrl;
 
-                    await _telegramCrosspostManager.Send(request.CategoryId, request.Comment, url);
-                    await _facebookCrosspostManager.Send(request.CategoryId, request.Comment, url);
+                    foreach (var crossPostManager in _crossPostManagers)
+                    {
+                        await crossPostManager .Send(request.CategoryId, request.Comment, url);    
+                    }
 
                     return Created(new Uri(model.ShareUrl), model);
                 }
@@ -155,9 +164,11 @@ namespace WebSite.Controllers
             if (vacancy != null)
             {
                 var model = new VacancyViewModel(vacancy, _settings.WebSiteUrl);
-
-                await _facebookCrosspostManager.Send(request.CategoryId, request.Comment, model.ShareUrl);
-                await _telegramCrosspostManager.Send(request.CategoryId, request.Comment, model.ShareUrl);
+                
+                foreach (var crossPostManager in _crossPostManagers)
+                {
+                    await crossPostManager .Send(request.CategoryId, request.Comment, model.ShareUrl);    
+                }
 
                 return Created(new Uri(model.ShareUrl), model);
             }
