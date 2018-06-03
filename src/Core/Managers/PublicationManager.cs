@@ -50,10 +50,7 @@ namespace Core.Managers
             return result;
         }
 
-        public IEnumerable<Category> GetCategories()
-        {
-            return _database.Category;
-        }
+        public IEnumerable<Category> GetCategories() => _database.Category;
 
         public async Task<Publication> Get(int id)
         {
