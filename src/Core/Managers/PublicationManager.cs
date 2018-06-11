@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Core.Logging;
 using X.PagedList;
 
 namespace Core.Managers
@@ -26,13 +27,15 @@ namespace Core.Managers
 
     public class PublicationManager : IManager, IPublicationManager
     {
+        private readonly ILogger _logger;
         private readonly IMemoryCache _cache;
-        private readonly DAL.DatabaseContext _database;
+        private readonly DatabaseContext _database;
 
-        public PublicationManager(IMemoryCache cache, DatabaseContext database)
+        public PublicationManager(IMemoryCache cache, DatabaseContext database, ILogger logger)
         {
             _cache = cache;
             _database = database;
+            _logger = logger;
         }
 
         public async Task<IPagedList<Publication>> GetPublications(

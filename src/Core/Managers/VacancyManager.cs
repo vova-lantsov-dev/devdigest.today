@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using X.PagedList;
 using System;
 using System.Collections.Generic;
+using Core.Logging;
 
 namespace Core.Managers
 {
@@ -20,13 +21,15 @@ namespace Core.Managers
 
     public class VacancyManager : IManager, IVacancyManager
     {
+        private readonly ILogger _logger;
         private readonly IMemoryCache _cache;
-        private readonly DAL.DatabaseContext _database;
+        private readonly DatabaseContext _database;
 
-        public VacancyManager(IMemoryCache cache, DatabaseContext database)
+        public VacancyManager(IMemoryCache cache, DatabaseContext database, ILogger logger)
         {
             _cache = cache;
             _database = database;
+            _logger = logger;
         }
 
         public async Task<IPagedList<DAL.Vacancy>> GetVacancies(int page = 1, int pageSize = 10)

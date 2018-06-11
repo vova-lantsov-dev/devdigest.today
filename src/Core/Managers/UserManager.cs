@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Core.Logging;
 using DAL;
 
 namespace Core.Managers
@@ -11,11 +12,13 @@ namespace Core.Managers
 
     public class UserManager : IManager, IUserManager
     {
-        private readonly DAL.DatabaseContext _database;
+        private readonly ILogger _logger;
+        private readonly DatabaseContext _database;
 
-        public UserManager(DatabaseContext database)
+        public UserManager(DatabaseContext database, ILogger logger)
         {
             _database = database;
+            _logger = logger;
         }
 
         public User GetBySecretKey(Guid key)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Core.Logging;
 using DAL;
 using Telegram.Bot;
 using X.Web;
@@ -15,9 +16,14 @@ namespace Core.Managers
 
     public class FacebookCrosspostManager : IManager, ICrossPostManager
     {
+        private readonly ILogger _logger;
         private readonly DatabaseContext _database;
 
-        public FacebookCrosspostManager(DatabaseContext database) => _database = database;
+        public FacebookCrosspostManager(DatabaseContext database, ILogger logger)
+        {
+            _database = database;
+            _logger = logger;
+        }
 
         public async Task<bool> Send(int categoryId, string comment, string link)
         {
@@ -42,9 +48,14 @@ namespace Core.Managers
 
     public class TelegramCrosspostManager : IManager, ICrossPostManager
     {
+        private readonly ILogger _logger;
         private readonly DatabaseContext _database;
 
-        public TelegramCrosspostManager(DatabaseContext database) => _database = database;
+        public TelegramCrosspostManager(DatabaseContext database, ILogger logger)
+        {
+            _database = database;
+            _logger = logger;
+        }
 
         public IEnumerable<Channel> GetTelegramChannels() => _database.Channel.ToList();
 

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Core.Logging;
 using DAL;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -11,11 +12,13 @@ namespace Core.Managers
 
     public class LocalizationManager : IManager, ILocalizationManager
     {
+        private readonly ILogger _logger;
         private readonly DatabaseContext _database;
 
-        public LocalizationManager(DAL.DatabaseContext database) 
+        public LocalizationManager(DAL.DatabaseContext database, ILogger logger)
         {
             _database = database;
+            _logger = logger;
         }
 
         public int? GetLanguageId(string code)
