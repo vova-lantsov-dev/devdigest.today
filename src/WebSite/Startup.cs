@@ -41,7 +41,7 @@ namespace WebSite
             services.AddMemoryCache();
 
             services.AddSingleton<Settings>(_ => _settings);
-            services.AddSingleton<DatabaseContext>(_ => new DatabaseContext(_settings.ConnectionString));
+            services.AddScoped<DatabaseContext>(_ => new DatabaseContext(_settings.ConnectionString));
             
             services.AddScoped(typeof(TelegramCrosspostManager));
             services.AddScoped(typeof(FacebookCrosspostManager));
