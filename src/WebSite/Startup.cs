@@ -13,20 +13,26 @@ using System.Text.Unicode;
 using Core.Managers;
 using DAL;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Serilog;
+using Serilog.Core;
 
 namespace WebSite
 {
     public class Startup
     {
+        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly Settings _settings;
-        
+
         public IConfiguration Configuration { get; }
-        
-        public Startup(IConfiguration configuration)
+
+        public Startup(IHostingEnvironment hostingEnvironment, IConfiguration configuration)
         {
+            _hostingEnvironment = hostingEnvironment;
             Configuration = configuration;
             _settings = new Settings(configuration);
-            
+
             Settings.Initialize(_settings);
         }
 
@@ -38,24 +44,11 @@ namespace WebSite
         {
             services.AddMvc();
 
-            services.AddMemoryCache();
+            var registry = new Registry(_hostingEnvironment, _settings);
 
-            services.AddSingleton<Settings>(_ => _settings);
-            services.AddScoped<DatabaseContext>(_ => new DatabaseContext(_settings.ConnectionString));
-            
-            services.AddScoped(typeof(TelegramCrosspostManager));
-            services.AddScoped(typeof(FacebookCrosspostManager));
-            
-            services.AddScoped(typeof(ILocalizationManager), typeof(LocalizationManager));
-            services.AddScoped(typeof(IPublicationManager), typeof(PublicationManager));
-            services.AddScoped(typeof(IUserManager), typeof(UserManager));
-            services.AddScoped(typeof(IVacancyManager), typeof(VacancyManager));
-            
-            services.Configure<WebEncoderOptions>(options =>
-            {
-                options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
-            });
+            registry.Register(services);
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

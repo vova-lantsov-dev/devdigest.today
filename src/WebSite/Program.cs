@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace WebSite
 {
@@ -24,6 +25,7 @@ namespace WebSite
                         .AddJsonFile($"c:/pub/devdigest.today/appsettings.json", true, true)
                         .AddEnvironmentVariables();
                 })
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .UseSerilog();
     }
 }
