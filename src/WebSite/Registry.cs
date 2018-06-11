@@ -10,27 +10,29 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Serilog;
 using Serilog.Core;
+using LogLevel = Core.Logging.LogLevel;
 
 namespace WebSite
 {
     public class Registry
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly Settings _settings;
-
+        private readonly Core.Logging.ILogger _logger;
+        private readonly IHostingEnvironment _hostingEnvironment;
+        
         public Registry(IHostingEnvironment hostingEnvironment, Settings settingst)
         {
             _hostingEnvironment = hostingEnvironment;
             _settings = settingst;
+            _logger = new Core.Logging.SerilogLoggerWrapper(CreateLogger(_hostingEnvironment));
         }
 
         public IServiceCollection Register(IServiceCollection services)
         {
-            var logger = new Core.Logging.SerilogLoggerWrapper(CreateLogger(_hostingEnvironment));
             services.AddMemoryCache();
 
             services.AddSingleton<Settings>(_ => _settings);
-            services.AddSingleton<Core.Logging.ILogger>(_ => logger);
+            services.AddSingleton<Core.Logging.ILogger>(_ => _logger);
             
             services.AddScoped<DatabaseContext>(_ => new DatabaseContext(_settings.ConnectionString));
             
@@ -46,13 +48,14 @@ namespace WebSite
             {
                 options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
             });
+            
+            _logger.Write(LogLevel.Info, "DI container initialized");
 
             return services;
         }
 
         private static Logger CreateLogger(IHostingEnvironment env)
         {
-
             var storageAccount = new CloudStorageAccount(new StorageCredentials("", ""), true);
 
             var path = $"{env.ContentRootPath}/logs/log-.log";
@@ -60,7 +63,7 @@ namespace WebSite
             return new LoggerConfiguration()
                 .WriteTo.Console()
                 .WriteTo.File(path)
-                .WriteTo.AzureTableStorage(storageAccount)
+                //.WriteTo.AzureTableStorage(storageAccount)
                 .CreateLogger();
         }
     }
