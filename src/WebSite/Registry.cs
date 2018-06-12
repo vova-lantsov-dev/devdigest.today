@@ -56,7 +56,7 @@ namespace WebSite
 
         private static Logger CreateLogger(IHostingEnvironment env)
         {
-            var storageAccount = new CloudStorageAccount(new StorageCredentials("", ""), true);
+            //var storageAccount = new CloudStorageAccount(new StorageCredentials("", ""), true);
 
             var path = $"{env.ContentRootPath}/logs/log-.log";
 
