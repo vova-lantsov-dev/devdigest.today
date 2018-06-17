@@ -1,16 +1,14 @@
 ﻿using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Core;
+using Core.Logging;
 using Core.Managers;
 using DAL;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.WebEncoders;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
 using Serilog;
 using Serilog.Core;
-using LogLevel = Core.Logging.LogLevel;
 
 namespace WebSite
 {
@@ -24,14 +22,14 @@ namespace WebSite
         {
             _hostingEnvironment = hostingEnvironment;
             _settings = settingst;
-            _logger = new Core.Logging.SerilogLoggerWrapper(CreateLogger(_hostingEnvironment));
+            _logger = new SerilogLoggerWrapper(CreateLogger(_hostingEnvironment));
         }
 
         public IServiceCollection Register(IServiceCollection services)
         {
             services.AddMemoryCache();
 
-            services.AddSingleton<Settings>(_ => _settings);
+            services.AddSingleton<Core.Settings>(_ => _settings);
             services.AddSingleton<Core.Logging.ILogger>(_ => _logger);
             
             services.AddScoped<DatabaseContext>(_ => new DatabaseContext(_settings.ConnectionString));
@@ -56,13 +54,13 @@ namespace WebSite
 
         private static Logger CreateLogger(IHostingEnvironment env)
         {
-            var storageAccount = new CloudStorageAccount(new StorageCredentials("", ""), true);
+            //var storageAccount = new CloudStorageAccount(new StorageCredentials("", ""), true);
 
             var path = $"{env.ContentRootPath}/logs/log-.log";
 
-            return new LoggerConfiguration()
+            return new Serilog.LoggerConfiguration()
                 .WriteTo.Console()
-                .WriteTo.File(path)
+                .WriteTo.File(path, rollingInterval: RollingInterval.Day)
                 //.WriteTo.AzureTableStorage(storageAccount)
                 .CreateLogger();
         }
