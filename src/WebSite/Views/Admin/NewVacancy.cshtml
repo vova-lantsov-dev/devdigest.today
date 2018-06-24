@@ -2,7 +2,9 @@
 @{
     ViewData["Title"] = "Add new vacancy";
 }
-
+@section head {
+    <link rel="stylesheet" href="lib/summernote/dist/summernote.css"/>
+}
 <h1>@ViewData["Title"]</h1>
 
 <form>
@@ -45,4 +47,32 @@
         crossorigin="anonymous"></script>
 
 <script src="/js/new-vacancy.js"></script>
-
+<script src="lib/summernote/src/js/summernote.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#vacancy-description').summernote({
+            tabsize: 2,
+            height: 300,
+            dialogsInBody: false,
+            shortcuts: false,
+            popover: {
+                image: [],
+                link: [],
+                air: []
+            },
+            toolbar: [
+                ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                ['remove', ['undo', 'redo']],
+                ['insert', ['linkDialogShow', 'link', 'unlink', 'picture', 'table']],
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['height', ['height']],
+                ['codeview']
+            ],
+            minHeight: 300
+        });
+    });
+</script>
