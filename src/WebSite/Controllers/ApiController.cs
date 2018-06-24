@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Core.Logging;
 
 namespace WebSite.Controllers
 {
@@ -19,10 +20,12 @@ namespace WebSite.Controllers
         private readonly IReadOnlyCollection<ICrossPostManager> _crossPostManagers;
         private readonly Settings _settings;
 
-        public ApiController(IPublicationManager publicationManager, 
+        public ApiController(
+            IPublicationManager publicationManager, 
             IVacancyManager vacancyManager, 
             IUserManager userManager, 
-            ILocalizationManager localizationManager, 
+            ILocalizationManager localizationManager,
+            ILogger logger,
             Settings settings, 
             FacebookCrosspostManager facebookCrosspostManager, 
             TelegramCrosspostManager telegramCrosspostManager)
@@ -36,7 +39,8 @@ namespace WebSite.Controllers
             _crossPostManagers = new List<ICrossPostManager>
             {
                 facebookCrosspostManager,
-                telegramCrosspostManager
+                telegramCrosspostManager,
+                //new FakeCrosspostManager(logger)
             };
         }
         
@@ -154,7 +158,7 @@ namespace WebSite.Controllers
                 CategoryId = request.CategoryId,
                 Date = DateTime.Now,
                 Active = true,
-                Content = null,
+                Content = request.Content,
                 Image = null,
                 Url = null,
             };
@@ -167,7 +171,7 @@ namespace WebSite.Controllers
                 
                 foreach (var crossPostManager in _crossPostManagers)
                 {
-                    await crossPostManager .Send(request.CategoryId, request.Comment, model.ShareUrl);    
+                    await crossPostManager.Send(request.CategoryId, request.Comment, model.ShareUrl);
                 }
 
                 return Created(new Uri(model.ShareUrl), model);
