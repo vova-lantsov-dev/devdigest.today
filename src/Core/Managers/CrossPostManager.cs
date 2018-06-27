@@ -35,12 +35,15 @@ namespace Core.Managers
                 {
                     var facebook = new Facebook(page.Token);
                     await facebook.PostOnWall(comment, link);
+
+                    _logger.Write(LogLevel.Info, $"Message was sent to Facebook page `{page.Name}`: `{comment}` `{link}` Category: `{categoryId}`");
                 }
 
                 return true;
             }
             catch (Exception ex)
             {
+                _logger.Write(LogLevel.Error, $"Error during send message to Facebook: `{comment}` `{link}` Category: `{categoryId}`", ex);
                 return false;
             }
         }
@@ -69,6 +72,7 @@ namespace Core.Managers
             {
                 var bot = new TelegramBotClient(channel.Token);
                 await bot.SendTextMessageAsync(channel.Name, message);
+                _logger.Write(LogLevel.Info, $"Message was sent to Telegram channel `{channel.Name}`: `{comment}` `{link}` Category: `{categoryId}`");
             }
 
             return true;
