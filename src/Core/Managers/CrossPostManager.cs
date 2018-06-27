@@ -67,12 +67,19 @@ namespace Core.Managers
             var channels = _database.Channel.Where(o => o.CategoryId == categoryId).ToList();
 
             var message = comment + Environment.NewLine + Environment.NewLine + link;
-
-            foreach (var channel in channels)
+            try
             {
-                var bot = new TelegramBotClient(channel.Token);
-                await bot.SendTextMessageAsync(channel.Name, message);
-                _logger.Write(LogLevel.Info, $"Message was sent to Telegram channel `{channel.Name}`: `{comment}` `{link}` Category: `{categoryId}`");
+                foreach (var channel in channels)
+                {
+                    var bot = new TelegramBotClient(channel.Token);
+                    await bot.SendTextMessageAsync(channel.Name, message);
+                    _logger.Write(LogLevel.Info, $"Message was sent to Telegram channel `{channel.Name}`: `{comment}` `{link}` Category: `{categoryId}`");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Write(LogLevel.Error, $"Error during send message to Telegram: `{comment}` `{link}` Category: `{categoryId}`", ex);
+                return false;
             }
 
             return true;
@@ -83,14 +90,12 @@ namespace Core.Managers
     {
         private readonly ILogger _logger;
 
-        public FakeCrosspostManager(ILogger logger)
-        {
-            _logger = logger;
-        }
+        public FakeCrosspostManager(ILogger logger) => _logger = logger;
 
-        public async  Task<bool> Send(int categoryId, string comment, string link)
+        public async Task<bool> Send(int categoryId, string comment, string link)
         {
             _logger.Write(LogLevel.Info, $"{comment} {link} {categoryId}");
+            
             return await Task.FromResult(true);
         }
     }

@@ -12,5 +12,8 @@ namespace Core
         public const string MicrosoftTechSummitWarsaw = "Microsoft Tech Summit Warsaw";
         public const string CloudDevelopersDays = "Cloud Developers Days";
         public const string Build2018 = "Build 2018";
+        public const string XamarinUkraineUserGroup = "Xamarin Ukraine User Group";
+        public const string MicrosoftAzureUkraineUserGroup = "Microsoft Azure Ukraine User Group";
+        public const string UkrainianNETCoreUserGroup = "Ukrainian .NET Core User Group";
     }
 }

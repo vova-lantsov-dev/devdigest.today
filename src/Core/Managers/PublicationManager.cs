@@ -95,6 +95,8 @@ namespace Core.Managers
             await _database.SaveChangesAsync();
             publication = _database.Publication.LastOrDefault();
 
+            _logger.Write(LogLevel.Info, $"Publication `{publication.Title}`  was saved. Id: {publication.Id}");
+
             return publication;
         }
 

@@ -89,6 +89,31 @@ namespace WebSite.Controllers
             return View("~/Views/Content/Build2018.cshtml");
         }
 
+        [Route("user-group")]
+        [Route("content/net-core-user-group")]        
+        public async Task<IActionResult> UkrainianNETCoreUserGroup()
+        {
+            ViewData["Title"] = Core.Pages.UkrainianNETCoreUserGroup;
+            
+            return View("~/Views/Content/UkrainianNETCoreUserGroup.cshtml");
+        }
+
+        [Route("content/xamarin-user-group")]
+        public async Task<IActionResult> XamarinUkraineUserGroup()
+        {
+            ViewData["Title"] = Core.Pages.XamarinUkraineUserGroup;
+
+            return View("~/Views/Content/XamarinUkraineUserGroup.cshtml");
+        }
+        
+        [Route("content/microsoft-azure-user-group")]
+        public async Task<IActionResult> MicrosoftAzureUkraineUserGroup()
+        {
+            ViewData["Title"] = Core.Pages.MicrosoftAzureUkraineUserGroup;
+
+            return View("~/Views/Content/MicrosoftAzureUkraineUserGroup.cshtml");
+        }
+
 
         [Route("content/telegram")]
         public async Task<IActionResult> Telegram()
