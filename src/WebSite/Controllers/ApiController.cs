@@ -19,6 +19,7 @@ namespace WebSite.Controllers
         private readonly ILocalizationManager _localizationManager;
         private readonly IReadOnlyCollection<ICrossPostManager> _crossPostManagers;
         private readonly Settings _settings;
+        private readonly ILogger _logger;
 
         public ApiController(
             IPublicationManager publicationManager, 
@@ -128,12 +129,12 @@ namespace WebSite.Controllers
 
                     return Created(new Uri(model.ShareUrl), model);
                 }
-
                 
                 throw new Exception("Can't save publication to databse");
             }
             catch (Exception ex)
             {
+                _logger.Write(LogLevel.Error, "Error while creating new publication", ex);
                 return BadRequest(ex.Message);
             }
         }

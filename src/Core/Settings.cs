@@ -15,7 +15,7 @@ namespace Core
             DefaultKeywords = WebUtility.HtmlDecode(configuration["DefaultKeywords"]);
             SupportEmail = "dncuug@agi.net.ua";
             FbAppId = "112150392810181";
-            Version = "1.7.0";
+            Version = "1.7.5";
         }
 
         public string ConnectionString { get; }
