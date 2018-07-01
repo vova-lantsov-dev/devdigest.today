@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Core.CognitiveServices;
+using Core.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using RestSharp;
@@ -10,9 +11,12 @@ namespace Core
     public class LanguageAnalyzer
     {
         private readonly IRestClient _client;
+        private readonly ILogger _logger;
 
-        public LanguageAnalyzer(string key)
+        public LanguageAnalyzer(string key, ILogger logger)
         {
+            _logger = logger;
+
             _client = new RestClient("https://westeurope.api.cognitive.microsoft.com/text/analytics/v2.0");
 
             _client.AddDefaultHeader("Ocp-Apim-Subscription-Key", key);
@@ -46,8 +50,9 @@ namespace Core
                     ?.FirstOrDefault();
                 return language?.Iso6391Name;
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.Write(LogLevel.Error, $"Error in `{nameof(GetTextLanguage)`} method", ex);
                 return string.Empty;
             }
         }

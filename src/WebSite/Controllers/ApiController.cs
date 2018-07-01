@@ -73,11 +73,13 @@ namespace WebSite.Controllers
 
             if (user == null)
             {
+                _logger.Write(LogLevel.Warning, $"Somebody tried to login with this key: `{request.Key}`. Text: `{request.Comment}`");
+
                 return StatusCode((int)HttpStatusCode.Forbidden, "Incorrect security key");
             }
 
             var extractor = new X.Web.MetaExtractor.Extractor();
-            var languageAnalyzer = new LanguageAnalyzer(_settings.CognitiveServicesTextAnalyticsKey);
+            var languageAnalyzer = new LanguageAnalyzer(_settings.CognitiveServicesTextAnalyticsKey, _logger);
             
             try
             {
