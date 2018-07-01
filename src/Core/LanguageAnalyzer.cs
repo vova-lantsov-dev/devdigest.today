@@ -52,7 +52,7 @@ namespace Core
             }
             catch(Exception ex)
             {
-                _logger.Write(LogLevel.Error, $"Error in `{nameof(GetTextLanguage)`} method", ex);
+                _logger.Write(LogLevel.Error, $"Error in `{nameof(GetTextLanguage)}` method", ex);
                 return string.Empty;
             }
         }
