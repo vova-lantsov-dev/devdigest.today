@@ -16,13 +16,11 @@ namespace WebSite
     {
         private readonly Settings _settings;
         private readonly Core.Logging.ILogger _logger;
-        private readonly IHostingEnvironment _hostingEnvironment;
-        
+
         public Registry(IHostingEnvironment hostingEnvironment, Settings settingst)
         {
-            _hostingEnvironment = hostingEnvironment;
             _settings = settingst;
-            _logger = new SerilogLoggerWrapper(CreateLogger(_hostingEnvironment));
+            _logger = new SerilogLoggerWrapper(CreateLogger(hostingEnvironment));
         }
 
         public IServiceCollection Register(IServiceCollection services)

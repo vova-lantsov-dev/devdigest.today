@@ -23,7 +23,10 @@ namespace Core.ViewModels
         
         private readonly string _websiteUrl;
 
-        public PublicationViewModel(DAL.Publication publication, string websiteUrl, IEnumerable<DAL.Category> categories = null)
+        public PublicationViewModel(
+            DAL.Publication publication, 
+            string websiteUrl, 
+            IReadOnlyCollection<DAL.Category> categories = null)
         {
             _websiteUrl = websiteUrl;
 
@@ -38,7 +41,6 @@ namespace Core.ViewModels
             EmbededPlayerCode = publication.EmbededPlayerCode;
             ViewsCount = publication.Views;
             
-            //ViewsCount = new Random((int)DateTime.Now.Ticks).Next(10, 915);
 
             if (publication.CategoryId.HasValue && categories != null && categories.Any())
             {
@@ -56,9 +58,6 @@ namespace Core.ViewModels
 
         }
         
-        public override string ToString()
-        {
-            return $"{Title}\r\n{Description}\r\n{Url}";
-        }
+        public override string ToString() => $"{Title}\r\n{Description}\r\n{Url}";
     }
 }

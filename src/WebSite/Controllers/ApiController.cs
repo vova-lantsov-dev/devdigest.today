@@ -47,10 +47,7 @@ namespace WebSite.Controllers
         
         [HttpGet]
         [Route("api")]
-        public async Task<ActionResult<string>> GetApiVersion()
-        {
-            return await Task.FromResult($"//devdigest API v{_settings.Version}");
-        }
+        public async Task<ActionResult<string>> GetApiVersion() => await Task.FromResult($"//devdigest API v{_settings.Version}");
 
         [HttpGet]
         [Route("api/categories")]

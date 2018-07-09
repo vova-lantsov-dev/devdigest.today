@@ -1,4 +1,5 @@
-﻿@model Core.ViewModels.VacancyViewModel
+﻿@using Core.Models
+@model Core.ViewModels.VacancyViewModel
 
 @section head {
     <meta property="og:title" content="@Model.Title" />
@@ -45,40 +46,40 @@
 
 <div class="row share">
     <div class="col-md-6">
-        @Html.Partial("_SocialButtons", new Core.Link(Model.Title, Model.ShareUrl))
+        @Html.Partial("_SocialButtons", new Link(Model.Title, Model.ShareUrl))
     </div>
     <div class="col-md-6 text-right">        
-        @if(Model.ContactType == Core.ContactType.Facebook)
+        @if(Model.ContactType == ContactType.Facebook)
         {	
             <a class="btn btn-success btn-contact"  target="_contact" href="@Model.Contact"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;View on Facebook</a>	
         }
 
-        @if(Model.ContactType == Core.ContactType.LinkedIn)
+        @if(Model.ContactType == ContactType.LinkedIn)
         {
             <a class="btn btn-success btn-contact"  target="_contact" href="@Model.Contact"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;View on LinkedIn</a>	
         }
 
-        @if(Model.ContactType == Core.ContactType.WebSite)
+        @if(Model.ContactType == ContactType.WebSite)
         {	
             <a class="btn btn-success btn-contact"  target="_contact" href="@Model.Contact"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;Go To Website</a>
         }
 
-        @if(Model.ContactType == Core.ContactType.Skype)
+        @if(Model.ContactType == ContactType.Skype)
         {
             <a class="btn btn-success btn-contact"  target="_contact" href="skype:@Model.Contact"><i class="glyphicon glyphicon-headphones"></i>&nbsp;Skype</a>	
         }
 
-        @if(Model.ContactType == Core.ContactType.Email)
+        @if(Model.ContactType == ContactType.Email)
         {
             <a class="btn btn-success btn-contact"  target="_contact" href="mailto:@Model.Contact"><i class="glyphicon glyphicon-envelope"></i>&nbsp;Send Email</a>	
         }
 
-        @if(Model.ContactType == Core.ContactType.Phone)
+        @if(Model.ContactType == ContactType.Phone)
         {
             <a class="btn btn-success btn-contact"  target="_contact" href="tel:"><i class="glyphicon glyphicon-earphone"></i>&nbsp;Call Now</a>
         }
 
-        @if(Model.ContactType == Core.ContactType.Default)
+        @if(Model.ContactType == ContactType.Default)
         {
             
         }

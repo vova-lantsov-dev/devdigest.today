@@ -1,4 +1,5 @@
-﻿@model Core.ViewModels.VacancyViewModel
+﻿@using Core.Models
+@model Core.ViewModels.VacancyViewModel
 
 <div class="vacancy-preview">
     <section>
@@ -25,7 +26,7 @@
         </div>
         <div class="row share">
             <div class="col-md-4">
-                @Html.Partial("_SocialButtons", new Core.Link(Model.Title, Model.ShareUrl))
+                @Html.Partial("_SocialButtons", new Link(Model.Title, Model.ShareUrl))
             </div>
             <div class="col-md-8 text-right">
                 <span class="label category-label label-default">@Model.Category.Name</span>

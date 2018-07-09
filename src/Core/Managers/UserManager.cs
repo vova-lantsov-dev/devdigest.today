@@ -21,10 +21,6 @@ namespace Core.Managers
             _logger = logger;
         }
 
-        public User GetBySecretKey(Guid key)
-        {
-            var secret = key.ToString();
-            return _database.User.FirstOrDefault( o => o.Key == secret);
-        }
+        public User GetBySecretKey(Guid key) => _database.User.FirstOrDefault( o => o.Key == key.ToString());
     }
 }

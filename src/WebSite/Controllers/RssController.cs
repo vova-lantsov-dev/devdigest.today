@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Core;
 using Core.Managers;
 using Core.ViewModels;
+using DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using X.Web.MetaExtractor;
 using X.Web.RSS;
 using X.Web.RSS.Enumerators;
 using X.Web.RSS.Structure;
@@ -88,7 +86,7 @@ namespace WebSite.Controllers
             return Content(xml, RssDocument.MimeType);
         }
 
-        private RssItem CreateRssItem(DAL.Publication publication)
+        private RssItem CreateRssItem(Publication publication)
         {
             var p = new PublicationViewModel(publication, _settings.WebSiteUrl);
 

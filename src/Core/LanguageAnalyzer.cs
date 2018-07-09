@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Core.CognitiveServices;
 using Core.Logging;
+using Core.Models.CognitiveServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using RestSharp;

@@ -14,7 +14,7 @@ namespace Core
 
     public class EmbededPlayer
     {
-        private Uri _uri;
+        private readonly Uri _uri;
 
         public PlayerSoure Source { get; private set; }
 
@@ -71,10 +71,7 @@ namespace Core
             }
         }
 
-        private string RenderSlideShare(Uri uri)
-        {
-            throw new NotImplementedException();
-        }
+        private string RenderSlideShare(Uri uri) => throw new NotImplementedException();
 
         private string RenderYouTube(Uri uri)
         {

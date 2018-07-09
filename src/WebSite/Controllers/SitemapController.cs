@@ -1,9 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
+﻿using System;
 using System.Threading.Tasks;
 using Core;
 using Core.Managers;
@@ -12,7 +7,6 @@ using DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using X.PagedList;
-using X.Web.MetaExtractor;
 using X.Web.Sitemap;
 
 namespace WebSite.Controllers
@@ -93,16 +87,12 @@ namespace WebSite.Controllers
             return Content(xml, "application/xml");
         }
 
-        private static Url CreateUrl(string url)
+        private static Url CreateUrl(string url) => new Url
         {
-            return new Url
-            {
-                ChangeFrequency = ChangeFrequency.Daily,
-                Location = url,
-                Priority = 0.5,
-                TimeStamp = DateTime.Now
-            };
-        }
-
+            ChangeFrequency = ChangeFrequency.Daily,
+            Location = url,
+            Priority = 0.5,
+            TimeStamp = DateTime.Now
+        };
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Core.CognitiveServices
+namespace Core.Models.CognitiveServices
 {
     public class Query
     {

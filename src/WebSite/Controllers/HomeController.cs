@@ -1,18 +1,17 @@
-﻿using Core;
-using Core.Managers;
-using Core.ViewModels;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
+﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using X.PagedList;
+using Core;
+using Core.Managers;
+using Core.ViewModels;
 using Microsoft.AspNetCore.Hosting;
-using System.IO;
-using System;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Caching.Memory;
+using X.PagedList;
 
 namespace WebSite.Controllers
 {
@@ -69,9 +68,9 @@ namespace WebSite.Controllers
         }
 
         [Route("page/{page}")]
-        public async Task<IActionResult> Page(int? categoryId = null, int page = 1, string lanugage = Core.Language.English)
+        public async Task<IActionResult> Page(int? categoryId = null, int page = 1, string lanugage = Language.English)
         {
-            ViewData["Title"] = $"{Core.Pages.Page} {page}";
+            ViewData["Title"] = $"{Pages.Page} {page}";
 
             var pagedResult = await _publicationManager.GetPublications(categoryId, page);
             var categories = await _publicationManager.GetCategories();
@@ -87,7 +86,7 @@ namespace WebSite.Controllers
         [Route("vacancies/{page}")]
         public async Task<IActionResult> Vacancies(int page = 1)
         {
-            ViewData["Title"] = $"{Core.Pages.Vacancies}";
+            ViewData["Title"] = $"{Pages.Vacancies}";
 
             var pagedResult = await _vacancyManager.GetVacancies(page);
 

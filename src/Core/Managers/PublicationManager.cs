@@ -1,11 +1,11 @@
 using System;
-using DAL;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Logging;
+using DAL;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using X.PagedList;
 
 namespace Core.Managers
@@ -16,7 +16,7 @@ namespace Core.Managers
             int? categoryId = null, 
             int page = 1,
             int pageSize = 10, 
-            int languageId = Core.Language.EnglishId);
+            int languageId = Language.EnglishId);
 
         Task<IReadOnlyCollection<Category>> GetCategories();
         Task<Publication> Get(int id);
@@ -42,7 +42,7 @@ namespace Core.Managers
             int? categoryId = null, 
             int page = 1,
             int pageSize = 10, 
-            int languageId = Core.Language.EnglishId)
+            int languageId = Language.EnglishId)
         {
             var key = $"page_{page}_{pageSize}_{categoryId}";
 

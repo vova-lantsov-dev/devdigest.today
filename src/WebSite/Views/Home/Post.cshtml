@@ -1,4 +1,5 @@
-﻿@model Core.ViewModels.PublicationViewModel
+﻿@using Core.Models
+@model Core.ViewModels.PublicationViewModel
 
 @section head {
     <meta property="og:title" content="@Model.Title" />
@@ -62,7 +63,7 @@
 
 <div class="row share">
     <div class="col-md-6">
-        @Html.Partial("_SocialButtons", new Core.Link(Model.Title, Model.ShareUrl))
+        @Html.Partial("_SocialButtons", new Link(Model.Title, Model.ShareUrl))
     </div>
     <div class="col-md-6 text-right">
         @if (Model.Url != null) {        

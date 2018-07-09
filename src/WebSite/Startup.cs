@@ -1,22 +1,8 @@
-﻿using System;
-using Core;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.WebEncoders;
-using System.Text.Encodings.Web;
-using System.Text.Unicode;
-using Core.Managers;
-using DAL;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
-using Serilog;
-using Serilog.Core;
 
 namespace WebSite
 {

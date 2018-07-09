@@ -1,20 +1,20 @@
-﻿using DAL;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using X.PagedList;
-using System;
-using System.Collections.Generic;
 using Core.Logging;
+using DAL;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using X.PagedList;
 
 namespace Core.Managers
 {
     public interface IVacancyManager
     {
-        Task<IPagedList<DAL.Vacancy>> GetVacancies(int page = 1, int pageSize = 10);
-        Task<IReadOnlyCollection<DAL.Vacancy>> GetHotVacancies();
-        Task<DAL.Vacancy> Get(int id);
+        Task<IPagedList<Vacancy>> GetVacancies(int page = 1, int pageSize = 10);
+        Task<IReadOnlyCollection<Vacancy>> GetHotVacancies();
+        Task<Vacancy> Get(int id);
         Task<Vacancy> Save(Vacancy vacancy);
         Task IncreaseViewCount(int id);
     }
@@ -32,11 +32,11 @@ namespace Core.Managers
             _logger = logger;
         }
 
-        public async Task<IPagedList<DAL.Vacancy>> GetVacancies(int page = 1, int pageSize = 10)
+        public async Task<IPagedList<Vacancy>> GetVacancies(int page = 1, int pageSize = 10)
         {
             var key = $"vacancy{page}_{pageSize}";
 
-            var result = _cache.Get(key) as IPagedList<DAL.Vacancy>;
+            var result = _cache.Get(key) as IPagedList<Vacancy>;
 
             if (result == null)
             {
@@ -45,7 +45,7 @@ namespace Core.Managers
                 var items = _database
                     .Vacancy
                     .Include(o => o.Category)
-                    .Where(o => o.Active && o.LanguageId == Core.Language.EnglishId)
+                    .Where(o => o.Active && o.LanguageId == Language.EnglishId)
                     .OrderByDescending(o => o.Id)
                     .Skip(skip)
                     .Take(pageSize).ToList();
@@ -64,14 +64,14 @@ namespace Core.Managers
             var key = $"hot_vacancies";
             var size = 5;
 
-            var result = _cache.Get(key) as IReadOnlyCollection<DAL.Vacancy>;
+            var result = _cache.Get(key) as IReadOnlyCollection<Vacancy>;
 
             if (result == null)
             {
                 result = await _database
                     .Vacancy
                     .Include(o => o.Category)
-                    .Where(o => o.Active && o.LanguageId == Core.Language.EnglishId)
+                    .Where(o => o.Active && o.LanguageId == Language.EnglishId)
                     .OrderByDescending(o => o.Id)
                     .Take(size)
                     .ToListAsync();
@@ -82,7 +82,7 @@ namespace Core.Managers
             return result;
         }
 
-        public async Task<DAL.Vacancy> Get(int id)
+        public async Task<Vacancy> Get(int id)
         {
             var key = $"vacancy_{id}";
 

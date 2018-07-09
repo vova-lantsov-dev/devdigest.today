@@ -29,11 +29,8 @@ namespace Core.Logging
     {
         private readonly Logger _log;
 
-        public SerilogLoggerWrapper(Logger log)
-        {
-            _log = log;
-        }
-        
+        public SerilogLoggerWrapper(Logger log) => _log = log;
+
         public void Write(LogLevel level, string message, Exception ex = null)
         {
             switch (level)
