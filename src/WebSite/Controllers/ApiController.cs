@@ -31,6 +31,7 @@ namespace WebSite.Controllers
             FacebookCrosspostManager facebookCrosspostManager, 
             TelegramCrosspostManager telegramCrosspostManager)
         {
+            _logger = logger;
             _settings = settings;
             _userManager = userManager;
             _vacancyManager = vacancyManager;
@@ -91,13 +92,14 @@ namespace WebSite.Controllers
                 
                 var languageCode = languageAnalyzer.GetTextLanguage(metadata.Description);
                 var languageId = _localizationManager.GetLanguageId(languageCode) ?? Language.EnglishId;
+                var image = metadata.Images.FirstOrDefault();
                 
                 var publication = new DAL.Publication
                 {
                     Title = metadata.Title,
                     Description = metadata.Description,
                     Link = metadata.Url,
-                    Image = metadata.Images.FirstOrDefault(),
+                    Image = string.IsNullOrWhiteSpace(image) || image.Length > 250 ? string.Empty : image,
                     Type = "article",
                     DateTime = DateTime.Now,
                     UserId = user.Id,
