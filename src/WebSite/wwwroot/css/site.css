@@ -30,8 +30,9 @@ footer a {
 
 .navbar-inverse {
     background: url(/images/bar_bg.jpg);
-    background-color: transparent;
-    background-position: center center;
+    background-color: #c5195d;
+    background-position: left center;
+    background-repeat: no-repeat;
 }
 
 .dropdown-header {
