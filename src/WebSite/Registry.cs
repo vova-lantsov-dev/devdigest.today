@@ -39,6 +39,7 @@ namespace WebSite
             services.AddScoped(typeof(IPublicationManager), typeof(PublicationManager));
             services.AddScoped(typeof(IUserManager), typeof(UserManager));
             services.AddScoped(typeof(IVacancyManager), typeof(VacancyManager));
+            services.AddScoped(typeof(IRepository), typeof(Repository));
             
             services.Configure<WebEncoderOptions>(options =>
             {

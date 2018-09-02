@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Core.Logging;
 using DAL;
 using Telegram.Bot;
-using X.Web;
+using X.Web.Facebook;
 
 namespace Core.Managers
 {
@@ -16,24 +16,25 @@ namespace Core.Managers
 
     public class FacebookCrosspostManager : IManager, ICrossPostManager
     {
-        private readonly ILogger _logger;
-        private readonly DatabaseContext _database;
+        private readonly IRepository _repository;
 
-        public FacebookCrosspostManager(DatabaseContext database, ILogger logger)
+        private readonly ILogger _logger;
+
+        public FacebookCrosspostManager(IRepository repository, ILogger logger)
         {
-            _database = database;
+            _repository = repository;
             _logger = logger;
         }
 
         public async Task<bool> Send(int categoryId, string comment, string link)
         {
-            var pages = _database.FacebookPage.Where(o => o.CategoryId == categoryId).ToList();
+            var pages = _repository.GetFacebookPages(categoryId); 
 
             try
             {
                 foreach (var page in pages)
                 {
-                    var facebook = new Facebook(page.Token);
+                    var facebook = new FacebookClient(page.Token);
                     await facebook.PostOnWall(comment, link);
 
                     _logger.Write(LogLevel.Info, $"Message was sent to Facebook page `{page.Name}`: `{comment}` `{link}` Category: `{categoryId}`");
@@ -52,19 +53,17 @@ namespace Core.Managers
     public class TelegramCrosspostManager : IManager, ICrossPostManager
     {
         private readonly ILogger _logger;
-        private readonly DatabaseContext _database;
+        private readonly IRepository _repository;
 
-        public TelegramCrosspostManager(DatabaseContext database, ILogger logger)
+        public TelegramCrosspostManager(IRepository repository, ILogger logger)
         {
-            _database = database;
             _logger = logger;
+            _repository = repository;
         }
-
-        public IEnumerable<Channel> GetTelegramChannels() => _database.Channel.ToList();
 
         public async Task<bool> Send(int categoryId, string comment, string link)
         {
-            var channels = _database.Channel.Where(o => o.CategoryId == categoryId).ToList();
+            var channels = _repository.GetTelegramChannels(categoryId);
 
             var message = comment + Environment.NewLine + Environment.NewLine + link;
             try
@@ -83,6 +82,11 @@ namespace Core.Managers
             }
 
             return true;
+        }
+
+        public IReadOnlyCollection<Channel> GetTelegramChannels()
+        {
+            return _repository.GetTelegramChannels();
         }
     }
 
