@@ -20,7 +20,6 @@ namespace WebSite
                     config.AddJsonFile("appsettings.json", true, true)
                         .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true)
                         .AddJsonFile($"/Users/andrew/pub/devdigest.today/appsettings.json", true, true)
-                        .AddJsonFile($"c:/pub/devdigest.today/appsettings.json", true, true)
                         .AddEnvironmentVariables();
                 })
                 .UseStartup<Startup>()
