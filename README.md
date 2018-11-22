@@ -1,6 +1,6 @@
 ## Developers Digest Website
-[![Build status](https://ci.appveyor.com/api/projects/status/g72o4w42yk90twxh?svg=true)](https://ci.appveyor.com/project/ernado-x/dot-net-in-ua)
+[![Build Status](https://dev.azure.com/AndrewGubskiy/NET%20Core%20Ukrainian%20User%20Group/_apis/build/status/dncuug.devdigest.today)](https://dev.azure.com/AndrewGubskiy/NET%20Core%20Ukrainian%20User%20Group/_build/latest?definitionId=1)
 
-Welcome to Developers Digest  web site https://devdigest.today 
+Welcome to Developers Digest website https://devdigest.today 
 
 Project supported by .NET Core Ukrainian User Group,  Microsoft Azure Ukraine User Group and Xamarin Ukraine User Group.
