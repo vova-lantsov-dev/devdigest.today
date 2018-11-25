@@ -460,3 +460,12 @@ footer ul {
     border: 1px solid #EEE;
     margin-bottom: 40px;
 }
+
+.profile-card {
+    width: 100%;
+}
+
+.profile-card  h1 {
+    font-size: 12pt;
+    font-weight: bold;
+}
