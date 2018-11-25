@@ -33,7 +33,7 @@ namespace WebSite.Controllers
         [Route("content/about")]
         public async Task<IActionResult> About()
         {
-            ViewData["Title"] = Pages.AboutUs;
+            ViewData["Title"] = Pages.AboutProject;
 
             return View("~/Views/Content/About.cshtml");
         }
