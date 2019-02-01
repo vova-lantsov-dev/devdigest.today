@@ -45,6 +45,8 @@
     @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body>
+    
+    @await Html.PartialAsync("~/Views/FacebookScripts.cshtml")    
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
@@ -87,10 +89,7 @@
                         </ul>
                     </li>  
                     
-                    <li><a href="/search">Search</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    
+                    <li><a href="/search">Search</a></li>                                 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Social networks<span class="caret"></span></a>
                         <ul class="dropdown-menu">
@@ -118,6 +117,12 @@
                             <li><a href="/content/about">@Core.Pages.AboutProject</a></li>
                         </ul>
                     </li>                            
+                </ul>
+                <ul class="nav navbar-nav">
+                    <fb:login-button 
+                        scope="public_profile,email"
+                        onlogin="checkLoginState();">
+                    </fb:login-button>   
                 </ul>
             </div><!--/.navbar-collapse -->
         </div>
