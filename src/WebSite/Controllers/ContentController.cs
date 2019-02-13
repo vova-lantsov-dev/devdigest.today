@@ -138,6 +138,9 @@ namespace WebSite.Controllers
 
         [Route("about")]
         public async Task<IActionResult> AboutRedirect() => RedirectPermanent("content/about");
+        
+        [Route("demo")]
+        public async Task<IActionResult> DemoRedirect() => RedirectPermanent("content/demo");
 
     }
 }
