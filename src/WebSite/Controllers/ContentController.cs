@@ -90,6 +90,14 @@ namespace WebSite.Controllers
             return View("~/Views/Content/Build2018.cshtml");
         }
 
+        [Route("content/demo")]
+        public async Task<IActionResult> Demo()
+        {
+            //ViewData["Title"] = Pages.Build2018;
+            
+            return View("~/Views/Content/Demo.cshtml");
+        }
+
         [Route("user-group")]
         [Route("content/net-core-user-group")]        
         public async Task<IActionResult> UkrainianNETCoreUserGroup()
