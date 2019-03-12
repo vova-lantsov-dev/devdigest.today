@@ -13,6 +13,6 @@ namespace DAL
         public string Description { get; set; }
         public string Logo { get; set; }
 
-        public Category Category { get; set; }
+        public virtual Category Category { get; set; }
     }
 }

@@ -135,9 +135,9 @@ namespace WebSite.Controllers
                 .Select(o => new FacebookViewModel()
                 {
                     Title = o.Name,
-                    Description = "", //o.Description,
-                    Logo = "https://127fc3e2e552.blob.core.windows.net/devdigest/facebook-logo-square.png", //o.Logo,
-                    Link = "https://facebook.com/" //o.Url,
+                    Description = o.Description,
+                    Logo = o.Logo,
+                    Link = o.Url,
                 }).ToList();
 
             var result = new List<SocialNetworkViewModel>();

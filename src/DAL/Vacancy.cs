@@ -21,8 +21,8 @@ namespace DAL
         public string Location { get; set; }
         public int Views { get; set; }
 
-        public Category Category { get; set; }
-        public Language Language { get; set; }
-        public User User { get; set; }
+        public virtual Category Category { get; set; }
+        public virtual Language Language { get; set; }
+        public virtual User User { get; set; }
     }
 }
