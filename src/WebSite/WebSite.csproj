@@ -19,13 +19,4 @@
   <ItemGroup>
     <Folder Include="logs" />
   </ItemGroup>
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\images\team\bg_andrew.jpg" />
-    <_ContentIncludedByDefault Remove="wwwroot\images\team\bg_anton.jpg" />
-    <_ContentIncludedByDefault Remove="wwwroot\images\team\bg_dima.jpg" />
-    <_ContentIncludedByDefault Remove="wwwroot\images\team\bg_illia.jpg" />
-    <_ContentIncludedByDefault Remove="wwwroot\images\team\dima.jpg" />
-    <_ContentIncludedByDefault Remove="wwwroot\images\team\illia.jpg" />
-    <_ContentIncludedByDefault Remove="Connected Services\Application Insights\ConnectedService.json" />
-  </ItemGroup>
 </Project>

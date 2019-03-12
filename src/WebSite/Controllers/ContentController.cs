@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Core;
@@ -10,16 +11,16 @@ namespace WebSite.Controllers
 {
     public class ContentController : Controller
     {
-        private readonly FacebookCrosspostManager _facebookCrosspostCrosspostManager;
-        private readonly TelegramCrosspostManager _telegramCrosspostCrosspostManager;
+        private readonly FacebookCrosspostManager _facebookCrospostManager;
+        private readonly TelegramCrosspostManager _telegramCrospostManager;
 
         public ContentController(
             IMemoryCache cache, 
-            FacebookCrosspostManager facebookCrosspostCrosspostManager, 
-            TelegramCrosspostManager telegramCrosspostCrosspostManager)
+            FacebookCrosspostManager facebookCrospostManager, 
+            TelegramCrosspostManager telegramCrospostManager)
         {
-            _facebookCrosspostCrosspostManager = facebookCrosspostCrosspostManager;
-            _telegramCrosspostCrosspostManager = telegramCrosspostCrosspostManager;
+            _facebookCrospostManager = facebookCrospostManager;
+            _telegramCrospostManager = telegramCrospostManager;
         }
 
         [Route("content/partners")]
@@ -89,15 +90,7 @@ namespace WebSite.Controllers
             
             return View("~/Views/Content/Build2018.cshtml");
         }
-
-        [Route("content/demo")]
-        public async Task<IActionResult> Demo()
-        {
-            //ViewData["Title"] = Pages.Build2018;
-            
-            return View("~/Views/Content/Demo.cshtml");
-        }
-
+        
         [Route("user-group")]
         [Route("content/net-core-user-group")]        
         public async Task<IActionResult> UkrainianNETCoreUserGroup()
@@ -123,32 +116,44 @@ namespace WebSite.Controllers
             return View("~/Views/Content/MicrosoftAzureUkraineUserGroup.cshtml");
         }
 
-        [Route("content/telegram")]
-        public async Task<IActionResult> Telegram()
+        [Route("content/platform")]
+        public async Task<IActionResult> Platform()
         {
-            ViewData["Title"] = Pages.Telegram;
+            ViewData["Title"] = Pages.Platform;
 
-            var channels = _telegramCrosspostCrosspostManager
-                .GetTelegramChannels()
-                .Select(o => new TelegramViewModel(o.Name)
+            var channels = (await _telegramCrospostManager.GetChannels())
+                .Select(o => new TelegramViewModel()
                 {
                     Title = o.Title,
-                    Description = o.Description,                    
-                    Logo = o.Logo
+                    Description = o.Description,
+                    Logo = o.Logo,
+                    Link = $"https://t.me/{o.Name.Replace("@", "")}"
                 }).ToList();
 
 
-            return View("~/Views/Content/Telegram.cshtml", channels);
+            var pages = (await _facebookCrospostManager.GetPages())
+                .Select(o => new FacebookViewModel()
+                {
+                    Title = o.Name,
+                    Description = "", //o.Description,
+                    Logo = "https://127fc3e2e552.blob.core.windows.net/devdigest/facebook-logo-square.png", //o.Logo,
+                    Link = "https://facebook.com/" //o.Url,
+                }).ToList();
+
+            var result = new List<SocialNetworkViewModel>();
+            result.AddRange(pages);
+            result.AddRange(channels);
+
+            return View("~/Views/Content/Platform.cshtml", result);
         }
+        
+        [Route("content/telegram")]
+        public async Task<IActionResult> Telegram()=> RedirectPermanent("/content/platform");
 
         [Route("partners")]
-        public async Task<IActionResult> PartnersRedirect() => RedirectPermanent("content/partners");
+        public async Task<IActionResult> PartnersRedirect() => RedirectPermanent("/content/partners");
 
         [Route("about")]
-        public async Task<IActionResult> AboutRedirect() => RedirectPermanent("content/about");
-        
-        [Route("demo")]
-        public async Task<IActionResult> DemoRedirect() => RedirectPermanent("content/demo");
-
+        public async Task<IActionResult> AboutRedirect() => RedirectPermanent("/content/about");
     }
 }

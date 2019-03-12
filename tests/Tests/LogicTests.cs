@@ -22,13 +22,16 @@ namespace Tests
         {
             var repositoryMock = new Mock<IRepository>();
 
-            repositoryMock.Setup(o => o.GetFacebookPages(It.IsAny<int>())).Returns((int id) => new List<FacebookPage>()
-            {
-                new FacebookPage
-                {
-                    Token = "token"
-                }
-            });
+            repositoryMock
+                .Setup(o => o.GetFacebookPages(It.IsAny<int>()))
+                .Returns((int id) =>
+                    Task.FromResult(new List<FacebookPage>()
+                    {
+                        new FacebookPage
+                        {
+                            Token = "token"
+                        }
+                    } as IReadOnlyCollection<FacebookPage>));
             
             ILogger logger = new SimpleLogger();
             IRepository repository = repositoryMock.Object;

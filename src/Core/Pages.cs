@@ -6,7 +6,7 @@ namespace Core
         public const string Partners = "Partners";
         public const string Page = "Page";
         public const string Vacancies = "Job";
-        public const string Telegram = "Our Telegram channels";
+        public const string Platform = "Our social networks";
         public const string Search = "Search";
         public const string DevelopexTechClub = "Developex Tech Club";
         public const string MicrosoftTechSummitWarsaw = "Microsoft Tech Summit Warsaw";

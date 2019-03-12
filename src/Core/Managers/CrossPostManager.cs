@@ -28,7 +28,7 @@ namespace Core.Managers
 
         public async Task<bool> Send(int categoryId, string comment, string link)
         {
-            var pages = _repository.GetFacebookPages(categoryId); 
+            var pages = await _repository.GetFacebookPages(categoryId); 
 
             try
             {
@@ -48,6 +48,8 @@ namespace Core.Managers
                 return false;
             }
         }
+
+        public async Task<IReadOnlyCollection<DAL.FacebookPage>> GetPages() => await _repository.GetFacebookPages();
     }
 
     public class TelegramCrosspostManager : IManager, ICrossPostManager
@@ -63,7 +65,7 @@ namespace Core.Managers
 
         public async Task<bool> Send(int categoryId, string comment, string link)
         {
-            var channels = _repository.GetTelegramChannels(categoryId);
+            var channels = await _repository.GetTelegramChannels(categoryId);
 
             var message = comment + Environment.NewLine + Environment.NewLine + link;
             try
@@ -84,10 +86,7 @@ namespace Core.Managers
             return true;
         }
 
-        public IReadOnlyCollection<Channel> GetTelegramChannels()
-        {
-            return _repository.GetTelegramChannels();
-        }
+        public async Task<IReadOnlyCollection<Channel>> GetChannels() => await _repository.GetTelegramChannels();
     }
 
     public class FakeCrosspostManager : IManager, ICrossPostManager

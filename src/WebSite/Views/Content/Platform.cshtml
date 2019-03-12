@@ -1,0 +1,80 @@
+﻿@using System.Collections.Immutable
+@using Core.ViewModels
+@model IList<Core.ViewModels.SocialNetworkViewModel>
+
+@{
+    Layout = "_GeneralLayout";
+
+    var telegramChannels = Model.Where(o => o is TelegramViewModel).ToImmutableList();
+    var facebookChannels = Model.Where(o => o is FacebookViewModel).ToImmutableList();
+}
+
+@section head {
+    <meta property="og:title" content="@ViewData["Title"]" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@Core.Settings.Current.WebSiteUrl" />
+    <meta property="og:image" content="@Core.Settings.Current.FacebookImage" />
+    <meta property="og:description" content="@Core.Settings.Current.DefaultDescription" />
+
+    <meta name="keywords" content="@Core.Settings.Current.DefaultKeywords" />
+    <meta name="description" content="@Core.Settings.Current.DefaultDescription" />
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <section class="col-md-12">
+        
+        <h2>Telegram</h2>
+        Here you can find our Telegram channels. We strongly recommend subscribe to them!
+        <br /><br />
+        <div class="container-fluid">
+            @for (var i=0; i<telegramChannels.Count; i++)
+            {
+                var item = telegramChannels.ElementAt(i);
+            
+                <div class="channel-preview row">
+                    <div class="col-md-3">
+                        <img class="" style="width: 100%" alt="@item.Title" src="@item.Logo" />
+                    </div>
+                    <div class="col-md-9">
+                        <h3 class="text-left">@item.Title</h3>
+                        @item.Description
+                        <div class="text-right">
+                            <a class="btn btn-default" href="@item.Link">Open channel&nbsp;<i class="glyphicon glyphicon-send"></i></a>
+                        </div>
+                    </div>                
+                </div>
+            }
+        </div>
+    </section>
+</div>
+
+<div class="row">
+    <section class="col-md-12">
+        
+        <h2>Facebook</h2>
+        Here you can find our Facebook pages and groups.
+        <br /><br />
+        <div class="container-fluid">
+        @for (var i=0; i<facebookChannels.Count; i++)
+        {
+            var item = facebookChannels.ElementAt(i);
+            
+            <div class="channel-preview row">
+                <div class="col-md-3">
+                    <img class="" style="width: 100%" alt="@item.Title" src="@item.Logo" />
+                </div>
+                <div class="col-md-9">
+                    <h3 class="text-left">@item.Title</h3>
+                    @item.Description
+                    <div class="text-right">
+                        <a class="btn btn-default" href="@item.Link">Visit page&nbsp;<i class="glyphicon glyphicon-thumbs-up"></i></a>
+                    </div>
+                </div>                
+            </div>
+        }
+        </div>
+    </section>
+</div>
+      

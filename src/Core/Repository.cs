@@ -1,38 +1,35 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DAL;
+using X.PagedList;
 
 namespace Core
 {
     public interface IRepository
     {
-        IReadOnlyCollection<FacebookPage> GetFacebookPages(int categoryId);
-        IReadOnlyCollection<Channel> GetTelegramChannels(int categoryId);
-        IReadOnlyCollection<Channel> GetTelegramChannels();
+        Task<IReadOnlyCollection<FacebookPage>> GetFacebookPages(int categoryId);
+        Task<IReadOnlyCollection<Channel>> GetTelegramChannels(int categoryId);
+        Task<IReadOnlyCollection<Channel>> GetTelegramChannels();
+        Task<IReadOnlyCollection<FacebookPage>> GetFacebookPages();
     }
     
     public class Repository : IRepository 
     {
         private readonly DatabaseContext _database;
 
-        public Repository(DatabaseContext database)
-        {
-            _database = database;
-        }
+        public Repository(DatabaseContext database) => _database = database;
 
-        public IReadOnlyCollection<FacebookPage> GetFacebookPages(int categoryId)
-        {
-            return _database.FacebookPage.Where(o => o.CategoryId == categoryId).ToList();
-        }
+        public async Task<IReadOnlyCollection<FacebookPage>> GetFacebookPages(int categoryId) => 
+            await _database.FacebookPage.Where(o => o.CategoryId == categoryId).ToListAsync();
 
-        public IReadOnlyCollection<Channel> GetTelegramChannels(int categoryId)
-        {
-            return _database.Channel.Where(o => o.CategoryId == categoryId).ToList();
-        }
+        public async Task<IReadOnlyCollection<Channel>> GetTelegramChannels(int categoryId) => 
+            await _database.Channel.Where(o => o.CategoryId == categoryId).ToListAsync();
 
-        public IReadOnlyCollection<Channel> GetTelegramChannels()
-        {
-            return _database.Channel.ToList();
-        }
+        public async Task<IReadOnlyCollection<Channel>> GetTelegramChannels() => 
+            await _database.Channel.ToListAsync();
+
+        public async Task<IReadOnlyCollection<FacebookPage>> GetFacebookPages() => 
+            await _database.FacebookPage.ToListAsync();
     }
 }

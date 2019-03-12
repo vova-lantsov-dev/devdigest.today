@@ -1,4 +1,21 @@
-﻿<!DOCTYPE html>
+﻿@using Core.Models
+@{
+    var featuredTelegramChannels = new List<Link>
+    {
+        new Link("devdigest // net core", "https://telegram.me/dncuug"),
+        new Link("devdigest // xamarin", "https://telegram.me/xamarin_ua"),
+        new Link("devdigest // azure", "https://telegram.me/azure_digest"),
+        new Link("devdigest // data science", "https://telegram.me/d_science")
+    };
+    
+    var featuredFacebookPages = new List<Link>
+    {
+        new Link(".NET Core User Group","https://facebook.com/groups/dncuug"),
+        new Link("Azure User Group","https://facebook.com/groups/azure.ua"),
+        new Link("Xamarin User Group","https://facebook.com/groups/xamarin.ua")        
+    };
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />    
@@ -28,7 +45,7 @@
      });
     </script>
 
-    <title>@ViewData["Title"] - Developers Digest | Latests news about .NET Core, Microsoft Azure and Xamarin</title>
+    <title>@ViewData["Title"] - //devdigest | Developers Digest | Latest news about .NET Core, Microsoft Azure and Xamarin</title>
 </head>
 <body>
     
@@ -80,17 +97,22 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Social networks<span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-header">Facebook</li>
-                            <li><a href="https://facebook.com/groups/dncuug">.NET Core User Group</a></li>
-                            <li><a href="https://facebook.com/groups/azure.ua/">Azure User Group</a></li>
-                            <li><a href="https://facebook.com/groups/xamarin.ua/">Xamarin User Group</a></li>
+                            
+                            @foreach (var x in featuredFacebookPages)
+                            {
+                                <li><a href=@x.Url>@x.Title</a></li>
+                            }
+                            
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Telegram</li>
-                            <li><a href="https://telegram.me/dncuug">devdigest // net core</a></li>
-                            <li><a href="https://telegram.me/xamarin_ua">devdigest // xamarin</a></li>
-                            <li><a href="https://telegram.me/azure_digest">devdigest // azure</a></li>
-                            <li><a href="https://telegram.me/d_science">devdigest // data science</a></li>
+                            
+                            @foreach (var x in featuredTelegramChannels)
+                            {
+                                <li><a href=@x.Url>@x.Title</a></li>    
+                            }
+                            
                             <li role="separator" class="divider"></li>
-                            <li><a href="/content/Telegram">All channels</a></li>
+                            <li><a href="/content/platform">View all</a></li>
                         </ul>
                     </li> 
                     
@@ -128,9 +150,10 @@
 
                 <h5>Facebook</h5>
                 <ul>
-                    <li><a href="https://facebook.com/groups/dncuug">.NET Core User Group</a></li>
-                    <li><a href="https://facebook.com/groups/azure.ua/">Azure User Group</a></li>
-                    <li><a href="https://facebook.com/groups/xamarin.ua/">Xamarin User Group</a></li>
+                    @foreach (var x in featuredFacebookPages)
+                    {
+                        <li><a href=@x.Url>@x.Title</a></li>
+                    }
                 </ul>
             </div>
             
@@ -138,9 +161,11 @@
                 <h4>&nbsp;</h4>
                 <h5>Telegram</h5>
                 <ul>
-                    <li><a href="https://telegram.me/dncuug">devdigest // net core</a></li>
-                    <li><a href="https://telegram.me/xamarin_ua">devdigest // xamarin</a></li>
-                    <li><a href="https://telegram.me/azure_digest">devdigest // azure</a></li>
+                    
+                    @foreach (var x in featuredTelegramChannels)
+                    {
+                        <li><a href=@x.Url>@x.Title</a></li>
+                    }
                 </ul>
             </div>
             <div class="col-md-2 col-sm-2">
