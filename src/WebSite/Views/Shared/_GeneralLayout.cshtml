@@ -138,7 +138,7 @@
     @RenderSection("top", required: false)
 
     <div class="container">    
-        <div class="row content">
+        <div class="content">
             @RenderBody()
         </div>
     </div>
@@ -161,7 +161,6 @@
                 <h4>&nbsp;</h4>
                 <h5>Telegram</h5>
                 <ul>
-                    
                     @foreach (var x in featuredTelegramChannels)
                     {
                         <li><a href=@x.Url>@x.Title</a></li>
