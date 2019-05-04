@@ -19,7 +19,7 @@ namespace Core.Managers.Crosspost
             _socialRepository = socialRepository;
         }
 
-        public async Task<bool> Send(int categoryId, string comment, string link)
+        public async Task Send(int categoryId, string comment, string link)
         {
             var channels = await _socialRepository.GetTelegramChannels(categoryId);
 
@@ -39,10 +39,7 @@ namespace Core.Managers.Crosspost
             catch (Exception ex)
             {
                 _logger.Write(LogLevel.Error, $"Error during send message to Telegram: `{comment}` `{link}` Category: `{categoryId}`", ex);
-                return false;
             }
-
-            return true;
         }
 
         public async Task<IReadOnlyCollection<Channel>> GetChannels() => await _socialRepository.GetTelegramChannels();

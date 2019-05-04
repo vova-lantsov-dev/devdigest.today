@@ -4,6 +4,6 @@ namespace Core.Managers
 {
     public interface ICrossPostManager
     {
-        Task<bool> Send(int categoryId, string comment, string link);
+        Task Send(int categoryId, string comment, string link);
     }
 }

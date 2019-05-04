@@ -9,11 +9,9 @@ namespace Core.Managers.Crosspost
 
         public FakeCrosspostManager(ILogger logger) => _logger = logger;
 
-        public async Task<bool> Send(int categoryId, string comment, string link)
+        public async Task Send(int categoryId, string comment, string link)
         {
             _logger.Write(LogLevel.Info, $"{comment} {link} {categoryId}");
-            
-            return await Task.FromResult(true);
         }
     }
 }

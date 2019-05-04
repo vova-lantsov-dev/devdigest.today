@@ -47,7 +47,6 @@ namespace WebSite.Controllers
                 facebookCrosspostManager,
                 telegramCrosspostManager,
                 twitterCrosspostManager
-                //new FakeCrosspostManager(logger)
             };
         }
         
@@ -70,9 +69,9 @@ namespace WebSite.Controllers
 
         [HttpPost]
         [Route("api/publications/new")]
-        public async Task<IActionResult> AddPublicaton(NewPostRequest request)
+        public async Task<IActionResult> AddPublication(NewPostRequest request)
         {
-            var user = _userManager.GetBySecretKey(request.Key);
+            var user = await _userManager.GetBySecretKey(request.Key);
 
             if (user == null)
             {

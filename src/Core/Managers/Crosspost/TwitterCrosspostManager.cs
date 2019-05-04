@@ -9,13 +9,13 @@ namespace Core.Managers.Crosspost
 {
     public class TwitterCrosspostManager : ICrossPostManager
     {
+        private static readonly Semaphore _semaphore = new Semaphore(1, 1);
+        
         private readonly IPublicationRepository _publicationRepository;
         private readonly ISocialRepository _socialRepository;
         private readonly ILogger _logger;
         
         private const int MaxTweetLength = 280;
-
-        private static readonly Semaphore _semaphore = new Semaphore(0, 1);
 
         public TwitterCrosspostManager(
             IPublicationRepository publicationRepository,
@@ -27,35 +27,41 @@ namespace Core.Managers.Crosspost
             _socialRepository = socialRepository;
         }
 
-        public async Task<bool> Send(int categoryId, string comment, string link)
+        public async Task Send(int categoryId, string comment, string link)
         {
-            try
+            var accounts = await _socialRepository.GetTwitterAccountsChannels(categoryId);
+            var categoryName = await _publicationRepository.GetCategoryName(categoryId);
+
+            var tag = $" #devdigest {ConvertToHashTag(categoryName)} ";
+            var maxMessageLength = MaxTweetLength - link.Length - tag.Length;
+            var message = Substring(comment, maxMessageLength);
+
+            var text = $"{message}{tag}{link}";
+
+            foreach (var account in accounts)
             {
-                var accounts = await _socialRepository.GetTwitterAccountsChannels(categoryId);
-                var categoryName = await _publicationRepository.GetCategoryName(categoryId);
-                
-                var tag = $" #devdigest {ConvertToHashTag(categoryName)} ";
-                var maxMessageLength = MaxTweetLength - link.Length - tag.Length;
-                var message = Substring(comment, maxMessageLength);
-
-                var text = $"{message}{tag}{link}";
-
-                foreach (var account in accounts)
+                try
                 {
                     _semaphore.WaitOne();
                     
-                    Auth.SetUserCredentials(account.ConsumerKey, account.ConsumerSecret, account.AccessToken, account.AccessTokenSecret);
+                    Auth.SetUserCredentials(
+                        account.ConsumerKey,
+                        account.ConsumerSecret,
+                        account.AccessToken,
+                        account.AccessTokenSecret);
+
                     Tweet.PublishTweet(text);
 
-                    _semaphore.Release();
+                    _logger.Write(LogLevel.Info, $"Message was sent to Twitter channel `{account.Name}`: `{comment}` `{link}` Category: `{categoryId}`");
                 }
-                
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.Write(LogLevel.Error, "Error in TwitterCrosspostManager.Send", ex);
-                return false;
+                catch (Exception ex)
+                {
+                    _logger.Write(LogLevel.Error, "Error in TwitterCrosspostManager.Send", ex);
+                }
+                finally
+                {
+                    _semaphore.Release();    
+                }
             }
         }
 
