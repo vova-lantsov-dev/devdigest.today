@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace DAL
 {
-    public class DatabaseContext : DbContext
+    public partial class DatabaseContext : DbContext
     {
         public DatabaseContext()
         {
@@ -19,6 +21,7 @@ namespace DAL
         public virtual DbSet<FacebookPage> FacebookPage { get; set; }
         public virtual DbSet<Language> Language { get; set; }
         public virtual DbSet<Publication> Publication { get; set; }
+        public virtual DbSet<TwitterAccount> TwitterAccount { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<Vacancy> Vacancy { get; set; }
 
@@ -236,6 +239,8 @@ namespace DAL
                     .HasColumnType("int(11)")
                     .HasDefaultValueSql("'1'");
 
+                entity.Property(e => e.Visible).HasColumnType("bit(1)");
+
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Publication)
                     .HasForeignKey(d => d.CategoryId)
@@ -250,6 +255,59 @@ namespace DAL
                     .WithMany(p => p.Publication)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("Publication_User_Id_fk");
+            });
+
+            modelBuilder.Entity<TwitterAccount>(entity =>
+            {
+                entity.HasIndex(e => e.AccessToken)
+                    .HasName("TwitterAccount_AccessToken_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.AccessTokenSecret)
+                    .HasName("TwitterAccount_AccessTokenSecret_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.ConsumerKey)
+                    .HasName("TwitterAccount_ConsumerKey_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.ConsumerSecret)
+                    .HasName("TwitterAccount_ConsumerSecret_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Name)
+                    .HasName("TwitterAccount_Name_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.AccessToken)
+                    .IsRequired()
+                    .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.AccessTokenSecret)
+                    .IsRequired()
+                    .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.ConsumerKey)
+                    .IsRequired()
+                    .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.ConsumerSecret)
+                    .IsRequired()
+                    .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.Logo)
+                    .IsRequired()
+                    .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnType("varchar(500)");
             });
 
             modelBuilder.Entity<User>(entity =>

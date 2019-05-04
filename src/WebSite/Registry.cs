@@ -36,13 +36,7 @@ namespace WebSite
             
             services.AddSingleton<TelegramCrosspostManager>();
             services.AddSingleton<FacebookCrosspostManager>();
-            services.AddSingleton(ctx => new TwitterCrosspostManager(
-                _settings.Twitter.ConsumerKey,
-                _settings.Twitter.ConsumerSecret,
-                _settings.Twitter.AccessToken,
-                _settings.Twitter.AccessTokenSecret,
-                ctx.GetService<IPublicationRepository>(),
-                _logger));
+            services.AddSingleton<TwitterCrosspostManager>();
             
             services.AddScoped<ILocalizationManager, LocalizationManager>();
             services.AddScoped<IPublicationManager, PublicationManager>();

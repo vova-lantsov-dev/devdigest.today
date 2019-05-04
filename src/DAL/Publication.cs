@@ -19,6 +19,7 @@ namespace DAL
         public string EmbededPlayerCode { get; set; }
         public int? LanguageId { get; set; }
         public int Views { get; set; }
+        public bool Visible { get; set; }
 
         public virtual Category Category { get; set; }
         public virtual Language Language { get; set; }

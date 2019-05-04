@@ -53,9 +53,10 @@ namespace Tests
         {
             ILogger logger = new SimpleLogger();
             
-            var repositoryMock = new Mock<IPublicationRepository>();
+            var publicationRepositoryMock = new Mock<IPublicationRepository>();
+            var socialRepositoryMock = new Mock<ISocialRepository>();
 
-            repositoryMock
+            publicationRepositoryMock
                 .Setup(o => o.GetCategoryName(It.IsAny<int>()))
                 .Returns((int id) =>
                 {
@@ -64,19 +65,9 @@ namespace Tests
                 });
                 
 
-            var consumerKey = "";
-            var consumerSecret = "";
-            var accessToken = "";
-            var accessTokenSecret = "";
-
-            var repository = repositoryMock.Object;
-            
             var manager = new TwitterCrosspostManager(
-                consumerKey,
-                consumerSecret,
-                accessToken,
-                accessTokenSecret,
-                repository,
+                publicationRepositoryMock.Object,
+                socialRepositoryMock.Object,
                 logger);
 
             var categoryId = 1;

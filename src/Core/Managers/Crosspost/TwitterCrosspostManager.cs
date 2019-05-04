@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Core.Logging;
 using Core.Repositories;
@@ -9,37 +10,46 @@ namespace Core.Managers.Crosspost
     public class TwitterCrosspostManager : ICrossPostManager
     {
         private readonly IPublicationRepository _publicationRepository;
+        private readonly ISocialRepository _socialRepository;
         private readonly ILogger _logger;
         
         private const int MaxTweetLength = 280;
 
+        private static readonly Semaphore _semaphore = new Semaphore(0, 1);
+
         public TwitterCrosspostManager(
-            string consumerKey, 
-            string consumerSecret, 
-            string accessToken,
-            string accessTokenSecret,
             IPublicationRepository publicationRepository,
+            ISocialRepository socialRepository,
             ILogger logger)
         {
             _publicationRepository = publicationRepository;
             _logger = logger;
-            
-            Auth.SetUserCredentials(consumerKey, consumerSecret, accessToken, accessTokenSecret);
+            _socialRepository = socialRepository;
         }
 
         public async Task<bool> Send(int categoryId, string comment, string link)
         {
             try
             {
-                string categoryName = await _publicationRepository.GetCategoryName(categoryId);
+                var accounts = await _socialRepository.GetTwitterAccountsChannels(categoryId);
+                var categoryName = await _publicationRepository.GetCategoryName(categoryId);
+                
                 var tag = $" #devdigest {ConvertToHashTag(categoryName)} ";
                 var maxMessageLength = MaxTweetLength - link.Length - tag.Length;
                 var message = Substring(comment, maxMessageLength);
 
                 var text = $"{message}{tag}{link}";
 
-                Tweet.PublishTweet(text);
+                foreach (var account in accounts)
+                {
+                    _semaphore.WaitOne();
+                    
+                    Auth.SetUserCredentials(account.ConsumerKey, account.ConsumerSecret, account.AccessToken, account.AccessTokenSecret);
+                    Tweet.PublishTweet(text);
 
+                    _semaphore.Release();
+                }
+                
                 return true;
             }
             catch (Exception ex)

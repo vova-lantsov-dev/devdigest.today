@@ -11,17 +11,17 @@ namespace Core.Managers.Crosspost
     public class TelegramCrosspostManager : ICrossPostManager
     {
         private readonly ILogger _logger;
-        private readonly ISocialRepository _repository;
+        private readonly ISocialRepository _socialRepository;
 
-        public TelegramCrosspostManager(ISocialRepository repository, ILogger logger)
+        public TelegramCrosspostManager(ISocialRepository socialRepository, ILogger logger)
         {
             _logger = logger;
-            _repository = repository;
+            _socialRepository = socialRepository;
         }
 
         public async Task<bool> Send(int categoryId, string comment, string link)
         {
-            var channels = await _repository.GetTelegramChannels(categoryId);
+            var channels = await _socialRepository.GetTelegramChannels(categoryId);
 
             var message = comment + Environment.NewLine + Environment.NewLine + link;
             
@@ -45,6 +45,6 @@ namespace Core.Managers.Crosspost
             return true;
         }
 
-        public async Task<IReadOnlyCollection<Channel>> GetChannels() => await _repository.GetTelegramChannels();
+        public async Task<IReadOnlyCollection<Channel>> GetChannels() => await _socialRepository.GetTelegramChannels();
     }
 }
