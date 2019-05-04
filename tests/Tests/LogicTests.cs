@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Core;
 using Core.Logging;
 using Core.Managers;
+using Core.Managers.Crosspost;
+using Core.Repositories;
 using DAL;
 using Moq;
 using Xunit;
@@ -20,7 +22,7 @@ namespace Tests
         //[Fact]
         public async Task TestFbPosting()
         {
-            var repositoryMock = new Mock<IRepository>();
+            var repositoryMock = new Mock<ISocialRepository>();
 
             repositoryMock
                 .Setup(o => o.GetFacebookPages(It.IsAny<int>()))
@@ -34,7 +36,7 @@ namespace Tests
                     } as IReadOnlyCollection<FacebookPage>));
             
             ILogger logger = new SimpleLogger();
-            IRepository repository = repositoryMock.Object;
+            ISocialRepository repository = repositoryMock.Object;
             
             var manager = new FacebookCrosspostManager(repository, logger);
 
@@ -44,5 +46,45 @@ namespace Tests
             
             await manager.Send(categoryId, comment, link);
         }
+
+
+        //[Fact]
+        public async Task TestTwitterPosting()
+        {
+            ILogger logger = new SimpleLogger();
+            
+            var repositoryMock = new Mock<IPublicationRepository>();
+
+            repositoryMock
+                .Setup(o => o.GetCategoryName(It.IsAny<int>()))
+                .Returns((int id) =>
+                {
+                    //
+                    return Task.FromResult(".NET Core");
+                });
+                
+
+            var consumerKey = "";
+            var consumerSecret = "";
+            var accessToken = "";
+            var accessTokenSecret = "";
+
+            var repository = repositoryMock.Object;
+            
+            var manager = new TwitterCrosspostManager(
+                consumerKey,
+                consumerSecret,
+                accessToken,
+                accessTokenSecret,
+                repository,
+                logger);
+
+            var categoryId = 1;
+            var comment = "test";
+            var link = "http://example.com";
+
+            await manager.Send(categoryId, comment, link);
+        }
+
     }
 }

@@ -6,14 +6,14 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using RestSharp;
 
-namespace Core
+namespace Core.Services
 {
-    public class LanguageAnalyzer
+    public class LanguageAnalyzerService
     {
         private readonly IRestClient _client;
         private readonly ILogger _logger;
 
-        public LanguageAnalyzer(string key, ILogger logger)
+        public LanguageAnalyzerService(string key, ILogger logger)
         {
             _logger = logger;
 
@@ -26,9 +26,7 @@ namespace Core
 
         public string GetTextLanguage(string text)
         {
-            var request = new RestRequest("languages", Method.POST);
-
-            request.RequestFormat = DataFormat.Json;
+            var request = new RestRequest("languages", Method.POST) {RequestFormat = DataFormat.Json};
 
             var body = new Query
             {
@@ -44,15 +42,20 @@ namespace Core
 
             try
             {
-                IRestResponse response = _client.Execute(request);
+                var response = _client.Execute(request);
                 var apiResponse = JsonConvert.DeserializeObject<Response>(response.Content);
-                var language = apiResponse.Documents?.Select(o => o.DetectedLanguages).FirstOrDefault()
-                    ?.FirstOrDefault();
-                return language?.Iso6391Name;
+
+                var language = apiResponse.Documents?
+                    .Select(o => o.DetectedLanguages.FirstOrDefault())
+                    .Select(o => o?.Iso6391Name?.Trim()?.ToLower())
+                    .FirstOrDefault();
+
+                return language ?? string.Empty;
             }
             catch(Exception ex)
             {
                 _logger.Write(LogLevel.Error, $"Error in `{nameof(GetTextLanguage)}` method", ex);
+                
                 return string.Empty;
             }
         }

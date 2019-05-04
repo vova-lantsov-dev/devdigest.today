@@ -1,4 +1,4 @@
-namespace Core
+namespace Core.Web
 {
     public static class Pages
     {
@@ -15,5 +15,6 @@ namespace Core
         public const string XamarinUkraineUserGroup = "Xamarin Ukraine User Group";
         public const string MicrosoftAzureUkraineUserGroup = "Microsoft Azure Ukraine User Group";
         public const string UkrainianNETCoreUserGroup = "Ukrainian .NET Core User Group";
+        public const string Build2019 = "// build 2019 /";
     }
 }

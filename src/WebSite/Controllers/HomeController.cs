@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Core;
 using Core.Managers;
 using Core.ViewModels;
+using Core.Web;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

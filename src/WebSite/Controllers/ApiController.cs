@@ -8,6 +8,9 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Core.Logging;
+using Core.Managers.Crosspost;
+using Core.Services;
+using Core.Web;
 
 namespace WebSite.Controllers
 {
@@ -29,7 +32,8 @@ namespace WebSite.Controllers
             ILogger logger,
             Settings settings, 
             FacebookCrosspostManager facebookCrosspostManager, 
-            TelegramCrosspostManager telegramCrosspostManager)
+            TelegramCrosspostManager telegramCrosspostManager,
+            TwitterCrosspostManager twitterCrosspostManager)
         {
             _logger = logger;
             _settings = settings;
@@ -42,6 +46,7 @@ namespace WebSite.Controllers
             {
                 facebookCrosspostManager,
                 telegramCrosspostManager,
+                twitterCrosspostManager
                 //new FakeCrosspostManager(logger)
             };
         }
@@ -77,13 +82,13 @@ namespace WebSite.Controllers
             }
 
             var extractor = new X.Web.MetaExtractor.Extractor();
-            var languageAnalyzer = new LanguageAnalyzer(_settings.CognitiveServicesTextAnalyticsKey, _logger);
+            var languageAnalyzer = new LanguageAnalyzerService(_settings.CognitiveServicesTextAnalyticsKey, _logger);
             
             try
             {
-                var metadata = await extractor.ExtractAsync(new Uri(request.Link));
+                var metadata = await extractor.ExtractAsync(request.Link);
 
-                var existingPublication =  _publicationManager.Get(new Uri(metadata.Url));
+                var existingPublication = await _publicationManager.Get(new Uri(metadata.Url));
 
                 if (existingPublication != null)
                 {
@@ -91,7 +96,7 @@ namespace WebSite.Controllers
                 }
                 
                 var languageCode = languageAnalyzer.GetTextLanguage(metadata.Description);
-                var languageId = _localizationManager.GetLanguageId(languageCode) ?? Language.EnglishId;
+                var languageId = await _localizationManager.GetLanguageId(languageCode) ?? Language.EnglishId;
                 var image = metadata.Images.FirstOrDefault();
                 
                 var publication = new DAL.Publication
@@ -108,10 +113,11 @@ namespace WebSite.Controllers
                     LanguageId = languageId
                 };
 
-                if (EmbededPlayer.GetPlayerSoure(request.Link) != null)
+                var player = EmbeddedPlayerFactory.CreatePlayer(request.Link);
+                
+                if (player != null)
                 {
-                    var player = new EmbededPlayer(request.Link);
-                    publication.EmbededPlayerCode = player.Render();
+                    publication.EmbededPlayerCode = await player.GetEmbeddedPlayerUrl(request.Link);
                 }
 
                 publication = await _publicationManager.Save(publication);
@@ -125,7 +131,7 @@ namespace WebSite.Controllers
 
                     foreach (var crossPostManager in _crossPostManagers)
                     {
-                        await crossPostManager .Send(request.CategoryId, request.Comment, url);    
+                        await crossPostManager.Send(request.CategoryId, request.Comment, url);
                     }
 
                     return Created(new Uri(model.ShareUrl), model);

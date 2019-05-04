@@ -1,10 +1,8 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace DAL
 {
-    public partial class DatabaseContext : DbContext
+    public class DatabaseContext : DbContext
     {
         public DatabaseContext()
         {
@@ -24,7 +22,7 @@ namespace DAL
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<Vacancy> Vacancy { get; set; }
 
-        private string _connectionString;
+        private readonly string _connectionString;
 
         public DatabaseContext(string connectionString)
         {

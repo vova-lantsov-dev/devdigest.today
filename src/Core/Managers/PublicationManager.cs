@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Logging;
+using Core.Repositories;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -22,20 +23,20 @@ namespace Core.Managers
         Task<Publication> Get(int id);
         Task<Publication> Save(Publication publication);
         Task IncreaseViewCount(int id);
-        Publication Get(Uri uri);
+        Task<Publication> Get(Uri uri);
     }
 
-    public class PublicationManager : IManager, IPublicationManager
+    public class PublicationManager : IPublicationManager
     {
         private readonly ILogger _logger;
         private readonly IMemoryCache _cache;
-        private readonly DatabaseContext _database;
-
-        public PublicationManager(IMemoryCache cache, DatabaseContext database, ILogger logger)
+        private readonly IPublicationRepository _repository;
+        
+        public PublicationManager(IMemoryCache cache, ILogger logger, IPublicationRepository repository)
         {
             _cache = cache;
-            _database = database;
             _logger = logger;
+            _repository = repository;
         }
 
         public async Task<IPagedList<Publication>> GetPublications(
@@ -50,20 +51,8 @@ namespace Core.Managers
 
             if (result == null)
             {
-                var skip = (page - 1) * pageSize;
-
-                var items = _database
-                    .Publication
-                    .Where(o => o.CategoryId == categoryId || categoryId == null)
-                    .Where(o => o.LanguageId == languageId)
-                    .OrderByDescending(o => o.DateTime)
-                    .Skip(skip)
-                    .Take(pageSize).ToList();
-
-                var totalItemsCount = await _database.Publication
-                    .Where(o => o.CategoryId == categoryId || categoryId == null)
-                    .Where(o => o.LanguageId == languageId)
-                    .CountAsync();
+                var items = await _repository.GetPublications(categoryId, languageId, page, pageSize);
+                var totalItemsCount = await _repository.GetPublicationsCount(categoryId, languageId);
 
                 result = new StaticPagedList<Publication>(items, page, pageSize, totalItemsCount);
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());
@@ -71,8 +60,8 @@ namespace Core.Managers
 
             return result;
         }
-        
-        public async Task<IReadOnlyCollection<Category>> GetCategories() => await _database.Category.ToListAsync();
+
+        public async Task<IReadOnlyCollection<Category>> GetCategories() => await _repository.GetCategories();
 
         public async Task<Publication> Get(int id)
         {
@@ -82,40 +71,19 @@ namespace Core.Managers
 
             if (result == null)
             {
-                result = _database.Publication.SingleOrDefault(o => o.Id == id);
+                result = await _repository.GetPublication(id);
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());
             }
 
             return await Task.FromResult(result);
         }
 
-        public async Task<Publication> Save(Publication publication)
-        {
-            _database.Add(publication);
-            await _database.SaveChangesAsync();
-            publication = _database.Publication.LastOrDefault();
+        public async Task<Publication> Save(Publication publication) => await _repository.Save(publication);
 
-            _logger.Write(LogLevel.Info, $"Publication `{publication.Title}`  was saved. Id: {publication.Id}");
+        public async Task IncreaseViewCount(int id) => await _repository.IncreasePublicationViewCount(id);
 
-            return publication;
-        }
+        public async Task<Publication> Get(Uri uri) => await _repository.GetPublication(uri);
 
-        public async Task IncreaseViewCount(int id)
-        {
-            var publication = _database.Publication.SingleOrDefault(o => o.Id == id);
-
-            if (publication != null)
-            {
-                publication.Views++;
-                await _database.SaveChangesAsync();
-            }
-        }
-
-        public Publication Get(Uri uri)
-        {
-            return _database.Publication.SingleOrDefault(o => o.Link.ToLower() == uri.ToString().ToLower());
-        }
-        
         private static MemoryCacheEntryOptions GetMemoryCacheEntryOptions() => new MemoryCacheEntryOptions
         {
             AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1)

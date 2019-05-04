@@ -1,4 +1,5 @@
 ﻿@using Core.Models
+@using Core.Web
 @{
     var featuredTelegramChannels = new List<Link>
     {
@@ -63,7 +64,6 @@
                             <li><a href="/page/1?categoryId=1">.NET Core</a></li>
                             <li><a href="/page/1?categoryId=2">Xamarin</a></li>
                             <li><a href="/page/1?categoryId=3">Azure</a></li>
-                            <li><a href="/page/1?categoryId=5">Go</a></li>
                             <li><a href="/page/1?categoryId=4">Data Science</a></li>
                         </ul>
                     </li>  
@@ -74,13 +74,14 @@
                             Events&nbsp; @*<span class="label label-danger">Hot!</span>*@ <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">No actual events</a></li>
+                            @* <li><a href="#">No actual events</a></li> *@
+                            <li><a href="/content/build-2019">@Pages.Build2019</a></li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Archive</li>
-                            <li><a href="/content/developex-tech-club">@Core.Pages.DevelopexTechClub</a></li>
-                            <li><a href="/content/microsoft-tech-summit-warsaw">@Core.Pages.MicrosoftTechSummitWarsaw</a></li>
-                            <li><a href="/content/build-2018">@Core.Pages.Build2018</a></li>
-                            <li><a href="/content/cloud-developers-days">@Core.Pages.CloudDevelopersDays</a></li>
+                            <li><a href="/content/developex-tech-club">@Pages.DevelopexTechClub</a></li>
+                            <li><a href="/content/microsoft-tech-summit-warsaw">@Pages.MicrosoftTechSummitWarsaw</a></li>
+                            <li><a href="/content/build-2018">@Pages.Build2018</a></li>
+                            <li><a href="/content/cloud-developers-days">@Pages.CloudDevelopersDays</a></li>
                         </ul>
                     </li>  
                     
@@ -113,8 +114,8 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="/content/partners">@Core.Pages.Partners</a></li>
-                            <li><a href="/content/about">@Core.Pages.AboutProject</a></li>
+                            <li><a href="/content/partners">@Pages.Partners</a></li>
+                            <li><a href="/content/about">@Pages.AboutProject</a></li>
                         </ul>
                     </li>                            
                 </ul>

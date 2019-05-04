@@ -3,7 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Core;
 using Core.Managers;
+using Core.Managers.Crosspost;
 using Core.ViewModels;
+using Core.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -11,16 +13,16 @@ namespace WebSite.Controllers
 {
     public class ContentController : Controller
     {
-        private readonly FacebookCrosspostManager _facebookCrospostManager;
-        private readonly TelegramCrosspostManager _telegramCrospostManager;
+        private readonly FacebookCrosspostManager _facebookCrosspostManager;
+        private readonly TelegramCrosspostManager _telegramCrosspostManager;
 
         public ContentController(
             IMemoryCache cache, 
-            FacebookCrosspostManager facebookCrospostManager, 
-            TelegramCrosspostManager telegramCrospostManager)
+            FacebookCrosspostManager facebookCrosspostManager, 
+            TelegramCrosspostManager telegramCrosspostManager)
         {
-            _facebookCrospostManager = facebookCrospostManager;
-            _telegramCrospostManager = telegramCrospostManager;
+            _facebookCrosspostManager = facebookCrosspostManager;
+            _telegramCrosspostManager = telegramCrosspostManager;
         }
 
         [Route("content/partners")]
@@ -121,7 +123,7 @@ namespace WebSite.Controllers
         {
             ViewData["Title"] = Pages.Platform;
 
-            var channels = (await _telegramCrospostManager.GetChannels())
+            var channels = (await _telegramCrosspostManager.GetChannels())
                 .Select(o => new TelegramViewModel()
                 {
                     Title = o.Title,
@@ -131,7 +133,7 @@ namespace WebSite.Controllers
                 }).ToList();
 
 
-            var pages = (await _facebookCrospostManager.GetPages())
+            var pages = (await _facebookCrosspostManager.GetPages())
                 .Select(o => new FacebookViewModel()
                 {
                     Title = o.Name,
