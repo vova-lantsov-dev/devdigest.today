@@ -66,7 +66,7 @@ namespace Core.Managers.Crosspost
         }
 
         private static string ConvertToHashTag(string text) =>
-            text
+            "#" + text
                 .Replace(".", "")
                 .Replace("#", "")
                 .Replace(" ", "_")
