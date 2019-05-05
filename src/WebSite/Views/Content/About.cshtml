@@ -1,4 +1,8 @@
-﻿@section head {
+﻿@{
+    ViewData["Title"] = Core.Web.Pages.AboutProject;
+}
+
+@section head {
     <meta property="og:title" content="@ViewData["Title"]" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="@Core.Settings.Current.WebSiteUrl" />
