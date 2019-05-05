@@ -1,2 +1,2 @@
 [config]
-project = src/WebSite.csproj
+project = src/WebSite/WebSite.csproj
