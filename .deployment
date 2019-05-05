@@ -1,2 +1,2 @@
 [config]
-project = src/WebSite/WebSite.csproj
+pcommand = deploy.sh
