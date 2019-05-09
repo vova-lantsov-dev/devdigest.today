@@ -18,31 +18,33 @@
 }
 
 @section top {
-    <a href="https://www.microsoft.com/en-us/build" style="text-align: center !important; display: block; background-color: rgba(232, 237,238, 1);">
-        <img style="display: block; margin: auto;" alt="Microsoft Build 2019" class="img-responsive" src="https://info.microsoft.com/rs/157-GQE-382/images/Build_2019_web_header_1900x300.jpg"/>
-    </a>
-    
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
-        <div class="container"> 
-           
-            <h1>Welcome to the daily developers digest!</h1>        
+        <div class="container">
+
+            <h1>Welcome to the daily developers digest!</h1>
             <h3 style="color: #FFF">All news and events will be here!</h3>
             <span style="color: #FFF">
                 Project supported by .NET Core Ukrainian User Group,  Microsoft Azure Ukraine User Group and Xamarin Ukraine User Group!
             </span>
-           
+
         </div>
     </div>
 }
 
-@for (var i=0; i<Model.Count(); i++)
-{    
-    @Html.Partial("_Publication", Model[i])
+@for (var i = 0; i < Model.Count(); i++)
+{
+    @await Html.PartialAsync("_Publication", Model[i])
 
-    if (i == 2) { @Html.Partial("_InFeedAd") }
+    if (i == 2)
+    {
+        @await Html.PartialAsync("_InFeedAd")
+    }
 
-    if (i == 0) { @Html.Partial("_SmartContent") }    
+    if (i == 0)
+    {
+        @await Html.PartialAsync("_SmartContent")
+    }
 }
 
 @Html.PagedListPager(Model, page => $"/page/{page}")
