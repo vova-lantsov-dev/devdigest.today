@@ -16,4 +16,8 @@ namespace Core.ViewModels
     public class FacebookViewModel : SocialNetworkViewModel
     {
     }
+    
+    public class TwitterViewModel : SocialNetworkViewModel
+    {
+    }
 }

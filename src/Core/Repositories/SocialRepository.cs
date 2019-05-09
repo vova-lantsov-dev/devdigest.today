@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Logging;
@@ -15,6 +16,7 @@ namespace Core.Repositories
         Task<IReadOnlyCollection<Channel>> GetTelegramChannels(int categoryId);
         Task<IReadOnlyCollection<Channel>> GetTelegramChannels();
         Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccountsChannels(int categoryId);
+        Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccounts();
     }
 
     public class SocialRepository : ISocialRepository
@@ -39,6 +41,8 @@ namespace Core.Repositories
 
         public async Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccountsChannels(int categoryId)
             => await _database.TwitterAccount.ToListAsync();
+
+        public async Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccounts() => await _database.TwitterAccount.ToListAsync();
 
         public async Task<IReadOnlyCollection<FacebookPage>> GetFacebookPages() =>
             await _database.FacebookPage.ToListAsync();

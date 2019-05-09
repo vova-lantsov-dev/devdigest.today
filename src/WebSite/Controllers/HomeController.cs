@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -6,6 +8,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Core;
 using Core.Managers;
+using Core.Managers.Crosspost;
 using Core.ViewModels;
 using Core.Web;
 using Microsoft.AspNetCore.Hosting;
@@ -18,6 +21,9 @@ namespace WebSite.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly FacebookCrosspostManager _facebookCrosspostManager;
+        private readonly TwitterCrosspostManager _twitterCrosspostManager;
+        private readonly TelegramCrosspostManager _telegramCrosspostManager;
         private readonly IPublicationManager _publicationManager;
         private readonly IVacancyManager _vacancyManager;
         private readonly IHostingEnvironment _env;
@@ -29,13 +35,19 @@ namespace WebSite.Controllers
             IHostingEnvironment env, 
             IVacancyManager vacancyManager, 
             IPublicationManager publicationManager, 
-            Settings settings)
+            Settings settings, 
+            TelegramCrosspostManager telegramCrosspostManager, 
+            FacebookCrosspostManager facebookCrosspostManager,
+            TwitterCrosspostManager twitterCrosspostManager)
         {
             _cache = cache;
             _env = env;
             _vacancyManager = vacancyManager;
             _publicationManager = publicationManager;
             _settings = settings;
+            _telegramCrosspostManager = telegramCrosspostManager;
+            _facebookCrosspostManager = facebookCrosspostManager;
+            _twitterCrosspostManager = twitterCrosspostManager;
         }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -47,10 +59,9 @@ namespace WebSite.Controllers
 
         private async Task LoadHotVacanciesToViewData()
         {
-            var vacancies = (await _vacancyManager
-                                .GetHotVacancies())
-                                .Select(o => new VacancyViewModel(o, _settings.WebSiteUrl))
-                                .ToList();
+            var vacancies = (await _vacancyManager.GetHotVacancies())
+                .Select(o => new VacancyViewModel(o, _settings.WebSiteUrl))
+                .ToImmutableList();
 
             ViewData["vacancies"] = vacancies;
         }
@@ -87,7 +98,7 @@ namespace WebSite.Controllers
         [Route("vacancies/{page}")]
         public async Task<IActionResult> Vacancies(int page = 1)
         {
-            ViewData["Title"] = $"{Pages.Vacancies}";
+            ViewData["Title"] = Pages.Vacancies;
 
             var pagedResult = await _vacancyManager.GetVacancies(page);
 
@@ -100,18 +111,20 @@ namespace WebSite.Controllers
         public async Task<IActionResult> Vacancy(int id)
         {
             var vacancy = await _vacancyManager.Get(id);
+            
             await _vacancyManager.IncreaseViewCount(id);
 
             if (vacancy == null)
             {
-                return StatusCode((int)HttpStatusCode.NotFound);
+                return NotFound();
             }
 
             var path = Path.Combine(_env.WebRootPath, "images/vacancy");
-            var file = Directory.GetFiles(path).OrderBy(o => Guid.NewGuid()).Select(o => Path.GetFileName(o)).FirstOrDefault();
+            var file = Directory.GetFiles(path).OrderBy(o => Guid.NewGuid()).Select(Path.GetFileName).FirstOrDefault();
             var image = $"{_settings.WebSiteUrl}images/vacancy/{file}";
 
             var model = new VacancyViewModel(vacancy, _settings.WebSiteUrl, image);
+            
             ViewData["Title"] = model.Title;
 
             return View("~/Views/Home/Vacancy.cshtml", model);
@@ -121,15 +134,17 @@ namespace WebSite.Controllers
         public async Task<IActionResult> Post(int id)
         {
             var publication = await _publicationManager.Get(id);
+            
             await _publicationManager.IncreaseViewCount(id);
 
             if (publication == null)
             {
-                return StatusCode((int)HttpStatusCode.NotFound);
+                return NotFound();
             }
 
             var categories = await _publicationManager.GetCategories();
             var model = new PublicationViewModel(publication, _settings.WebSiteUrl, categories);
+            
             ViewData["Title"] = model.Title;
 
             return View("~/Views/Home/Post.cshtml", model);
@@ -138,6 +153,49 @@ namespace WebSite.Controllers
         public async Task<IActionResult> Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        
+        [Route("platform")]
+        public async Task<IActionResult> Platform()
+        {
+            ViewData["Title"] = Pages.Platform;
+
+            var channels = (await _telegramCrosspostManager.GetChannels())
+                .Select(o => new TelegramViewModel()
+                {
+                    Title = o.Title,
+                    Description = o.Description,
+                    Logo = o.Logo,
+                    Link = $"https://t.me/{o.Name.Replace("@", "")}"
+                }).ToImmutableList();
+
+
+            var pages = (await _facebookCrosspostManager.GetPages())
+                .Select(o => new FacebookViewModel()
+                {
+                    Title = o.Name,
+                    Description = o.Description,
+                    Logo = o.Logo,
+                    Link = o.Url,
+                }).ToImmutableList();
+
+
+            var twitters = (await _twitterCrosspostManager.GetAccounts())
+                .Select(o => new TwitterViewModel()
+                {
+                    Title = o.Name,
+                    Description = o.Description,
+                    Logo = o.Logo,
+                    Link = o.Url
+                }).ToImmutableList();
+
+            var result = new List<SocialNetworkViewModel>();
+            
+            result.AddRange(pages);
+            result.AddRange(channels);
+            result.AddRange(twitters);
+
+            return View("~/Views/Home/Platform.cshtml", result);
         }
     }
 }

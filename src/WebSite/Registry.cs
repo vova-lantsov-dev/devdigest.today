@@ -7,6 +7,8 @@ using Core.Managers.Crosspost;
 using Core.Repositories;
 using DAL;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.WebEncoders;
 using Serilog;
@@ -28,15 +30,17 @@ namespace WebSite
         public IServiceCollection Register(IServiceCollection services)
         {
             services.AddMemoryCache();
-            
-            services.AddScoped(_ => new DatabaseContext(_settings.ConnectionString));
 
+            services.AddEntityFrameworkMySql();
+            
+            services.AddDbContext<DatabaseContext>(options => options.UseMySql(_settings.ConnectionString));
+            
             services.AddSingleton(_ => _settings);
             services.AddSingleton(_ => _logger);
             
-            services.AddSingleton<TelegramCrosspostManager>();
-            services.AddSingleton<FacebookCrosspostManager>();
-            services.AddSingleton<TwitterCrosspostManager>();
+            services.AddTransient<TelegramCrosspostManager>();
+            services.AddTransient<FacebookCrosspostManager>();
+            services.AddTransient<TwitterCrosspostManager>();
             
             services.AddScoped<ILocalizationManager, LocalizationManager>();
             services.AddScoped<IPublicationManager, PublicationManager>();

@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Core.Logging;
 using Core.Repositories;
+using DAL;
 using Tweetinvi;
 
 namespace Core.Managers.Crosspost
@@ -78,6 +80,11 @@ namespace Core.Managers.Crosspost
                 return string.Empty;
 
             return text.Length <= length ? text : $"{text.Substring(0, length - 4)}... ";
+        }
+
+        public async Task<IReadOnlyCollection<TwitterAccount>> GetAccounts()
+        {
+            return await _socialRepository.GetTwitterAccounts();
         }
     }
 }

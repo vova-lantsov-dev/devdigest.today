@@ -13,5 +13,6 @@ namespace DAL
         public string ConsumerSecret { get; set; }
         public string AccessToken { get; set; }
         public string AccessTokenSecret { get; set; }
+        public string Url { get; set; }
     }
 }

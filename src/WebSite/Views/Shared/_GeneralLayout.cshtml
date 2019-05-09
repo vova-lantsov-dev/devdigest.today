@@ -15,6 +15,11 @@
         new Link("Azure User Group","https://facebook.com/groups/azure.ua"),
         new Link("Xamarin User Group","https://facebook.com/groups/xamarin.ua")        
     };
+    
+    var featuredTwitterChannels = new List<Link>
+    {
+        new Link("//devdigest on Twitter","https://twitter.com/devdigest_today")
+    };
 }
 <!DOCTYPE html>
 <html>
@@ -105,7 +110,13 @@
                             }
                             
                             <li role="separator" class="divider"></li>
-                            <li><a href="/content/platform">View all</a></li>
+                            <li class="dropdown-header">Twitter</li>
+                            
+                            @foreach (var x in featuredTwitterChannels)
+                            {
+                                <li><a href=@x.Url>@x.Title</a></li>    
+                            }
+                            
                         </ul>
                     </li> 
                     
@@ -114,8 +125,9 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                            <li><a href="/content/platform">Platform</a></li>
                             <li><a href="/content/partners">@Pages.Partners</a></li>
-                            <li><a href="/content/about">@Pages.AboutProject</a></li>
+                            <li><a href="/content/about-project">@Pages.AboutProject</a></li>
                         </ul>
                     </li>                            
                 </ul>
@@ -170,7 +182,7 @@
                 <h4>Information</h4>
                 <ul>
                     <li><a href="/content/partners">Partners</a></li>
-                    <li><a href="/content/about">About Us</a></li>
+                    <li><a href="/content/about-project">About Us</a></li>
                 </ul>
             </div>
             <div class="col-md-3 col-sm-3">

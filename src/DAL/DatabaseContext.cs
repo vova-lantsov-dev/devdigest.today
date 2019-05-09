@@ -279,6 +279,10 @@ namespace DAL
                     .HasName("TwitterAccount_Name_uindex")
                     .IsUnique();
 
+                entity.HasIndex(e => e.Url)
+                    .HasName("TwitterAccount_Url_uindex")
+                    .IsUnique();
+
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.AccessToken)
@@ -308,6 +312,10 @@ namespace DAL
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.Url)
+                    .HasColumnType("varchar(500)")
+                    .HasDefaultValueSql("''");
             });
 
             modelBuilder.Entity<User>(entity =>
