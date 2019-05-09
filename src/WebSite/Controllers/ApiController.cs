@@ -136,11 +136,12 @@ namespace WebSite.Controllers
                     return Created(new Uri(model.ShareUrl), model);
                 }
                 
-                throw new Exception("Can't save publication to databse");
+                throw new Exception("Can't save publication to database");
             }
             catch (Exception ex)
             {
                 _logger.Write(LogLevel.Error, "Error while creating new publication", ex);
+                
                 return BadRequest(ex.Message);
             }
         }
@@ -153,7 +154,7 @@ namespace WebSite.Controllers
 
             if (user == null)
             {
-                return StatusCode((int)HttpStatusCode.Forbidden);
+                return Forbid();
             }
 
             var vacancy = new DAL.Vacancy
@@ -184,7 +185,7 @@ namespace WebSite.Controllers
                 return Created(new Uri(model.ShareUrl), model);
             }
 
-            return StatusCode((int)HttpStatusCode.BadRequest);
+            return BadRequest();
         }
     }
 }

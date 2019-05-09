@@ -80,7 +80,7 @@ namespace WebSite.Controllers
         }
 
         [Route("page/{page}")]
-        public async Task<IActionResult> Page(int? categoryId = null, int page = 1, string lanugage = Language.English)
+        public async Task<IActionResult> Page(int? categoryId = null, int page = 1, string language = Language.English)
         {
             ViewData["Title"] = $"{Pages.Page} {page}";
 
