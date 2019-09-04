@@ -1,5 +1,8 @@
 ﻿@using Core.Models
 @model Core.ViewModels.PublicationViewModel
+@{
+    var categoryLink = $"/page/1?categoryId={Model.Category.Id}";
+}
 
 <div class="publication-preview">
     <div class="image-block">
@@ -37,7 +40,7 @@
             <div class="col-md-8 text-right">
                 @if (Model.Category != null)
                 {
-                    <span class="label category-label label-default">@Model.Category.Name</span>
+                    <a href="@categoryLink" class="label category-label label-default">@Model.Category.Name</a>
                 }
                 @if (Model.Url != null && string.IsNullOrEmpty(Model.EmbededPlayerCode))
                 {
