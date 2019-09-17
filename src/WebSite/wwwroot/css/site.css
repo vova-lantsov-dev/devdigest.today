@@ -16,7 +16,7 @@ h5,
 .navbar-inverse .navbar-nav > li > a,
 footer,
 footer a {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
     font-weight: 300;
 }
 
@@ -29,10 +29,7 @@ footer a {
 }
 
 .navbar-inverse {
-    background: url(/images/bar_bg.jpg);
-    background-color: #c5195d;
-    background-position: left center;
-    background-repeat: no-repeat;
+    background: #c5195d url(/images/bar_bg.jpg) no-repeat left center;
 }
 
 .dropdown-header {
@@ -94,7 +91,7 @@ footer a {
 
 .jumbotron .social {
     padding: 10px;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 .jumbotron .social a {
@@ -102,7 +99,7 @@ footer a {
 }
 
 .jumbotron {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 .jumbotron .container {
@@ -202,7 +199,7 @@ footer a {
     padding-bottom: 6px !important;
     padding-left: 12px !important;
     padding-right: 12px !important;
-    font-family: "Open Sans", sans-serif !important;
+    font-family: 'Ubuntu', sans-serif !important;
     font-size: 16px !important;
     font-weight: normal !important;
     text-decoration: none !important;
@@ -221,12 +218,10 @@ form.gsc-search-box,
 
 footer {
     color: #FFF;
-    background-color: transparent;
+    background: #c5195d url(/images/bar_bg.jpg) no-repeat left center;
     margin-bottom: 0;
     padding-bottom: 10px;
-    padding-top: 25px;
-    background: url(/images/bar_bg.jpg);
-    background-position: center center;
+    padding-top: 25px;   
 }
 
 footer a {
@@ -253,7 +248,7 @@ footer ul {
 
 .content,
 .description {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
     font-size: 11pt;
     font-weight: lighter;
 }

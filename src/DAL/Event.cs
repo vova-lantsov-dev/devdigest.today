@@ -15,7 +15,7 @@ namespace DAL
         public string Description { get; set; }
         public string Link { get; set; }
 
-        public Category Category { get; set; }
-        public User User { get; set; }
+        public virtual Category Category { get; set; }
+        public virtual User User { get; set; }
     }
 }

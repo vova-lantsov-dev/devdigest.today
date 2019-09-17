@@ -6,7 +6,7 @@
     <meta property="og:type" content="article" />
     <meta property="og:url" content="@Model.ShareUrl" />
     <meta property="og:image" content="@Model.Image" />
-    <meta property="og:description" content="@Model.Description" />    
+    <meta property="og:description" content="@Model.Description" />
 
     <meta name="keywords" content="@Model.Keywords" />
     <meta name="description" content="@Model.Description" />
@@ -15,66 +15,74 @@
 <h1>@Model.Title</h1>
 
 <div class="date">
-    @Model.DateTime.ToString("MMMM dd, yyyy") 
-</div>    
+    @Model.DateTime.ToString("MMMM dd, yyyy")
+</div>
 <div class="views" title="Views count">
     <i class="glyphicon glyphicon-stats"></i>&nbsp; @Model.ViewsCount
 </div>
 
 <div class="clear"></div>
 
-@if (string.IsNullOrEmpty(Model.EmbededPlayerCode)) {
+@if (string.IsNullOrEmpty(Model.EmbededPlayerCode))
+{
     <div class="image-block inner">
-        @if (string.IsNullOrEmpty(Model.Image)) {
+        @if (string.IsNullOrEmpty(Model.Image))
+        {
             <img class="img-responsive" alt="@Model.Title" src="@Core.Settings.Current.DefaultPublicationImage" />
         }
-        else{
+        else
+        {
             <img class="img-responsive" alt="@Model.Title" src="@Model.Image" />
         }
     </div>
 }
 
-@if (!string.IsNullOrEmpty(Model.EmbededPlayerCode)) {
-    
+@if (!string.IsNullOrEmpty(Model.EmbededPlayerCode))
+{
+
     <div class="row">
         <div class="col-md-12 video">
-            @Html.Partial("_EmbededPlayer", Model.EmbededPlayerCode)
-        </div>    
+            @await Html.PartialAsync("_EmbededPlayer", Model.EmbededPlayerCode)
+        </div>
     </div>
 }
 
 <div class="row">
     <article class="col-md-12">
-        @if (string.IsNullOrEmpty(@Model.Content)) {
+        @if (string.IsNullOrEmpty(@Model.Content))
+        {
             @Model.Description
-        } else {
+        }
+        else
+        {
             @Html.Raw(@Model.Content)
         }
-    </article>    
+    </article>
 </div>
 
 <!-- <div class="row">
     <section class="col-md-12">
         <h3>View Also</h3>
         <br />
-        @Html.Partial("_SmartContent")
+        @await Html.PartialAsync("_SmartContent")
     </section>
 </div> -->
 
 <div class="row share">
     <div class="col-md-6">
-        @Html.Partial("_SocialButtons", new Link(Model.Title, Model.ShareUrl))
+        @await Html.PartialAsync("_SocialButtons", new Link(Model.Title, Model.ShareUrl))
     </div>
     <div class="col-md-6 text-right">
-        @if (Model.Url != null) {        
+        @if (Model.Url != null)
+        {
             <a class="btn btn-default" target="blank" href="@Model.Url">Original publication&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>
         }
     </div>
-</div>   
+</div>
 
-@Html.Partial("_PostStructuredData", Model)
+@await Html.PartialAsync("_PostStructuredData", Model)
 
 <section class="col-md-12 comments">
-    <div class="fb-comments" data-href="@Model.ShareUrl" data-width="100%" data-numposts="10"></div>     
+    <div class="fb-comments" data-href="@Model.ShareUrl" data-width="100%" data-numposts="10"></div>
 </section>
 

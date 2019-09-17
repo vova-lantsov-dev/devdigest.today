@@ -1,5 +1,8 @@
 ﻿@using Core.Models
 @model Core.ViewModels.PublicationViewModel
+@{
+    var categoryLink = $"/page/1?categoryId={Model.Category.Id}";
+}
 
 <div class="publication-preview">
     <div class="image-block">
@@ -32,13 +35,15 @@
         </div>
         <div class="row share">
             <div class="col-md-4">
-                @Html.Partial("_SocialButtons", new Link(Model.Title, Model.ShareUrl))
+                @await Html.PartialAsync("_SocialButtons", new Link(Model.Title, Model.ShareUrl))
             </div>
             <div class="col-md-8 text-right">
-                @if(Model.Category != null) {
-                    <span class="label category-label label-default">@Model.Category.Name</span>
+                @if (Model.Category != null)
+                {
+                    <a href="@categoryLink" class="label category-label label-default">@Model.Category.Name</a>
                 }
-                @if (Model.Url != null  && string.IsNullOrEmpty(Model.EmbededPlayerCode)) {
+                @if (Model.Url != null && string.IsNullOrEmpty(Model.EmbededPlayerCode))
+                {
                     <a class="btn btn-default" target="blank" href="@Model.Url">Original publication&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>
                 }
                 <a class="btn btn-default" href="@Model.ShareUrl">Read&nbsp;<i class="glyphicon glyphicon-info-sign"></i></a>

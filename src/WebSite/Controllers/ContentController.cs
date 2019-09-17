@@ -1,8 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Core;
 using Core.Managers;
+using Core.Managers.Crosspost;
 using Core.ViewModels;
+using Core.Web;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -10,145 +17,67 @@ namespace WebSite.Controllers
 {
     public class ContentController : Controller
     {
-        private readonly FacebookCrosspostManager _facebookCrosspostCrosspostManager;
-        private readonly TelegramCrosspostManager _telegramCrosspostCrosspostManager;
-
+        private readonly IHostingEnvironment _hostingEnvironment;
+        
         public ContentController(
             IMemoryCache cache, 
-            FacebookCrosspostManager facebookCrosspostCrosspostManager, 
-            TelegramCrosspostManager telegramCrosspostCrosspostManager)
+            IHostingEnvironment hostingEnvironment)
         {
-            _facebookCrosspostCrosspostManager = facebookCrosspostCrosspostManager;
-            _telegramCrosspostCrosspostManager = telegramCrosspostCrosspostManager;
+            _hostingEnvironment = hostingEnvironment;
         }
 
-        [Route("content/partners")]
-        public async Task<IActionResult> Partners()
+        [Route("content/{name}")]
+        public async Task<IActionResult> Index(string name)
         {
-            ViewData["Title"] = Pages.Partners;
+            var html = await GetFileContent(name);
 
-            return View("~/Views/Content/Partners.cshtml");
+            if (string.IsNullOrWhiteSpace(html))
+                return NotFound();
+
+            ViewData["Title"] = string.Join(" ", name.Split('-').Select(UppercaseFirstLetter));
+
+            return View((object) html);
         }
 
-        [Route("content/about")]
-        public async Task<IActionResult> About()
+        private static string UppercaseFirstLetter(string text)
         {
-            ViewData["Title"] = Pages.AboutProject;
+            if (string.IsNullOrWhiteSpace(text))
+                return string.Empty;
 
-            return View("~/Views/Content/About.cshtml");
+            if (text.Length == 1)
+                return text.ToUpper();
+
+            return text.First().ToString().ToUpper() + text.Substring(1);
         }
 
-        [Route("content/developex-tech-club")]
-        public async Task<IActionResult> DevelopexTechClub()
+        private async Task<string> GetFileContent(string name)
         {
-            ViewData["Title"] = Pages.DevelopexTechClub;
-
-            return View("~/Views/Content/DevelopexTechClub.cshtml");
-        }
-
-        [Route("search")]
-        public async Task<IActionResult> Search()
-        {
-            ViewData["Title"] = Pages.Search;
-
-            return View("~/Views/Content/Search.cshtml");
-        }
-
-        [Route("content/privacy")]
-        public async Task<IActionResult> Privacy()
-        {
-            return View("~/Views/Content/Privacy.cshtml");
-        }
-        
-        [Route("content/how-to-post-vacancy")]
-        public async Task<IActionResult> HowToPostVacancy()
-        {
-            return View("~/Views/Content/HowToPostVacancy.cshtml");
-        }
-        
-        [Route("content/microsoft-tech-summit-warsaw")]
-        public async Task<IActionResult> MicrosoftTechSummitWarsaw()
-        {
-            ViewData["Title"] = Pages.MicrosoftTechSummitWarsaw;
+            name = name.Replace("-", "");
             
-            return View("~/Views/Content/MicrosoftTechSummitWarsaw.cshtml");
-        }
-        
-        [Route("content/cloud-developers-days")]
-        public async Task<IActionResult> CloudDevelopersDaysPoland()
-        {
-            ViewData["Title"] = Pages.CloudDevelopersDays;
+            var path = Directory
+                .GetFiles(Path.Combine(_hostingEnvironment.WebRootPath, "content"))
+                .SingleOrDefault(o => string.Equals(
+                    Path.GetFileNameWithoutExtension(o).Trim(),
+                    name.Trim(),
+                    StringComparison.InvariantCultureIgnoreCase));
+
+            if (string.IsNullOrWhiteSpace(path) || !System.IO.File.Exists(path))
+                return null;
             
-            return View("~/Views/Content/CloudDevelopersDaysPoland.cshtml");
-        } 
-        
-        [Route("content/build-2018")]
-        public async Task<IActionResult> Build2018()
-        {
-            ViewData["Title"] = Pages.Build2018;
-            
-            return View("~/Views/Content/Build2018.cshtml");
-        }
-
-        [Route("content/demo")]
-        public async Task<IActionResult> Demo()
-        {
-            //ViewData["Title"] = Pages.Build2018;
-            
-            return View("~/Views/Content/Demo.cshtml");
-        }
-
-        [Route("user-group")]
-        [Route("content/net-core-user-group")]        
-        public async Task<IActionResult> UkrainianNETCoreUserGroup()
-        {
-            ViewData["Title"] = Pages.UkrainianNETCoreUserGroup;
-            
-            return View("~/Views/Content/UkrainianNETCoreUserGroup.cshtml");
-        }
-
-        [Route("content/xamarin-user-group")]
-        public async Task<IActionResult> XamarinUkraineUserGroup()
-        {
-            ViewData["Title"] = Pages.XamarinUkraineUserGroup;
-
-            return View("~/Views/Content/XamarinUkraineUserGroup.cshtml");
-        }
-        
-        [Route("content/microsoft-azure-user-group")]
-        public async Task<IActionResult> MicrosoftAzureUkraineUserGroup()
-        {
-            ViewData["Title"] = Pages.MicrosoftAzureUkraineUserGroup;
-
-            return View("~/Views/Content/MicrosoftAzureUkraineUserGroup.cshtml");
+            return await System.IO.File.ReadAllTextAsync(path);
         }
 
         [Route("content/telegram")]
-        public async Task<IActionResult> Telegram()
-        {
-            ViewData["Title"] = Pages.Telegram;
-
-            var channels = _telegramCrosspostCrosspostManager
-                .GetTelegramChannels()
-                .Select(o => new TelegramViewModel(o.Name)
-                {
-                    Title = o.Title,
-                    Description = o.Description,                    
-                    Logo = o.Logo
-                }).ToList();
-
-
-            return View("~/Views/Content/Telegram.cshtml", channels);
-        }
+        public async Task<IActionResult> Telegram()=> RedirectPermanent("/content/platform");
 
         [Route("partners")]
-        public async Task<IActionResult> PartnersRedirect() => RedirectPermanent("content/partners");
-
-        [Route("about")]
-        public async Task<IActionResult> AboutRedirect() => RedirectPermanent("content/about");
+        public async Task<IActionResult> PartnersRedirect() => RedirectPermanent("/content/partners");  
         
-        [Route("demo")]
-        public async Task<IActionResult> DemoRedirect() => RedirectPermanent("content/demo");
-
+        [Route("search")]
+        public async Task<IActionResult> SearchRedirect() => RedirectPermanent("/content/search");
+        
+        [Route("content/platform")]
+        [Route("content/telegram")]
+        public async Task<IActionResult> Platform()=> RedirectPermanent("/platform");
     }
 }

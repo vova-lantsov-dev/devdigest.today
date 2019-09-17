@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Core.Logging;
+using Core.Repositories;
 using DAL;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using X.PagedList;
 
@@ -19,17 +18,17 @@ namespace Core.Managers
         Task IncreaseViewCount(int id);
     }
 
-    public class VacancyManager : IManager, IVacancyManager
+    public class VacancyManager : IVacancyManager
     {
         private readonly ILogger _logger;
         private readonly IMemoryCache _cache;
-        private readonly DatabaseContext _database;
+        private readonly IVacancyRepository _repository;
 
-        public VacancyManager(IMemoryCache cache, DatabaseContext database, ILogger logger)
+        public VacancyManager(IMemoryCache cache, ILogger logger, IVacancyRepository repository)
         {
             _cache = cache;
-            _database = database;
             _logger = logger;
+            _repository = repository;
         }
 
         public async Task<IPagedList<Vacancy>> GetVacancies(int page = 1, int pageSize = 10)
@@ -40,18 +39,9 @@ namespace Core.Managers
 
             if (result == null)
             {
-                var skip = (page - 1) * pageSize;
-
-                var items = _database
-                    .Vacancy
-                    .Include(o => o.Category)
-                    .Where(o => o.Active && o.LanguageId == Language.EnglishId)
-                    .OrderByDescending(o => o.Id)
-                    .Skip(skip)
-                    .Take(pageSize).ToList();
-
-                var totalItemsCount = await _database.Vacancy.Where(o => o.Active).CountAsync();
-
+                var items =  await  _repository.GetVacancies(page, pageSize);
+                var totalItemsCount = await _repository.GetVacanciesCount();
+                
                 result = new StaticPagedList<Vacancy>(items, page, pageSize, totalItemsCount);
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());
             }
@@ -62,19 +52,13 @@ namespace Core.Managers
         public async Task<IReadOnlyCollection<Vacancy>> GetHotVacancies()
         {
             var key = $"hot_vacancies";
-            var size = 5;
+            const int size = 5;
 
             var result = _cache.Get(key) as IReadOnlyCollection<Vacancy>;
 
             if (result == null)
             {
-                result = await _database
-                    .Vacancy
-                    .Include(o => o.Category)
-                    .Where(o => o.Active && o.LanguageId == Language.EnglishId)
-                    .OrderByDescending(o => o.Id)
-                    .Take(size)
-                    .ToListAsync();
+                result = await _repository.GetHotVacancies(size);
 
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());
             }
@@ -90,33 +74,17 @@ namespace Core.Managers
 
             if (result == null)
             {
-                result = await _database.Vacancy.SingleOrDefaultAsync(o => o.Id == id);
+                result = await _repository.GetVacancy(id);
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());
             }
 
             return result;
         }
 
-        public async Task<Vacancy> Save(Vacancy vacancy)
-        {
-            _database.Add(vacancy);
-            await _database.SaveChangesAsync();
-            vacancy = _database.Vacancy.LastOrDefault();
+        public async Task<Vacancy> Save(Vacancy vacancy) => await _repository.Save(vacancy);
 
-            return vacancy;
-        }
+        public async Task IncreaseViewCount(int id) => await _repository.IncreaseVacancyViewCount(id);
 
-        public async Task IncreaseViewCount(int id)
-        {
-            var vacancy = _database.Vacancy.SingleOrDefault(o => o.Id == id);
-            
-            if (vacancy != null)
-            {
-                vacancy.Views++;
-                await _database.SaveChangesAsync();
-            }
-        }
-        
         private static MemoryCacheEntryOptions GetMemoryCacheEntryOptions() => new MemoryCacheEntryOptions
         {
             AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1)

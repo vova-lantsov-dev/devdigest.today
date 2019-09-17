@@ -3,8 +3,12 @@ using System.Text.Unicode;
 using Core;
 using Core.Logging;
 using Core.Managers;
+using Core.Managers.Crosspost;
+using Core.Repositories;
 using DAL;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.WebEncoders;
 using Serilog;
@@ -17,9 +21,9 @@ namespace WebSite
         private readonly Settings _settings;
         private readonly Core.Logging.ILogger _logger;
 
-        public Registry(IHostingEnvironment hostingEnvironment, Settings settingst)
+        public Registry(IHostingEnvironment hostingEnvironment, Settings settings)
         {
-            _settings = settingst;
+            _settings = settings;
             _logger = new SerilogLoggerWrapper(CreateLogger(hostingEnvironment));
         }
 
@@ -27,19 +31,27 @@ namespace WebSite
         {
             services.AddMemoryCache();
 
-            services.AddSingleton<Core.Settings>(_ => _settings);
-            services.AddSingleton<Core.Logging.ILogger>(_ => _logger);
+            services.AddEntityFrameworkMySql();
             
-            services.AddScoped<DatabaseContext>(_ => new DatabaseContext(_settings.ConnectionString));
+            services.AddDbContext<DatabaseContext>(options => options.UseMySql(_settings.ConnectionString));
             
-            services.AddScoped(typeof(TelegramCrosspostManager));
-            services.AddScoped(typeof(FacebookCrosspostManager));
+            services.AddSingleton(_ => _settings);
+            services.AddSingleton(_ => _logger);
             
-            services.AddScoped(typeof(ILocalizationManager), typeof(LocalizationManager));
-            services.AddScoped(typeof(IPublicationManager), typeof(PublicationManager));
-            services.AddScoped(typeof(IUserManager), typeof(UserManager));
-            services.AddScoped(typeof(IVacancyManager), typeof(VacancyManager));
-            services.AddScoped(typeof(IRepository), typeof(Repository));
+            services.AddTransient<TelegramCrosspostManager>();
+            services.AddTransient<FacebookCrosspostManager>();
+            services.AddTransient<TwitterCrosspostManager>();
+            
+            services.AddScoped<ILocalizationManager, LocalizationManager>();
+            services.AddScoped<IPublicationManager, PublicationManager>();
+            services.AddScoped<IUserManager, UserManager>();
+            services.AddScoped<IVacancyManager, VacancyManager>();
+            
+            services.AddScoped<IPublicationRepository, PublicationRepository>();
+            services.AddScoped<ISettingsRepository, SettingsRepository>();
+            services.AddScoped<ISocialRepository, SocialRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IVacancyRepository, VacancyRepository>();
             
             services.Configure<WebEncoderOptions>(options =>
             {
@@ -53,14 +65,11 @@ namespace WebSite
 
         private static Logger CreateLogger(IHostingEnvironment env)
         {
-            //var storageAccount = new CloudStorageAccount(new StorageCredentials("", ""), true);
-
             var path = $"{env.ContentRootPath}/logs/log-.log";
 
             return new Serilog.LoggerConfiguration()
                 .WriteTo.Console()
                 .WriteTo.File(path, rollingInterval: RollingInterval.Day)
-                //.WriteTo.AzureTableStorage(storageAccount)
                 .CreateLogger();
         }
     }

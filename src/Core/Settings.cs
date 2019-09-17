@@ -15,7 +15,7 @@ namespace Core
             DefaultKeywords = WebUtility.HtmlDecode(configuration["DefaultKeywords"]);
             SupportEmail = "dncuug@agi.net.ua";
             FbAppId = "112150392810181";
-            Version = "1.7.5";
+            Version = "2.0.0";
         }
 
         public string ConnectionString { get; }
@@ -41,6 +41,8 @@ namespace Core
         public string CognitiveServicesTextAnalyticsKey { get; }
         
         public string Version { get; }
+        
+        public TwitterSettings Twitter { get; set; }
 
         #region Current
         
@@ -53,5 +55,13 @@ namespace Core
         public static Settings Current { get; private set; }
 
         #endregion
+
+        public class TwitterSettings
+        {
+            public string ConsumerKey { get; set; }
+            public string ConsumerSecret { get; set; }
+            public string AccessTokenSecret { get; set; }
+            public string AccessToken { get; set; }
+        }
     }
 }

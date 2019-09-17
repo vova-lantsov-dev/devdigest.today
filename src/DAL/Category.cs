@@ -18,10 +18,10 @@ namespace DAL
         public string Name { get; set; }
         public string Description { get; set; }
 
-        public ICollection<Channel> Channel { get; set; }
-        public ICollection<Event> Event { get; set; }
-        public ICollection<FacebookPage> FacebookPage { get; set; }
-        public ICollection<Publication> Publication { get; set; }
-        public ICollection<Vacancy> Vacancy { get; set; }
+        public virtual ICollection<Channel> Channel { get; set; }
+        public virtual ICollection<Event> Event { get; set; }
+        public virtual ICollection<FacebookPage> FacebookPage { get; set; }
+        public virtual ICollection<Publication> Publication { get; set; }
+        public virtual ICollection<Vacancy> Vacancy { get; set; }
     }
 }

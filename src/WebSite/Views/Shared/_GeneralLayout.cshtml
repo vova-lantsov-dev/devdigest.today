@@ -1,4 +1,27 @@
-﻿<!DOCTYPE html>
+﻿@using Core.Models
+@using Core.Web
+@{
+    var featuredTelegramChannels = new List<Link>
+    {
+        new Link("devdigest // net core", "https://telegram.me/dncuug"),
+        new Link("devdigest // xamarin", "https://telegram.me/xamarin_ua"),
+        new Link("devdigest // azure", "https://telegram.me/azure_digest"),
+        new Link("devdigest // data science", "https://telegram.me/d_science")
+    };
+    
+    var featuredFacebookPages = new List<Link>
+    {
+        new Link(".NET Core User Group","https://facebook.com/groups/dncuug"),
+        new Link("Azure User Group","https://facebook.com/groups/azure.ua"),
+        new Link("Xamarin User Group","https://facebook.com/groups/xamarin.ua")        
+    };
+    
+    var featuredTwitterChannels = new List<Link>
+    {
+        new Link("//devdigest on Twitter","https://twitter.com/devdigest_today")
+    };
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />    
@@ -14,21 +37,13 @@
     
     @RenderSection("head",  required: false)
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&amp;subset=cyrillic" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,400i,700&amp;subset=cyrillic,cyrillic-ext" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/5.1.1/bootstrap-social.min.css" />
     <link rel="stylesheet" href="/css/site.css" />
-    
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script>
-     (adsbygoogle = window.adsbygoogle || []).push({
-          google_ad_client: "ca-pub-9437162291368173",
-          enable_page_level_ads: true
-     });
-    </script>
 
-    <title>@ViewData["Title"] - Developers Digest | Latests news about .NET Core, Microsoft Azure and Xamarin</title>
+    <title>@ViewData["Title"] - //devdigest | Developers Digest | Latest news about .NET Core, Microsoft Azure and Xamarin</title>
 </head>
 <body>
     
@@ -54,7 +69,6 @@
                             <li><a href="/page/1?categoryId=1">.NET Core</a></li>
                             <li><a href="/page/1?categoryId=2">Xamarin</a></li>
                             <li><a href="/page/1?categoryId=3">Azure</a></li>
-                            <li><a href="/page/1?categoryId=5">Go</a></li>
                             <li><a href="/page/1?categoryId=4">Data Science</a></li>
                         </ul>
                     </li>  
@@ -65,13 +79,14 @@
                             Events&nbsp; @*<span class="label label-danger">Hot!</span>*@ <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">No actual events</a></li>
+                            @* <li><a href="#">No actual events</a></li> *@
+                            <li><a href="/content/build-2019">@Pages.Build2019</a></li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Archive</li>
-                            <li><a href="/content/developex-tech-club">@Core.Pages.DevelopexTechClub</a></li>
-                            <li><a href="/content/microsoft-tech-summit-warsaw">@Core.Pages.MicrosoftTechSummitWarsaw</a></li>
-                            <li><a href="/content/build-2018">@Core.Pages.Build2018</a></li>
-                            <li><a href="/content/cloud-developers-days">@Core.Pages.CloudDevelopersDays</a></li>
+                            <li><a href="/content/developex-tech-club">@Pages.DevelopexTechClub</a></li>
+                            <li><a href="/content/microsoft-tech-summit-warsaw">@Pages.MicrosoftTechSummitWarsaw</a></li>
+                            <li><a href="/content/build-2018">@Pages.Build2018</a></li>
+                            <li><a href="/content/cloud-developers-days">@Pages.CloudDevelopersDays</a></li>
                         </ul>
                     </li>  
                     
@@ -80,17 +95,28 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Social networks<span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-header">Facebook</li>
-                            <li><a href="https://facebook.com/groups/dncuug">.NET Core User Group</a></li>
-                            <li><a href="https://facebook.com/groups/azure.ua/">Azure User Group</a></li>
-                            <li><a href="https://facebook.com/groups/xamarin.ua/">Xamarin User Group</a></li>
+                            
+                            @foreach (var x in featuredFacebookPages)
+                            {
+                                <li><a href=@x.Url>@x.Title</a></li>
+                            }
+                            
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Telegram</li>
-                            <li><a href="https://telegram.me/dncuug">devdigest // net core</a></li>
-                            <li><a href="https://telegram.me/xamarin_ua">devdigest // xamarin</a></li>
-                            <li><a href="https://telegram.me/azure_digest">devdigest // azure</a></li>
-                            <li><a href="https://telegram.me/d_science">devdigest // data science</a></li>
+                            
+                            @foreach (var x in featuredTelegramChannels)
+                            {
+                                <li><a href=@x.Url>@x.Title</a></li>    
+                            }
+                            
                             <li role="separator" class="divider"></li>
-                            <li><a href="/content/Telegram">All channels</a></li>
+                            <li class="dropdown-header">Twitter</li>
+                            
+                            @foreach (var x in featuredTwitterChannels)
+                            {
+                                <li><a href=@x.Url>@x.Title</a></li>    
+                            }
+                            
                         </ul>
                     </li> 
                     
@@ -99,8 +125,9 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="/content/partners">@Core.Pages.Partners</a></li>
-                            <li><a href="/content/about">@Core.Pages.AboutProject</a></li>
+                            <li><a href="/content/platform">Platform</a></li>
+                            <li><a href="/content/partners">@Pages.Partners</a></li>
+                            <li><a href="/content/about-project">@Pages.AboutProject</a></li>
                         </ul>
                     </li>                            
                 </ul>
@@ -109,14 +136,15 @@
                         <div class="fb-login-button" data-size="medium" data-button-type="continue_with" data-auto-logout-link="true" data-use-continue-as="true" data-onlogin="checkLoginState"></div>
                     </li>
                 </ul>
-            </div><!--/.navbar-collapse -->
+            </div>
+            <!--/.navbar-collapse -->
         </div>
-    </nav>
+    </nav>   
 
-    @RenderSection("top", required: false)
+@RenderSection("top", required: false)
 
-    <div class="container">    
-        <div class="row content">
+<div class="container">    
+        <div class="content">
             @RenderBody()
         </div>
     </div>
@@ -128,9 +156,10 @@
 
                 <h5>Facebook</h5>
                 <ul>
-                    <li><a href="https://facebook.com/groups/dncuug">.NET Core User Group</a></li>
-                    <li><a href="https://facebook.com/groups/azure.ua/">Azure User Group</a></li>
-                    <li><a href="https://facebook.com/groups/xamarin.ua/">Xamarin User Group</a></li>
+                    @foreach (var x in featuredFacebookPages)
+                    {
+                        <li><a href=@x.Url>@x.Title</a></li>
+                    }
                 </ul>
             </div>
             
@@ -138,16 +167,17 @@
                 <h4>&nbsp;</h4>
                 <h5>Telegram</h5>
                 <ul>
-                    <li><a href="https://telegram.me/dncuug">devdigest // net core</a></li>
-                    <li><a href="https://telegram.me/xamarin_ua">devdigest // xamarin</a></li>
-                    <li><a href="https://telegram.me/azure_digest">devdigest // azure</a></li>
+                    @foreach (var x in featuredTelegramChannels)
+                    {
+                        <li><a href=@x.Url>@x.Title</a></li>
+                    }
                 </ul>
             </div>
             <div class="col-md-2 col-sm-2">
                 <h4>Information</h4>
                 <ul>
                     <li><a href="/content/partners">Partners</a></li>
-                    <li><a href="/content/about">About Us</a></li>
+                    <li><a href="/content/about-project">About Us</a></li>
                 </ul>
             </div>
             <div class="col-md-3 col-sm-3">

@@ -16,9 +16,10 @@ namespace WebSite
                 {
                     var env = hostingContext.HostingEnvironment;
 
-                    config.AddJsonFile("appsettings.json", true, true)
+                    config
+                        .AddJsonFile($"appsettings.json", true, true)
                         .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true)
-                        .AddJsonFile($"/Users/andrew/pub/devdigest.today/appsettings.json", true, true)
+                        .AddJsonFile($"/Users/andrew/pub/dd.settings.json", true, true)
                         .AddEnvironmentVariables();
                 })
                 .UseStartup<Startup>()
