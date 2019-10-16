@@ -17,11 +17,11 @@ namespace WebSite.Controllers
 {
     public class ContentController : Controller
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         
         public ContentController(
             IMemoryCache cache, 
-            IHostingEnvironment hostingEnvironment)
+            IWebHostEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
         }
