@@ -37,7 +37,7 @@ echo ""
 
 echo "To push to Docker Hub:"
 echo "   ${bold}docker tag $project:$now docker.pkg.github.com/dncuug/devdigest.today/$project:$now${normal}"
-echo "   ${bold}docker push docker.pkg.github.com/dncuug/devdigest.today/$project:%$now${normal}"
+echo "   ${bold}docker push docker.pkg.github.com/dncuug/devdigest.today/$project:$now${normal}"
 
 echo ""
 echo ""
