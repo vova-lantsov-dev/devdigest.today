@@ -6,16 +6,26 @@ namespace DAL
 {
     public partial class DatabaseContext : DbContext
     {
+        public DatabaseContext()
+        {
+        }
+
+        public DatabaseContext(DbContextOptions<DatabaseContext> options)
+            : base(options)
+        {
+        }
+
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<Channel> Channel { get; set; }
         public virtual DbSet<Event> Event { get; set; }
         public virtual DbSet<FacebookPage> FacebookPage { get; set; }
         public virtual DbSet<Language> Language { get; set; }
         public virtual DbSet<Publication> Publication { get; set; }
+        public virtual DbSet<TwitterAccount> TwitterAccount { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<Vacancy> Vacancy { get; set; }
 
-        private string _connectionString;
+        private readonly string _connectionString;
 
         public DatabaseContext(string connectionString)
         {
@@ -40,9 +50,11 @@ namespace DAL
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
+                entity.Property(e => e.Description).HasColumnType("varchar(500)");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasColumnType("varchar(50)");
             });
 
             modelBuilder.Entity<Channel>(entity =>
@@ -60,17 +72,17 @@ namespace DAL
 
                 entity.Property(e => e.Description).HasColumnType("text");
 
-                entity.Property(e => e.Logo).HasMaxLength(256);
+                entity.Property(e => e.Logo).HasColumnType("varchar(256)");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasColumnType("varchar(50)");
 
-                entity.Property(e => e.Title).HasMaxLength(100);
+                entity.Property(e => e.Title).HasColumnType("varchar(100)");
 
                 entity.Property(e => e.Token)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasColumnType("varchar(50)");
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Channel)
@@ -94,19 +106,19 @@ namespace DAL
 
                 entity.Property(e => e.Description)
                     .IsRequired()
-                    .HasMaxLength(1000);
+                    .HasColumnType("varchar(1000)");
 
                 entity.Property(e => e.End).HasColumnType("datetime");
 
-                entity.Property(e => e.Image).HasMaxLength(100);
+                entity.Property(e => e.Image).HasColumnType("varchar(100)");
 
-                entity.Property(e => e.Link).HasMaxLength(100);
+                entity.Property(e => e.Link).HasColumnType("varchar(100)");
 
                 entity.Property(e => e.Start).HasColumnType("datetime");
 
                 entity.Property(e => e.Title)
                     .IsRequired()
-                    .HasMaxLength(250);
+                    .HasColumnType("varchar(250)");
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
 
@@ -138,13 +150,25 @@ namespace DAL
 
                 entity.Property(e => e.CategoryId).HasColumnType("int(11)");
 
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasColumnType("varchar(500)")
+                    .HasDefaultValueSql("''");
+
+                entity.Property(e => e.Logo).HasColumnType("varchar(256)");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(200);
+                    .HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Token)
                     .IsRequired()
-                    .HasMaxLength(500);
+                    .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.Url)
+                    .IsRequired()
+                    .HasColumnType("varchar(256)")
+                    .HasDefaultValueSql("''");
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.FacebookPage)
@@ -161,9 +185,9 @@ namespace DAL
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.Code).HasMaxLength(2);
+                entity.Property(e => e.Code).HasColumnType("varchar(2)");
 
-                entity.Property(e => e.Name).HasMaxLength(25);
+                entity.Property(e => e.Name).HasColumnType("varchar(25)");
             });
 
             modelBuilder.Entity<Publication>(entity =>
@@ -185,7 +209,7 @@ namespace DAL
 
                 entity.Property(e => e.CategoryId).HasColumnType("int(11)");
 
-                entity.Property(e => e.Comment).HasMaxLength(1000);
+                entity.Property(e => e.Comment).HasColumnType("varchar(1000)");
 
                 entity.Property(e => e.Content).HasColumnType("text");
 
@@ -193,23 +217,29 @@ namespace DAL
 
                 entity.Property(e => e.Description)
                     .IsRequired()
-                    .HasMaxLength(5000);
+                    .HasColumnType("varchar(5000)");
 
-                entity.Property(e => e.EmbededPlayerCode).HasMaxLength(1000);
+                entity.Property(e => e.EmbededPlayerCode).HasColumnType("varchar(1000)");
 
-                entity.Property(e => e.Image).HasMaxLength(250);
+                entity.Property(e => e.Image).HasColumnType("varchar(250)");
 
                 entity.Property(e => e.LanguageId).HasColumnType("int(11)");
 
-                entity.Property(e => e.Link).HasMaxLength(250);
+                entity.Property(e => e.Link).HasColumnType("varchar(250)");
 
                 entity.Property(e => e.Title)
                     .IsRequired()
-                    .HasMaxLength(250);
+                    .HasColumnType("varchar(250)");
 
-                entity.Property(e => e.Type).HasMaxLength(25);
+                entity.Property(e => e.Type).HasColumnType("varchar(25)");
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
+
+                entity.Property(e => e.Views)
+                    .HasColumnType("int(11)")
+                    .HasDefaultValueSql("'1'");
+
+                entity.Property(e => e.Visible).HasColumnType("bit(1)");
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Publication)
@@ -227,6 +257,67 @@ namespace DAL
                     .HasConstraintName("Publication_User_Id_fk");
             });
 
+            modelBuilder.Entity<TwitterAccount>(entity =>
+            {
+                entity.HasIndex(e => e.AccessToken)
+                    .HasName("TwitterAccount_AccessToken_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.AccessTokenSecret)
+                    .HasName("TwitterAccount_AccessTokenSecret_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.ConsumerKey)
+                    .HasName("TwitterAccount_ConsumerKey_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.ConsumerSecret)
+                    .HasName("TwitterAccount_ConsumerSecret_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Name)
+                    .HasName("TwitterAccount_Name_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Url)
+                    .HasName("TwitterAccount_Url_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.AccessToken)
+                    .IsRequired()
+                    .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.AccessTokenSecret)
+                    .IsRequired()
+                    .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.ConsumerKey)
+                    .IsRequired()
+                    .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.ConsumerSecret)
+                    .IsRequired()
+                    .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.Logo)
+                    .IsRequired()
+                    .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.Url)
+                    .HasColumnType("varchar(500)")
+                    .HasDefaultValueSql("''");
+            });
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasIndex(e => e.Key)
@@ -237,11 +328,11 @@ namespace DAL
 
                 entity.Property(e => e.Key)
                     .IsRequired()
-                    .HasMaxLength(36);
+                    .HasColumnType("varchar(36)");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasColumnType("varchar(50)");
             });
 
             modelBuilder.Entity<Vacancy>(entity =>
@@ -269,11 +360,11 @@ namespace DAL
 
                 entity.Property(e => e.CategoryId).HasColumnType("int(11)");
 
-                entity.Property(e => e.Company).HasMaxLength(100);
+                entity.Property(e => e.Company).HasColumnType("varchar(100)");
 
                 entity.Property(e => e.Contact)
                     .IsRequired()
-                    .HasMaxLength(500);
+                    .HasColumnType("varchar(500)");
 
                 entity.Property(e => e.Content).HasColumnType("text");
 
@@ -281,21 +372,27 @@ namespace DAL
 
                 entity.Property(e => e.Description)
                     .IsRequired()
-                    .HasMaxLength(5000);
+                    .HasColumnType("varchar(5000)");
 
-                entity.Property(e => e.Image).HasMaxLength(500);
+                entity.Property(e => e.Image).HasColumnType("varchar(500)");
 
                 entity.Property(e => e.LanguageId)
                     .HasColumnType("int(11)")
                     .HasDefaultValueSql("'1'");
 
+                entity.Property(e => e.Location).HasColumnType("varchar(200)");
+
                 entity.Property(e => e.Title)
                     .IsRequired()
-                    .HasMaxLength(300);
+                    .HasColumnType("varchar(300)");
 
-                entity.Property(e => e.Url).HasMaxLength(5000);
+                entity.Property(e => e.Url).HasColumnType("varchar(5000)");
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
+
+                entity.Property(e => e.Views)
+                    .HasColumnType("int(11)")
+                    .HasDefaultValueSql("'1'");
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Vacancy)

@@ -1,25 +1,38 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
+using Core.Logging;
+using Core.Repositories;
+using DAL;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Core.Managers
 {
-    public class LocalizationManager : ManagerBase
+    public interface ILocalizationManager
     {
-        public LocalizationManager(string connectionString, IMemoryCache cache = null) 
-            : base(connectionString, cache)
+        Task<int?> GetLanguageId(string code);
+    }
+
+    public class LocalizationManager : ILocalizationManager
+    {
+        private readonly ISettingsRepository _settingsRepository;
+        private readonly ILogger _logger;
+
+        public LocalizationManager(ISettingsRepository settingsRepository, ILogger logger)
         {
+            _settingsRepository = settingsRepository;
+            _logger = logger;
         }
 
-        public int? GetLanguageId(string code)
+        public async Task<int?> GetLanguageId(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
             {
                 return null;
             }
-            
+
             code = code.Trim().ToLower();
 
-            var language = _database.Language.FirstOrDefault(o => o.Code == code);
+            var language = await _settingsRepository.GetLanguage(code);
             return language?.Id;
         }
     }

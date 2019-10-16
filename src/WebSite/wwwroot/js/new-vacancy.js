@@ -25,7 +25,8 @@ function addNewVacancy() {
     var comment = $("#vacancy-comment").val();
 
     var title = $("#vacancy-title").val();
-    var description = $("#vacancy-description").val();
+    var description = $('#vacancy-description').val();
+    var content = $('#vacancy-content').summernote('code');
     var contact = $("#vacancy-contact").val();
 
     var progress = $(".progress");
@@ -36,6 +37,7 @@ function addNewVacancy() {
         comment: comment,
         title: title,
         description: description,
+        content:content,
         contact: contact
     };
 

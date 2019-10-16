@@ -15,7 +15,7 @@ namespace DAL
         public string Name { get; set; }
         public string Code { get; set; }
 
-        public ICollection<Publication> Publication { get; set; }
-        public ICollection<Vacancy> Vacancy { get; set; }
+        public virtual ICollection<Publication> Publication { get; set; }
+        public virtual ICollection<Vacancy> Vacancy { get; set; }
     }
 }

@@ -1,48 +1,67 @@
-﻿using Core;
-using Core.Managers;
-using Core.ViewModels;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using X.PagedList;
+using Core;
+using Core.Managers;
+using Core.Managers.Crosspost;
+using Core.ViewModels;
+using Core.Web;
 using Microsoft.AspNetCore.Hosting;
-using System.IO;
-using System;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Caching.Memory;
+using X.PagedList;
 
 namespace WebSite.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly PublicationManager _publicationManager;
-        private readonly VacancyManager _vacancyManager;
+        private readonly FacebookCrosspostManager _facebookCrosspostManager;
+        private readonly TwitterCrosspostManager _twitterCrosspostManager;
+        private readonly TelegramCrosspostManager _telegramCrosspostManager;
+        private readonly IPublicationManager _publicationManager;
+        private readonly IVacancyManager _vacancyManager;
         private readonly IHostingEnvironment _env;
         private readonly IMemoryCache _cache;
+        private readonly Settings _settings;
 
-        public HomeController(IMemoryCache cache, IHostingEnvironment env)
+        public HomeController(
+            IMemoryCache cache, 
+            IHostingEnvironment env, 
+            IVacancyManager vacancyManager, 
+            IPublicationManager publicationManager, 
+            Settings settings, 
+            TelegramCrosspostManager telegramCrosspostManager, 
+            FacebookCrosspostManager facebookCrosspostManager,
+            TwitterCrosspostManager twitterCrosspostManager)
         {
             _cache = cache;
-            _publicationManager = new PublicationManager(Core.Settings.Current.ConnectionString, cache);
-            _vacancyManager = new VacancyManager(Core.Settings.Current.ConnectionString, cache);
             _env = env;
+            _vacancyManager = vacancyManager;
+            _publicationManager = publicationManager;
+            _settings = settings;
+            _telegramCrosspostManager = telegramCrosspostManager;
+            _facebookCrosspostManager = facebookCrosspostManager;
+            _twitterCrosspostManager = twitterCrosspostManager;
         }
 
-        public override void OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext context)
+        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            base.OnActionExecuted(context);
+            await LoadHotVacanciesToViewData();
 
-            LoadHotVacanciesToViewData();
+            await base.OnActionExecutionAsync(context, next);
         }
 
-        private void LoadHotVacanciesToViewData()
+        private async Task LoadHotVacanciesToViewData()
         {
-            var vacancies = _vacancyManager
-                                .GetHotVacancies()
-                                .Select(o => new VacancyViewModel(o, Settings.Current.WebSiteUrl))
-                                .ToList();
+            var vacancies = (await _vacancyManager.GetHotVacancies())
+                .Select(o => new VacancyViewModel(o, _settings.WebSiteUrl))
+                .ToImmutableList();
 
             ViewData["vacancies"] = vacancies;
         }
@@ -52,20 +71,24 @@ namespace WebSite.Controllers
             ViewData["Title"] = "Welcome!";
 
             var pagedResult = await _publicationManager.GetPublications();
-            var categories = _publicationManager.GetCategories();
-            var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, Settings.Current.WebSiteUrl, categories)), pagedResult);
+            var categories = await _publicationManager.GetCategories();
+            var publications = pagedResult.Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories));
+            
+            var model = new StaticPagedList<PublicationViewModel>(publications, pagedResult);
 
             return View(model);
         }
 
         [Route("page/{page}")]
-        public async Task<IActionResult> Page(int? categoryId = null, int page = 1, string lanugage = Core.Language.English)
+        public async Task<IActionResult> Page(int? categoryId = null, int page = 1, string language = Language.English)
         {
-            ViewData["Title"] = $"{Core.Pages.Page} {page}";
+            ViewData["Title"] = $"{Pages.Page} {page}";
 
             var pagedResult = await _publicationManager.GetPublications(categoryId, page);
-            var categories = _publicationManager.GetCategories();
-            var model = new StaticPagedList<PublicationViewModel>(pagedResult.Select(o => new PublicationViewModel(o, Settings.Current.WebSiteUrl, categories)), pagedResult);
+            var categories = await _publicationManager.GetCategories();
+            var pages = pagedResult.Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories));
+            
+            var model = new StaticPagedList<PublicationViewModel>(pages, pagedResult);
 
             ViewBag.CategoryId = categoryId;
 
@@ -75,11 +98,11 @@ namespace WebSite.Controllers
         [Route("vacancies/{page}")]
         public async Task<IActionResult> Vacancies(int page = 1)
         {
-            ViewData["Title"] = $"{Core.Pages.Vacancies}";
+            ViewData["Title"] = Pages.Vacancies;
 
             var pagedResult = await _vacancyManager.GetVacancies(page);
 
-            var model = new StaticPagedList<VacancyViewModel>(pagedResult.Select(o => new VacancyViewModel(o, Settings.Current.WebSiteUrl)), pagedResult);
+            var model = new StaticPagedList<VacancyViewModel>(pagedResult.Select(o => new VacancyViewModel(o, _settings.WebSiteUrl)), pagedResult);
 
             return View("~/Views/Home/Vacancies.cshtml", model);
         }
@@ -88,18 +111,20 @@ namespace WebSite.Controllers
         public async Task<IActionResult> Vacancy(int id)
         {
             var vacancy = await _vacancyManager.Get(id);
+            
             await _vacancyManager.IncreaseViewCount(id);
 
             if (vacancy == null)
             {
-                return StatusCode((int)HttpStatusCode.NotFound);
+                return NotFound();
             }
 
             var path = Path.Combine(_env.WebRootPath, "images/vacancy");
-            var file = Directory.GetFiles(path).OrderBy(o => Guid.NewGuid()).Select(o => Path.GetFileName(o)).FirstOrDefault();
-            var image = $"{Settings.Current.WebSiteUrl}images/vacancy/{file}";
+            var file = Directory.GetFiles(path).OrderBy(o => Guid.NewGuid()).Select(Path.GetFileName).FirstOrDefault();
+            var image = $"{_settings.WebSiteUrl}images/vacancy/{file}";
 
-            var model = new VacancyViewModel(vacancy, Settings.Current.WebSiteUrl, image);
+            var model = new VacancyViewModel(vacancy, _settings.WebSiteUrl, image);
+            
             ViewData["Title"] = model.Title;
 
             return View("~/Views/Home/Vacancy.cshtml", model);
@@ -109,14 +134,17 @@ namespace WebSite.Controllers
         public async Task<IActionResult> Post(int id)
         {
             var publication = await _publicationManager.Get(id);
+            
             await _publicationManager.IncreaseViewCount(id);
 
             if (publication == null)
             {
-                return StatusCode((int)HttpStatusCode.NotFound);
+                return NotFound();
             }
 
-            var model = new PublicationViewModel(publication, Settings.Current.WebSiteUrl);
+            var categories = await _publicationManager.GetCategories();
+            var model = new PublicationViewModel(publication, _settings.WebSiteUrl, categories);
+            
             ViewData["Title"] = model.Title;
 
             return View("~/Views/Home/Post.cshtml", model);
@@ -125,6 +153,49 @@ namespace WebSite.Controllers
         public async Task<IActionResult> Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        
+        [Route("platform")]
+        public async Task<IActionResult> Platform()
+        {
+            ViewData["Title"] = Pages.Platform;
+
+            var channels = (await _telegramCrosspostManager.GetChannels())
+                .Select(o => new TelegramViewModel()
+                {
+                    Title = o.Title,
+                    Description = o.Description,
+                    Logo = o.Logo,
+                    Link = $"https://t.me/{o.Name.Replace("@", "")}"
+                }).ToImmutableList();
+
+
+            var pages = (await _facebookCrosspostManager.GetPages())
+                .Select(o => new FacebookViewModel()
+                {
+                    Title = o.Name,
+                    Description = o.Description,
+                    Logo = o.Logo,
+                    Link = o.Url,
+                }).ToImmutableList();
+
+
+            var twitters = (await _twitterCrosspostManager.GetAccounts())
+                .Select(o => new TwitterViewModel()
+                {
+                    Title = o.Name,
+                    Description = o.Description,
+                    Logo = o.Logo,
+                    Link = o.Url
+                }).ToImmutableList();
+
+            var result = new List<SocialNetworkViewModel>();
+            
+            result.AddRange(pages);
+            result.AddRange(channels);
+            result.AddRange(twitters);
+
+            return View("~/Views/Home/Platform.cshtml", result);
         }
     }
 }

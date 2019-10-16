@@ -16,8 +16,8 @@ namespace DAL
         public string Key { get; set; }
         public string Name { get; set; }
 
-        public ICollection<Event> Event { get; set; }
-        public ICollection<Publication> Publication { get; set; }
-        public ICollection<Vacancy> Vacancy { get; set; }
+        public virtual ICollection<Event> Event { get; set; }
+        public virtual ICollection<Publication> Publication { get; set; }
+        public virtual ICollection<Vacancy> Vacancy { get; set; }
     }
 }

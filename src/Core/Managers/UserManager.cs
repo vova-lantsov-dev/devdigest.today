@@ -1,20 +1,28 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Core.Logging;
+using Core.Repositories;
 using DAL;
 
 namespace Core.Managers
 {
-    public class UserManager : ManagerBase
+    public interface IUserManager
     {
-        public UserManager(string connectionString)
-            : base(connectionString)
+        Task<User> GetBySecretKey(Guid key);
+    }
+
+    public class UserManager : IUserManager
+    {
+        private readonly IUserRepository _repository;
+        private readonly ILogger _logger;
+        
+        public UserManager(IUserRepository repository, ILogger logger)
         {
+            _repository = repository;
+            _logger = logger;
         }
 
-        public User GetBySecretKey(Guid key)
-        {
-            var secret = key.ToString();
-            return _database.User.FirstOrDefault( o => o.Key == secret);
-        }
+        public async Task<User> GetBySecretKey(Guid key) => await _repository.GetUserBySecretKey(key);
     }
 }

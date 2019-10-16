@@ -2,36 +2,63 @@
 using Core.Managers;
 using Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Core.Logging;
+using Core.Managers.Crosspost;
+using Core.Services;
+using Core.Web;
 
 namespace WebSite.Controllers
 {
-    public class ApiController : Controller
+    public class ApiController : ControllerBase
     {
-        private readonly PublicationManager _publicationManager;
-        private readonly VacancyManager _vacancyManager;
-        private readonly UserManager _userManager;
-        private readonly CrossPostManager _crossPostManager;
-        private readonly LocalizationManager _localizationManager;
+        private readonly IPublicationManager _publicationManager;
+        private readonly IVacancyManager _vacancyManager;
+        private readonly IUserManager _userManager;
+        private readonly ILocalizationManager _localizationManager;
+        private readonly IReadOnlyCollection<ICrossPostManager> _crossPostManagers;
+        private readonly Settings _settings;
+        private readonly ILogger _logger;
 
-        public ApiController(IMemoryCache cache)
+        public ApiController(
+            IPublicationManager publicationManager, 
+            IVacancyManager vacancyManager, 
+            IUserManager userManager, 
+            ILocalizationManager localizationManager,
+            ILogger logger,
+            Settings settings, 
+            FacebookCrosspostManager facebookCrosspostManager, 
+            TelegramCrosspostManager telegramCrosspostManager,
+            TwitterCrosspostManager twitterCrosspostManager)
         {
-            _publicationManager = new PublicationManager(Settings.Current.ConnectionString, cache);
-            _userManager = new UserManager(Settings.Current.ConnectionString);
-            _vacancyManager = new VacancyManager(Settings.Current.ConnectionString, cache);
-            _crossPostManager = new CrossPostManager(Settings.Current.ConnectionString);
-            _localizationManager = new LocalizationManager(Settings.Current.ConnectionString, cache);
+            _logger = logger;
+            _settings = settings;
+            _userManager = userManager;
+            _vacancyManager = vacancyManager;
+            _localizationManager = localizationManager;
+            _publicationManager = publicationManager;
+
+            _crossPostManagers = new List<ICrossPostManager>
+            {
+                facebookCrosspostManager,
+                telegramCrosspostManager,
+                twitterCrosspostManager
+            };
         }
+        
+        [HttpGet]
+        [Route("api")]
+        public async Task<ActionResult<string>> GetApiVersion() => await Task.FromResult($"//devdigest API v{_settings.Version}");
 
         [HttpGet]
         [Route("api/categories")]
         public async Task<IActionResult> GetCategories()
         {
-            var categories = _publicationManager.GetCategories().Select(o => new
+            var categories = (await _publicationManager.GetCategories()).Select(o => new
             {
                 o.Id,
                 o.Name
@@ -42,32 +69,42 @@ namespace WebSite.Controllers
 
         [HttpPost]
         [Route("api/publications/new")]
-        public async Task<IActionResult> AddPublicaton(NewPostRequest request)
+        public async Task<IActionResult> AddPublication(NewPostRequest request)
         {
-            var user = _userManager.GetBySecretKey(request.Key);
+            var user = await _userManager.GetBySecretKey(request.Key);
 
             if (user == null)
             {
-                return StatusCode((int)HttpStatusCode.Forbidden);
+                _logger.Write(LogLevel.Warning, $"Somebody tried to login with this key: `{request.Key}`. Text: `{request.Comment}`");
+
+                return StatusCode((int)HttpStatusCode.Forbidden, "Incorrect security key");
             }
 
             var extractor = new X.Web.MetaExtractor.Extractor();
-            var languageAnalyzer = new LanguageAnalyzer(Settings.Current.CognitiveServicesTextAnalyticsKey);
+            var languageAnalyzer = new LanguageAnalyzerService(_settings.CognitiveServicesTextAnalyticsKey, _logger);
             
             try
             {
-                var metadata = await extractor.Extract(new Uri(request.Link));
+                var metadata = await extractor.ExtractAsync(request.Link);
 
+                var existingPublication = await _publicationManager.Get(new Uri(metadata.Url));
+
+                if (existingPublication != null)
+                {
+                    return StatusCode((int)HttpStatusCode.Conflict, "Publication with this URL already exist");
+                }
+                
                 var languageCode = languageAnalyzer.GetTextLanguage(metadata.Description);
-                var languageId = _localizationManager.GetLanguageId(languageCode) ?? Language.EnglishId;
+                var languageId = await _localizationManager.GetLanguageId(languageCode) ?? Language.EnglishId;
+                var image = metadata.Images.FirstOrDefault();
                 
                 var publication = new DAL.Publication
                 {
                     Title = metadata.Title,
                     Description = metadata.Description,
                     Link = metadata.Url,
-                    Image = metadata.Image.FirstOrDefault(),
-                    Type = metadata.Type,
+                    Image = string.IsNullOrWhiteSpace(image) || image.Length > 250 ? string.Empty : image,
+                    Type = "article",
                     DateTime = DateTime.Now,
                     UserId = user.Id,
                     CategoryId = request.CategoryId,
@@ -75,32 +112,36 @@ namespace WebSite.Controllers
                     LanguageId = languageId
                 };
 
-                if (EmbededPlayer.GetPlayerSoure(request.Link) != null)
+                var player = EmbeddedPlayerFactory.CreatePlayer(request.Link);
+                
+                if (player != null)
                 {
-                    var player = new EmbededPlayer(request.Link);
-                    publication.EmbededPlayerCode = player.Render();
+                    publication.EmbededPlayerCode = await player.GetEmbeddedPlayerUrl(request.Link);
                 }
 
                 publication = await _publicationManager.Save(publication);
 
                 if (publication != null)
                 {
-                    var model = new PublicationViewModel(publication, Settings.Current.WebSiteUrl);
+                    var model = new PublicationViewModel(publication, _settings.WebSiteUrl);
 
                     //If we can embed main content into site page, so we can share this page.
                     var url = string.IsNullOrEmpty(model.EmbededPlayerCode) ? model.Link : model.ShareUrl;
 
-                    await _crossPostManager.Send(request.CategoryId, request.Comment, url);
+                    foreach (var crossPostManager in _crossPostManagers)
+                    {
+                        await crossPostManager.Send(request.CategoryId, request.Comment, url);
+                    }
 
                     return Created(new Uri(model.ShareUrl), model);
                 }
-                else
-                {
-                    throw new Exception("Can't save publication to databse");
-                }
+                
+                throw new Exception("Can't save publication to database");
             }
             catch (Exception ex)
             {
+                _logger.Write(LogLevel.Error, "Error while creating new publication", ex);
+                
                 return BadRequest(ex.Message);
             }
         }
@@ -113,7 +154,7 @@ namespace WebSite.Controllers
 
             if (user == null)
             {
-                return StatusCode((int)HttpStatusCode.Forbidden);
+                return Forbid();
             }
 
             var vacancy = new DAL.Vacancy
@@ -125,7 +166,7 @@ namespace WebSite.Controllers
                 CategoryId = request.CategoryId,
                 Date = DateTime.Now,
                 Active = true,
-                Content = null,
+                Content = request.Content,
                 Image = null,
                 Url = null,
             };
@@ -134,14 +175,17 @@ namespace WebSite.Controllers
 
             if (vacancy != null)
             {
-                var model = new VacancyViewModel(vacancy, Settings.Current.WebSiteUrl);
-
-                await _crossPostManager.Send(request.CategoryId, request.Comment, model.ShareUrl);
+                var model = new VacancyViewModel(vacancy, _settings.WebSiteUrl);
+                
+                foreach (var crossPostManager in _crossPostManagers)
+                {
+                    await crossPostManager.Send(request.CategoryId, request.Comment, model.ShareUrl);
+                }
 
                 return Created(new Uri(model.ShareUrl), model);
             }
 
-            return StatusCode((int)HttpStatusCode.BadRequest);
+            return BadRequest();
         }
     }
 }

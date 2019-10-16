@@ -1,31 +1,28 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace WebSite
 {
     public class Program
     {
-        public static void Main(string[] args)
-        {
-            BuildWebHost(args).Run();
-        }
+        public static void Main(string[] args) => CreateWebHostBuilder(args).Build().Run();
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseApplicationInsights()
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+            WebHost
+                .CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     var env = hostingContext.HostingEnvironment;
 
-                    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                          .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
-                          .AddJsonFile($"/Users/andrew/pub/devdigest.today/appsettings.json", optional: true, reloadOnChange: true)
-                          .AddJsonFile($"c:/pub/devdigest.today/appsettings.json", optional: true, reloadOnChange: true)
-                          .AddEnvironmentVariables();
-
+                    config
+                        .AddJsonFile($"appsettings.json", true, true)
+                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true)
+                        .AddJsonFile($"/Users/andrew/pub/dd.settings.json", true, true)
+                        .AddEnvironmentVariables();
                 })
                 .UseStartup<Startup>()
-                .Build();
+                .UseSerilog();
     }
 }

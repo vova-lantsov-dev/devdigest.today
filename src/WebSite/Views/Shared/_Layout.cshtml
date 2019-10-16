@@ -1,257 +1,56 @@
-﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
-@{
+﻿@{
+    Layout = "_GeneralLayout";
     var vacancies = ViewData["vacancies"] as IList<Core.ViewModels.VacancyViewModel> ?? new List<Core.ViewModels.VacancyViewModel>();
 }
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />    
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-    <meta name="msvalidate.01" content="13285491122FD93E71050B4D568B72FA" />
-    <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />    
-    
-    <meta property="fb:pages" content="1407984512841601" />
-    <meta property="fb:app_id" content="@Core.Settings.Current.FbAppId" />
-    <meta property="og:site_name" content="@Core.Settings.Current.WebSiteTitle" />
-    <meta property="author" content="@Core.Settings.Current.WebSiteTitle" />
-    <meta property="article:author" content="https://www.facebook.com/dncuug/">
-    
+
+@section head{
     @RenderSection("head",  required: false)
+}
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">    
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&amp;subset=cyrillic" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-    
-    <environment include="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />        
-        <link rel="stylesheet" href="~/css/site.css" />
-        <link rel="stylesheet" href="~/lib/bootstrap-social/bootstrap-social.css" />
-    </environment>
-    
-    <environment exclude="Development">
-        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/lib/bootstrap-social/bootstrap-social.css" asp-append-version="true" />
-    </environment>
-    
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({
-        google_ad_client: "ca-pub-9091710548216122",
-        enable_page_level_ads: true
-        });
-    </script>
+@section top{
+    @RenderSection("top",  required: false)
+}
 
-    <title>@ViewData["Title"] - Developers Digest | Latests news about .NET Core, Microsoft Azure and Xamarin</title>
-    
-    <!--  Application Insights -->
-    <script type="text/javascript">
-    var appInsights=window.appInsights||function(config){
-    function i(config){t[config]=function(){var i=arguments;t.queue.push(function(){t[config].apply(t,i)})}}var t={config:config},u=document,e=window,o="script",s="AuthenticatedUserContext",h="start",c="stop",l="Track",a=l+"Event",v=l+"Page",y=u.createElement(o),r,f;y.src=config.url||"https://az416426.vo.msecnd.net/scripts/a/ai.0.js";u.getElementsByTagName(o)[0].parentNode.appendChild(y);try{t.cookie=u.cookie}catch(p){}for(t.queue=[],t.version="1.0",r=["Event","Exception","Metric","PageView","Trace","Dependency"];r.length;)i("track"+r.pop());return i("set"+s),i("clear"+s),i(h+a),i(c+a),i(h+v),i(c+v),i("flush"),config.disableExceptionTracking||(r="onerror",i("_"+r),f=e[r],e[r]=function(config,i,u,e,o){var s=f&&f(config,i,u,e,o);return s!==!0&&t["_"+r](config,i,u,e,o),s}),t
-    }({
-        instrumentationKey:"f920ba25-44ac-450e-b8f9-1e932811df4e"
-    });       
-    window.appInsights=appInsights;
-    appInsights.trackPageView();
-    </script>
-    @Html.Raw(JavaScriptSnippet.FullScript)
-</head>
-<body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div>
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" style="font-weight: bold" href="/">//devdigest</a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav navbar-left">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Streams <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/page/1?categoryId=1">.NET Core</a></li>
-                            <li><a href="/page/1?categoryId=2">Xamarin</a></li>
-                            <li><a href="/page/1?categoryId=3">Azure</a></li>
-                            <li><a href="/page/1?categoryId=4">Data Science</a></li>
-                        </ul>
-                    </li>  
-                    <li><a href="/vacancies/1">Job</a></li>
-                    <li><a href="/search">Search</a></li>
-                    <li><a href="/content/developex-tech-club">Developex Tech Club&nbsp;<span class="label label-danger">New!</span></a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Facebook <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="https://facebook.com/groups/dncuug">.NET Core User Group</a></li>
-                            <li><a href="https://facebook.com/groups/azure.ua/">Azure User Group</a></li>
-                            <li><a href="https://facebook.com/groups/xamarin.ua/">Xamarin User Group</a></li>
-                        </ul>
-                    </li> 
-                    
-                    <li><a href="https://github.com/dncuug">GitHub</a></li>
-                    
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Telegram <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="https://telegram.me/dncuug">devdigest // net core</a></li>
-                            <li><a href="https://telegram.me/xamarin_ua">devdigest // xamarin</a></li>
-                            <li><a href="https://telegram.me/azure_digest">devdigest // azure</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="/content/Telegram">All channels</a></li>
-                        </ul>
-                    </li>  
-
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/content/partners">@Core.Pages.Partners</a></li>
-                            <li><a href="/content/about">@Core.Pages.AboutUs</a></li>
-                        </ul>
-                    </li>                            
-                </ul>
-            </div><!--/.navbar-collapse -->
-        </div>
-    </nav>
-
-    @RenderSection("top", required: false)
-
-    <div class="container">    
-        <div class="row content">
-            <div class="col-md-8">
-                @RenderBody()
-            </div>
-            <div class="col-md-4">
-
-                <div class="fb-page" 
-                    data-href="https://facebook.com/dncuug"
-                    data-width="380" 
-                    data-hide-cover="false"
-                    data-show-facepile="false"></div>
-
-                <div class="ad">
-                    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                    <!-- dot-net.in.ua right side ad -->
-                    <ins class="adsbygoogle"
-                        style="display:block"
-                        data-ad-client="ca-pub-9437162291368173"
-                        data-ad-slot="5581239879"
-                        data-ad-format="auto"></ins>
-                    <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
-                </div>
-
-                @if(vacancies.Any()) {
-                    <div class="vacancies">
-                        <h3>Hot Vacancies</h3>
-                        @foreach(var v in vacancies) {
-                            @Html.Partial("_VacancySmallPreview", v)                                    
-                        }
-                        <a href="/vacancies/1"> View all vacancies</a>.
-                    </div>
-                }
-            </div>
-        </div>
+@section scripts{
+    @RenderSection("scripts", required: false)
+}
+<div class="row">
+    <div class="col-md-8">
+        @RenderBody()
     </div>
-
-
-    <footer class="container-fluid">
-        <section class="container">
-            <div class="col-md-2 col-sm-2">
-                <h4>Community</h4>
-
-                <h5>Facebook</h5>
-                <ul>
-                    <li><a href="https://facebook.com/groups/dncuug">.NET Core User Group</a></li>
-                    <li><a href="https://facebook.com/groups/azure.ua/">Azure User Group</a></li>
-                    <li><a href="https://facebook.com/groups/xamarin.ua/">Xamarin User Group</a></li>
-                </ul>
-            </div>
-            
-            <div class="col-md-2 col-sm-2">
-                <h4>&nbsp;</h4>
-                <h5>Telegram</h5>
-                <ul>
-                    <li><a href="https://telegram.me/dncuug">devdigest // net core</a></li>
-                    <li><a href="https://telegram.me/xamarin_ua">devdigest // xamarin</a></li>
-                    <li><a href="https://telegram.me/azure_digest">devdigest // azure</a></li>
-                </ul>
-            </div>
-            <div class="col-md-2 col-sm-2">
-                <h4>Information</h4>
-                <ul>
-                    <li><a href="/content/partners">Partners</a></li>
-                    <li><a href="/content/about">About Us</a></li>
-                </ul>
-            </div>
-            <div class="col-md-3 col-sm-3">
-                <h4>Concept</h4>
-                Our community is a union of developers, who use and love Microsoft technology stack: .NET Core, Xamarin and Microsoft Azure.
-            </div>
-            <div class="col-md-3 col-sm-3 text-right">
-                <br />
-                <p>//devdigest &copy; @DateTime.Now.Year</p>
-            </div>            
-        </section>    
-    </footer>
+    <div class="col-md-4">
     
-    <environment include="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-    </environment>
-    <environment exclude="Development">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery"
-                crossorigin="anonymous"
-                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
-        </script>
-        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-                crossorigin="anonymous"
-                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
-        </script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
-    </environment>
-
-    @RenderSection("Scripts", required: false)
-
-    <div id="fb-root"></div>
-    <script>(function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10&appId=112146102787692";
-    fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));</script>
-
-    <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-5273549-33', 'auto');
-    ga('send', 'pageview');
-    </script>
+        <div class="fb-page"
+             data-href="https://facebook.com/dncuug"
+             data-width="380"
+             data-hide-cover="false"
+             data-show-facepile="false">
+        </div>
     
-    <script>
-    ((window.gitter = {}).chat = {}).options = {
-        room: 'dncuug/Lobby'
-    };
-    </script>
-    <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
+        <div class="ad">
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- right side ad -->
+            <ins class="adsbygoogle"
+                 style="display: block"
+                 data-ad-client="ca-pub-9437162291368173"
+                 data-ad-slot="5581239879"
+                 data-ad-format="auto">
+            </ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
     
-</body>
-</html>
+        @if (vacancies.Any())
+        {
+    <div class="vacancies">
+        <h3>Hot Vacancies</h3>
+        @foreach (var v in vacancies)
+        {
+            @await Html.PartialAsync("_VacancySmallPreview", v)
+        }
+        <a href="/vacancies/1"> View all vacancies</a>.
+    </div>
+        }
+    </div>
+</div>

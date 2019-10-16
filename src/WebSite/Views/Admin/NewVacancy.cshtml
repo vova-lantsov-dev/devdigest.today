@@ -2,47 +2,88 @@
 @{
     ViewData["Title"] = "Add new vacancy";
 }
+@section head {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.10/summernote.css"/>
+}
 
-<h1>@ViewData["Title"]</h1>
+@section scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.10/summernote.min.js"></script>
+    <script src="/js/new-vacancy.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            $('#vacancy-content').summernote({
+                tabsize: 2,
+                height: 300,
+                dialogsInBody: false,
+                shortcuts: false,
+                popover: {
+                    image: [],
+                    link: [],
+                    air: []
+                },
+                toolbar: [
+                    ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                    ['remove', ['undo', 'redo']],
+                    ['insert', ['linkDialogShow', 'link', 'unlink', 'picture', 'table']],
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']],
+                    ['codeview']
+                ],
+                minHeight: 300
+            });
+        });
+    </script>
 
-<form>
-    <div class="form-group">
-        <label for="vacancy-title">Title</label>
-        <input type="text" class="form-control" id="vacancy-title" placeholder="Title" />
-    </div>
-    <div class="form-group">
-        <label for="vacancy-description">Description</label>
-        <textarea class="form-control" id="vacancy-description"></textarea>
-    </div>
-    <div class="form-group">
-        <label for="vacancy-contact">Contact</label>
-        <input class="form-control" id="vacancy-contact" />
-    </div>
-    <div class="form-group">
-        <label for="security-key">Security Key</label>
-        <input type="password" class="form-control" id="security-key" placeholder="Security Key" />
-    </div>
-    <div class="form-group">
-        <label for="vacancy-comment">Telegram Comment</label>
-        <input type="text" class="form-control" id="vacancy-comment" placeholder="Telegram Comment" />
-    </div>
-    <div class="form-group">
-        <label for="category-id">Category</label>
-        <select class="form-control" id="category-id"></select>
-    </div>
+}
 
-    <button type="button" id="add-vacancy" class="btn btn-primary">Add</button>
-</form>
+<div class="row">
+    <div class="col-md-12">
 
-<br />
-<div class="progress">
-    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+        <h1>@ViewData["Title"]</h1>
+
+        <form>
+            <div class="form-group">
+                <label for="vacancy-title">Title</label>
+                <input type="text" class="form-control" id="vacancy-title" placeholder="Title" />
+            </div>
+            <div class="form-group">
+                <label for="vacancy-description">Description</label>
+                <textarea class="form-control" id="vacancy-description" placeholder="Description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="vacancy-description">Content</label>
+                <textarea class="form-control" id="vacancy-content"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="vacancy-contact">Contact</label>
+                <input class="form-control" id="vacancy-contact" placeholder="Contact"/>
+            </div>
+            <div class="form-group">
+                <label for="security-key">Security Key</label>
+                <input type="password" class="form-control" id="security-key" placeholder="Security Key" />
+            </div>
+            <div class="form-group">
+                <label for="vacancy-comment">Social Network Comment</label>
+                <input type="text" class="form-control" id="vacancy-comment" placeholder="Social Network Comment" />
+            </div>
+            <div class="form-group">
+                <label for="category-id">Category</label>
+                <select class="form-control" id="category-id"></select>
+            </div>
+
+            <button type="button" id="add-vacancy" class="btn btn-primary">Add</button>
+        </form>
+
+        <br />
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            </div>
+        </div>
+
     </div>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.2.1.min.js"
-        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-        crossorigin="anonymous"></script>
-
-<script src="/js/new-vacancy.js"></script>
-

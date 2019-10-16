@@ -1,41 +1,47 @@
-﻿using DAL;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
-using System.Linq;
-using System.Threading.Tasks;
-using X.PagedList;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Core.Logging;
+using Core.Repositories;
+using DAL;
+using Microsoft.Extensions.Caching.Memory;
+using X.PagedList;
 
 namespace Core.Managers
 {
-    public class VacancyManager : ManagerBase
+    public interface IVacancyManager
     {
-        public VacancyManager(string connectionString, IMemoryCache cache)
-            : base(connectionString, cache)
+        Task<IPagedList<Vacancy>> GetVacancies(int page = 1, int pageSize = 10);
+        Task<IReadOnlyCollection<Vacancy>> GetHotVacancies();
+        Task<Vacancy> Get(int id);
+        Task<Vacancy> Save(Vacancy vacancy);
+        Task IncreaseViewCount(int id);
+    }
+
+    public class VacancyManager : IVacancyManager
+    {
+        private readonly ILogger _logger;
+        private readonly IMemoryCache _cache;
+        private readonly IVacancyRepository _repository;
+
+        public VacancyManager(IMemoryCache cache, ILogger logger, IVacancyRepository repository)
         {
+            _cache = cache;
+            _logger = logger;
+            _repository = repository;
         }
 
-        public async Task<IPagedList<DAL.Vacancy>> GetVacancies(int page = 1, int pageSize = 10)
+        public async Task<IPagedList<Vacancy>> GetVacancies(int page = 1, int pageSize = 10)
         {
             var key = $"vacancy{page}_{pageSize}";
 
-            var result = _cache.Get(key) as IPagedList<DAL.Vacancy>;
+            var result = _cache.Get(key) as IPagedList<Vacancy>;
 
             if (result == null)
             {
-                var skip = (page - 1) * pageSize;
-
-                var items = _database
-                    .Vacancy
-                    .Include(o => o.Category)
-                    .Where(o => o.Active && o.LanguageId == Core.Language.EnglishId)
-                    .OrderByDescending(o => o.Id)
-                    .Skip(skip)
-                    .Take(pageSize).ToList();
-
-                var totalItemsCount = await _database.Vacancy.Where(o => o.Active).CountAsync();
-
+                var items =  await  _repository.GetVacancies(page, pageSize);
+                var totalItemsCount = await _repository.GetVacanciesCount();
+                
                 result = new StaticPagedList<Vacancy>(items, page, pageSize, totalItemsCount);
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());
             }
@@ -43,21 +49,16 @@ namespace Core.Managers
             return result;
         }
 
-        public IList<DAL.Vacancy> GetHotVacancies()
+        public async Task<IReadOnlyCollection<Vacancy>> GetHotVacancies()
         {
             var key = $"hot_vacancies";
-            var size = 5;
+            const int size = 5;
 
-            var result = _cache.Get(key) as IList<DAL.Vacancy>;
+            var result = _cache.Get(key) as IReadOnlyCollection<Vacancy>;
 
             if (result == null)
             {
-                result = _database
-                    .Vacancy
-                    .Include(o => o.Category)
-                    .Where(o => o.Active && o.LanguageId == Core.Language.EnglishId)
-                    .OrderByDescending(o => o.Id)
-                    .Take(size).ToList();
+                result = await _repository.GetHotVacancies(size);
 
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());
             }
@@ -65,40 +66,28 @@ namespace Core.Managers
             return result;
         }
 
-        public async Task<DAL.Vacancy> Get(int id)
+        public async Task<Vacancy> Get(int id)
         {
             var key = $"vacancy_{id}";
 
             var result = _cache.Get(key) as Vacancy;
-            result = null;
 
             if (result == null)
             {
-                result = _database.Vacancy.SingleOrDefault(o => o.Id == id);
+                result = await _repository.GetVacancy(id);
                 _cache.Set(key, result, GetMemoryCacheEntryOptions());
             }
 
-            return await Task.FromResult(result);
+            return result;
         }
 
-        public async Task<Vacancy> Save(Vacancy vacancy)
+        public async Task<Vacancy> Save(Vacancy vacancy) => await _repository.Save(vacancy);
+
+        public async Task IncreaseViewCount(int id) => await _repository.IncreaseVacancyViewCount(id);
+
+        private static MemoryCacheEntryOptions GetMemoryCacheEntryOptions() => new MemoryCacheEntryOptions
         {
-            _database.Add(vacancy);
-            await _database.SaveChangesAsync();
-            vacancy = _database.Vacancy.LastOrDefault();
-
-            return vacancy;
-        }
-
-        public async Task IncreaseViewCount(int id)
-        {
-            var vacancy = _database.Vacancy.SingleOrDefault(o => o.Id == id);
-            
-            if (vacancy != null)
-            {
-                vacancy.Views++;
-                await _database.SaveChangesAsync();
-            }
-        }
+            AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1)
+        };
     }
 }

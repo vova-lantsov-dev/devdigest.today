@@ -16,7 +16,7 @@ h5,
 .navbar-inverse .navbar-nav > li > a,
 footer,
 footer a {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
     font-weight: 300;
 }
 
@@ -24,15 +24,31 @@ footer a {
     font-size: 10pt;
 }
 
-.navbar-header,
+.navbar-header {
+    background: none;
+}
+
 .navbar-inverse {
-    background: url(/images/bar_bg.jpg);
-    background-color: transparent;
-    background-position: center center;
+    background: #c5195d url(/images/bar_bg.jpg) no-repeat left center;
+}
+
+.dropdown-header {
+    font-weight: bold;
+}
+
+@media (max-width: 767px) {
+    .dropdown-header,
+    .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {
+        color: #FFF;
+    }
 }
 
 .navbar-inverse {
     border-color: #777;
+}
+
+.protocol {
+    color: #AeAeAe;
 }
 
 .navbar-inverse .navbar-brand {
@@ -56,7 +72,7 @@ footer a {
     padding-bottom: 15px;
 }
 
-.partner .btn-xs{
+.partner .btn-xs {
     margin-top: 10px;
     display: inline-block;
 }
@@ -75,7 +91,7 @@ footer a {
 
 .jumbotron .social {
     padding: 10px;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 .jumbotron .social a {
@@ -83,7 +99,7 @@ footer a {
 }
 
 .jumbotron {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 .jumbotron .container {
@@ -183,7 +199,7 @@ footer a {
     padding-bottom: 6px !important;
     padding-left: 12px !important;
     padding-right: 12px !important;
-    font-family: "Open Sans", sans-serif !important;
+    font-family: 'Ubuntu', sans-serif !important;
     font-size: 16px !important;
     font-weight: normal !important;
     text-decoration: none !important;
@@ -202,12 +218,10 @@ form.gsc-search-box,
 
 footer {
     color: #FFF;
-    background-color: transparent;
+    background: #c5195d url(/images/bar_bg.jpg) no-repeat left center;
     margin-bottom: 0;
     padding-bottom: 10px;
-    padding-top: 25px;
-    background: url(/images/bar_bg.jpg);
-    background-position: center center;
+    padding-top: 25px;   
 }
 
 footer a {
@@ -234,7 +248,7 @@ footer ul {
 
 .content,
 .description {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
     font-size: 11pt;
     font-weight: lighter;
 }
@@ -440,4 +454,13 @@ footer ul {
 .in-feed-ad {
     border: 1px solid #EEE;
     margin-bottom: 40px;
+}
+
+.profile-card {
+    width: 100%;
+}
+
+.profile-card  h1 {
+    font-size: 12pt;
+    font-weight: bold;
 }

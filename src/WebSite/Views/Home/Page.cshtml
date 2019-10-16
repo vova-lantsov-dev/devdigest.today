@@ -4,13 +4,13 @@
 
 @{
     var categoryId = ViewBag.CategoryId as int?;
-    var category = categoryId.HasValue ? Model.Select(o => o.Category.Name).FirstOrDefault() : string.Empty;
+    var category = categoryId.HasValue ? Model.Select(o => o.Category.Name).FirstOrDefault()?.ToLower() : string.Empty;
 }
 
 @section head {
     <meta property="og:title" content="@Core.Settings.Current.WebSiteTitle" />
     <meta property="og:type" content="website" />
-    
+
     <meta property="og:image" content="@Core.Settings.Current.FacebookImage" />
     <meta property="og:description" content="@Core.Settings.Current.DefaultDescription" />
 
@@ -20,19 +20,25 @@
 
 @if (categoryId.HasValue)
 {
-    <h1>stream://&nbsp;@category</h1>
+    <h1><span class="protocol">stream://&nbsp;</span>@category</h1>
     <br />
 }
 
-@for (var i=0; i<Model.Count(); i++)
-{    
-    @Html.Partial("_Publication", Model[i])
+@for (var i = 0; i < Model.Count(); i++)
+{
+    @await Html.PartialAsync("_Publication", Model[i])
 
-    if (i == 2) { @Html.Partial("_InFeedAd") }
+    if (i == 2)
+    {
+        @await Html.PartialAsync("_InFeedAd")
+    }
 }
 
-@if (categoryId != null){
+@if (categoryId != null)
+{
     @Html.PagedListPager(Model, page => $"/page/{page}?categoryId={categoryId}")
-} else {
+}
+else
+{
     @Html.PagedListPager(Model, page => $"/page/{page}")
 }

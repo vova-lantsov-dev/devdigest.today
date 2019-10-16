@@ -1,8 +1,15 @@
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Core;
 using Core.Managers;
+using Core.Managers.Crosspost;
+using Core.ViewModels;
+using Core.Web;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -10,76 +17,67 @@ namespace WebSite.Controllers
 {
     public class ContentController : Controller
     {
-        private readonly CrossPostManager _crossPostManager;
-
-        public ContentController(IMemoryCache cache)
+        private readonly IHostingEnvironment _hostingEnvironment;
+        
+        public ContentController(
+            IMemoryCache cache, 
+            IHostingEnvironment hostingEnvironment)
         {
-            _crossPostManager = new CrossPostManager(Settings.Current.ConnectionString);
+            _hostingEnvironment = hostingEnvironment;
         }
 
-        [Route("content/partners")]
-        public async Task<IActionResult> Partners()
+        [Route("content/{name}")]
+        public async Task<IActionResult> Index(string name)
         {
-            ViewData["Title"] = Core.Pages.Partners;
+            var html = await GetFileContent(name);
 
-            return View("~/Views/Content/Partners.cshtml");
+            if (string.IsNullOrWhiteSpace(html))
+                return NotFound();
+
+            ViewData["Title"] = string.Join(" ", name.Split('-').Select(UppercaseFirstLetter));
+
+            return View((object) html);
         }
 
-        [Route("content/about")]
-        public async Task<IActionResult> About()
+        private static string UppercaseFirstLetter(string text)
         {
-            ViewData["Title"] = Core.Pages.AboutUs;
+            if (string.IsNullOrWhiteSpace(text))
+                return string.Empty;
 
-            return View("~/Views/Content/About.cshtml");
+            if (text.Length == 1)
+                return text.ToUpper();
+
+            return text.First().ToString().ToUpper() + text.Substring(1);
         }
 
-        [Route("content/developex-tech-club")]
-        public async Task<IActionResult> DevelopexTechClub()
+        private async Task<string> GetFileContent(string name)
         {
-            ViewData["Title"] = Core.Pages.DevelopexTechClub;
+            name = name.Replace("-", "");
+            
+            var path = Directory
+                .GetFiles(Path.Combine(_hostingEnvironment.WebRootPath, "content"))
+                .SingleOrDefault(o => string.Equals(
+                    Path.GetFileNameWithoutExtension(o).Trim(),
+                    name.Trim(),
+                    StringComparison.InvariantCultureIgnoreCase));
 
-            return View("~/Views/Content/DevelopexTechClub.cshtml");
+            if (string.IsNullOrWhiteSpace(path) || !System.IO.File.Exists(path))
+                return null;
+            
+            return await System.IO.File.ReadAllTextAsync(path);
         }
-
-        [Route("search")]
-        public async Task<IActionResult> Search()
-        {
-            ViewData["Title"] = Core.Pages.Search;
-
-            return View("~/Views/Content/Search.cshtml");
-        }
-
-        [Route("content/privacy")]
-        public async Task<IActionResult> Privacy()
-        {
-            return View("~/Views/Content/Privacy.cshtml");
-        }
-
 
         [Route("content/telegram")]
-        public async Task<IActionResult> Telegram()
-        {
-            ViewData["Title"] = Core.Pages.Telegram;
-
-            var channels = _crossPostManager
-                .GetTelegramChannels()
-                .Select(o => new Core.ViewModels.TelegramViewModel(o.Name)
-                {
-                    Title = o.Title,
-                    Description = o.Description,                    
-                    Logo = o.Logo
-                }).ToList();
-
-
-            return View("~/Views/Content/Telegram.cshtml", channels);
-        }
-
+        public async Task<IActionResult> Telegram()=> RedirectPermanent("/content/platform");
 
         [Route("partners")]
-        public async Task<IActionResult> PartnersRedirect() => RedirectPermanent("content/partners");
-
-        [Route("about")]
-        public async Task<IActionResult> AboutRedirect() => RedirectPermanent("content/about");
-
+        public async Task<IActionResult> PartnersRedirect() => RedirectPermanent("/content/partners");  
+        
+        [Route("search")]
+        public async Task<IActionResult> SearchRedirect() => RedirectPermanent("/content/search");
+        
+        [Route("content/platform")]
+        [Route("content/telegram")]
+        public async Task<IActionResult> Platform()=> RedirectPermanent("/platform");
     }
 }
