@@ -64,7 +64,8 @@ namespace Core.Repositories
             
             _database.Add(publication);
             await _database.SaveChangesAsync();
-            publication = _database.Publication.LastOrDefault();
+            
+            publication = await _database.Publication.OrderBy(o => o.DateTime).LastOrDefaultAsync();
 
             _logger.Write(LogLevel.Info, $"Publication `{publication.Title}`  was saved. Id: {publication.Id}");
 

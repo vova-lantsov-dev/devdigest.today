@@ -411,6 +411,10 @@ namespace DAL
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Vacancy_User_Id_fk");
             });
+
+            OnModelCreatingPartial(modelBuilder);
         }
+
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
