@@ -26,13 +26,13 @@ namespace WebSite.Controllers
         private readonly TelegramCrosspostManager _telegramCrosspostManager;
         private readonly IPublicationManager _publicationManager;
         private readonly IVacancyManager _vacancyManager;
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
         private readonly IMemoryCache _cache;
         private readonly Settings _settings;
 
         public HomeController(
             IMemoryCache cache, 
-            IHostingEnvironment env, 
+            IWebHostEnvironment env, 
             IVacancyManager vacancyManager, 
             IPublicationManager publicationManager, 
             Settings settings, 

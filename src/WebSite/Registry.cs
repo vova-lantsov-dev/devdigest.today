@@ -6,9 +6,7 @@ using Core.Managers;
 using Core.Managers.Crosspost;
 using Core.Repositories;
 using DAL;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.WebEncoders;
 using Serilog;
@@ -21,10 +19,10 @@ namespace WebSite
         private readonly Settings _settings;
         private readonly Core.Logging.ILogger _logger;
 
-        public Registry(IHostingEnvironment hostingEnvironment, Settings settings)
+        public Registry(string contentRootPath, Settings settings)
         {
             _settings = settings;
-            _logger = new SerilogLoggerWrapper(CreateLogger(hostingEnvironment));
+            _logger = new SerilogLoggerWrapper(CreateLogger(contentRootPath));
         }
 
         public IServiceCollection Register(IServiceCollection services)
@@ -63,9 +61,9 @@ namespace WebSite
             return services;
         }
 
-        private static Logger CreateLogger(IHostingEnvironment env)
+        private static Logger CreateLogger(string contentRootPath)
         {
-            var path = $"{env.ContentRootPath}/logs/log-.log";
+            var path = $"{contentRootPath}/logs/log-.log";
 
             return new Serilog.LoggerConfiguration()
                 .WriteTo.Console()
