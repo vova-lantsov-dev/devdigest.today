@@ -112,12 +112,12 @@ namespace WebSite.Controllers
         {
             var vacancy = await _vacancyManager.Get(id);
             
-            await _vacancyManager.IncreaseViewCount(id);
-
             if (vacancy == null)
             {
                 return NotFound();
             }
+            
+            await _vacancyManager.IncreaseViewCount(id);
 
             var path = Path.Combine(_env.WebRootPath, "images/vacancy");
             var file = Directory.GetFiles(path).OrderBy(o => Guid.NewGuid()).Select(Path.GetFileName).FirstOrDefault();

@@ -45,8 +45,9 @@ namespace WebSite
             }
             else
             {
-                //app.UseExceptionHandler("/error/info");
-                app.UseStatusCodePagesWithReExecute("/error/info");
+                app.UseExceptionHandler("/error/info");
+                
+                app.UseStatusCodePagesWithRedirects("/error/info");
                 
                 app.UseHsts();
             }

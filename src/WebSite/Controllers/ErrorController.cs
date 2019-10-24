@@ -27,6 +27,8 @@ namespace WebSite.Controllers
         [Route("info")]
         public ActionResult Info()
         {
+            ViewData["Title"] = "Error";
+            
             var model = new ErrorViewModel
             {
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
