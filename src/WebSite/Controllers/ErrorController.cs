@@ -1,19 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
-using Core;
-using Core.Managers;
-using Core.Managers.Crosspost;
 using Core.ViewModels;
-using Core.Web;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace WebSite.Controllers
 {
@@ -25,15 +13,17 @@ namespace WebSite.Controllers
         }
 
         [Route("info")]
-        public ActionResult Info()
+        public ActionResult Info(int? code)
         {
             ViewData["Title"] = "Error";
+
+            var statusCode = code ?? HttpContext.Response.StatusCode;
             
             var model = new ErrorViewModel
             {
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
-                StatusCode = HttpContext.Response.StatusCode,
-                Description = GetDescription(HttpContext.Response.StatusCode)
+                StatusCode = statusCode,
+                Description = GetDescription(statusCode)
             };
             
             return View(model);
@@ -41,10 +31,13 @@ namespace WebSite.Controllers
 
         private static string GetDescription(int code)
         {
-            if (code == (int) HttpStatusCode.NotFound) 
-                return "Page not found";
-
-            return "System error";
+            switch (code)
+            {
+                case (int) HttpStatusCode.NotFound:
+                    return "Page not found";
+                default:
+                    return "System error";
+            }
         }
     }
 }
