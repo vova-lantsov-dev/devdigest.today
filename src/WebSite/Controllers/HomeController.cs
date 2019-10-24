@@ -149,11 +149,6 @@ namespace WebSite.Controllers
 
             return View("~/Views/Home/Post.cshtml", model);
         }
-
-        public async Task<IActionResult> Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
         
         [Route("platform")]
         public async Task<IActionResult> Platform()

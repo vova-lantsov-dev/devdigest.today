@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Core.Logging;
 using Core.Repositories;
 using DAL;
+using Microsoft.Extensions.Logging;
+using Serilog.Events;
 using Telegram.Bot;
+using ILogger = Core.Logging.ILogger;
 
 namespace Core.Managers.Crosspost
 {
@@ -33,12 +35,12 @@ namespace Core.Managers.Crosspost
                     
                     await bot.SendTextMessageAsync(channel.Name, message);
                     
-                    _logger.Write(LogLevel.Info, $"Message was sent to Telegram channel `{channel.Name}`: `{comment}` `{link}` Category: `{categoryId}`");
+                    _logger.Write(LogEventLevel.Information, $"Message was sent to Telegram channel `{channel.Name}`: `{comment}` `{link}` Category: `{categoryId}`");
                 }
             }
             catch (Exception ex)
             {
-                _logger.Write(LogLevel.Error, $"Error during send message to Telegram: `{comment}` `{link}` Category: `{categoryId}`", ex);
+                _logger.Write(LogEventLevel.Error, $"Error during send message to Telegram: `{comment}` `{link}` Category: `{categoryId}`", ex);
             }
         }
 

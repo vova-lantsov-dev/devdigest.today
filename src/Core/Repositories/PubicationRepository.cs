@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Core.Logging;
 using DAL;
 using Microsoft.EntityFrameworkCore;
+using Serilog.Events;
 
 namespace Core.Repositories
 {
@@ -67,7 +68,7 @@ namespace Core.Repositories
             
             publication = await _database.Publication.OrderBy(o => o.DateTime).LastOrDefaultAsync();
 
-            _logger.Write(LogLevel.Info, $"Publication `{publication.Title}`  was saved. Id: {publication.Id}");
+            _logger.Write(LogEventLevel.Information, $"Publication `{publication.Title}`  was saved. Id: {publication.Id}");
 
             return publication;
         }

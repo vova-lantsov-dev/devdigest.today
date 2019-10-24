@@ -1,9 +1,13 @@
+using System;
 using Core;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 
 namespace WebSite
 {
@@ -41,9 +45,9 @@ namespace WebSite
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                //app.UseExceptionHandler("/error/info");
+                app.UseStatusCodePagesWithReExecute("/error/info");
                 
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 

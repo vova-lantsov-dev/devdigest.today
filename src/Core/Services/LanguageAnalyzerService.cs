@@ -5,6 +5,7 @@ using Core.Models.CognitiveServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using RestSharp;
+using Serilog.Events;
 
 namespace Core.Services
 {
@@ -54,7 +55,7 @@ namespace Core.Services
             }
             catch(Exception ex)
             {
-                _logger.Write(LogLevel.Error, $"Error in `{nameof(GetTextLanguage)}` method", ex);
+                _logger.Write(LogEventLevel.Error, $"Error in `{nameof(GetTextLanguage)}` method", ex);
                 
                 return string.Empty;
             }

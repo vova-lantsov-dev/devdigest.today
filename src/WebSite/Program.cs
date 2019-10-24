@@ -1,3 +1,4 @@
+using Core.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -7,7 +8,12 @@ namespace WebSite
 {
     public class Program
     {
-        public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
+        public static void Main(string[] args)
+        {
+            var loggerFactory = new SerilogFactory();
+            Serilog.Log.Logger = loggerFactory.CreateLogger(); 
+            CreateHostBuilder(args).Build().Run();
+        }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host
@@ -22,7 +28,7 @@ namespace WebSite
                         .AddJsonFile($"/Users/andrew/pub/dd.settings.json", true, true)
                         .AddEnvironmentVariables();
                 })
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
-                .UseSerilog();
+                .UseSerilog()
+                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }

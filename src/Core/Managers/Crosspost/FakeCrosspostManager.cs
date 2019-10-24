@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Core.Logging;
+using Serilog.Events;
 
 namespace Core.Managers.Crosspost
 {
@@ -11,7 +12,7 @@ namespace Core.Managers.Crosspost
 
         public async Task Send(int categoryId, string comment, string link)
         {
-            _logger.Write(LogLevel.Info, $"{comment} {link} {categoryId}");
+            _logger.Write(LogEventLevel.Information, $"{comment} {link} {categoryId}");
         }
     }
 }

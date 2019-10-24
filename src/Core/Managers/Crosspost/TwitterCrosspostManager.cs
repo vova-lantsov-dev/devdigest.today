@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Core.Logging;
 using Core.Repositories;
 using DAL;
+using Serilog.Events;
 using Tweetinvi;
 
 namespace Core.Managers.Crosspost
@@ -54,11 +55,11 @@ namespace Core.Managers.Crosspost
 
                     Tweet.PublishTweet(text);
 
-                    _logger.Write(LogLevel.Info, $"Message was sent to Twitter channel `{account.Name}`: `{comment}` `{link}` Category: `{categoryId}`");
+                    _logger.Write(LogEventLevel.Information, $"Message was sent to Twitter channel `{account.Name}`: `{comment}` `{link}` Category: `{categoryId}`");
                 }
                 catch (Exception ex)
                 {
-                    _logger.Write(LogLevel.Error, "Error in TwitterCrosspostManager.Send", ex);
+                    _logger.Write(LogEventLevel.Error, "Error in TwitterCrosspostManager.Send", ex);
                 }
                 finally
                 {

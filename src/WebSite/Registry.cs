@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.WebEncoders;
 using Serilog;
 using Serilog.Core;
+using Serilog.Events;
 
 namespace WebSite
 {
@@ -21,8 +22,9 @@ namespace WebSite
 
         public Registry(string contentRootPath, Settings settings)
         {
+            
             _settings = settings;
-            _logger = new SerilogLoggerWrapper(CreateLogger(contentRootPath));
+            _logger = new SerilogLoggerWrapper(new SerilogFactory().CreateLogger(contentRootPath));
         }
 
         public IServiceCollection Register(IServiceCollection services)
@@ -56,19 +58,10 @@ namespace WebSite
                 options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
             });
             
-            _logger.Write(LogLevel.Info, "DI container initialized");
+            _logger.Write(LogEventLevel.Information, "DI container initialized");
 
             return services;
         }
 
-        private static Logger CreateLogger(string contentRootPath)
-        {
-            var path = $"{contentRootPath}/logs/log-.log";
-
-            return new Serilog.LoggerConfiguration()
-                .WriteTo.Console()
-                .WriteTo.File(path, rollingInterval: RollingInterval.Day)
-                .CreateLogger();
-        }
     }
 }

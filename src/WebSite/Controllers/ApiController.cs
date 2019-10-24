@@ -7,10 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Core.Logging;
 using Core.Managers.Crosspost;
 using Core.Services;
 using Core.Web;
+using Microsoft.Extensions.Logging;
+using Serilog.Events;
+using ILogger = Core.Logging.ILogger;
 
 namespace WebSite.Controllers
 {
@@ -75,7 +77,7 @@ namespace WebSite.Controllers
 
             if (user == null)
             {
-                _logger.Write(LogLevel.Warning, $"Somebody tried to login with this key: `{request.Key}`. Text: `{request.Comment}`");
+                _logger.Write(LogEventLevel.Warning, $"Somebody tried to login with this key: `{request.Key}`. Text: `{request.Comment}`");
 
                 return StatusCode((int)HttpStatusCode.Forbidden, "Incorrect security key");
             }
@@ -140,7 +142,7 @@ namespace WebSite.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Write(LogLevel.Error, "Error while creating new publication", ex);
+                _logger.Write(LogEventLevel.Error, "Error while creating new publication", ex);
                 
                 return BadRequest(ex.Message);
             }

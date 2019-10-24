@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Logging;
 using Core.Repositories;
+using Serilog.Events;
 using X.Web.Facebook;
 
 namespace Core.Managers.Crosspost
@@ -30,13 +31,13 @@ namespace Core.Managers.Crosspost
                     
                     await facebook.PostOnWall(comment, link);
 
-                    _logger.Write(LogLevel.Info, $"Message was sent to Facebook page `{page.Name}`: `{comment}` `{link}` Category: `{categoryId}`");
+                    _logger.Write(LogEventLevel.Information, $"Message was sent to Facebook page `{page.Name}`: `{comment}` `{link}` Category: `{categoryId}`");
                 }
 
             }
             catch (Exception ex)
             {
-                _logger.Write(LogLevel.Error, $"Error during send message to Facebook: `{comment}` `{link}` Category: `{categoryId}`", ex);
+                _logger.Write(LogEventLevel.Error, $"Error during send message to Facebook: `{comment}` `{link}` Category: `{categoryId}`", ex);
             }
         }
 
