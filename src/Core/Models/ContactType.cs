@@ -8,6 +8,7 @@ namespace Core.Models
         Email,
         Phone,
         Skype,
-        Default
+        Default,
+        Telegram
     }
 }

@@ -63,7 +63,7 @@ namespace Core.ViewModels
 		{
 			get
 			{
-				var contact = Contact.Trim().ToLower();
+				var contact = Contact?.Trim()?.ToLower() ?? string.Empty;
 
 				if (contact.Contains("facebook.com"))
 					return ContactType.Facebook;
@@ -76,11 +76,14 @@ namespace Core.ViewModels
 
 				if (contact.Contains("skype:"))
 					return ContactType.Skype;
+				
+				if (contact.StartsWith("@"))
+					return ContactType.Telegram;
 
 				if (contact.Contains("@"))
 					return ContactType.Email;
 
-				if (contact.Contains("+38") || contact.Contains("+1") || contact.Contains("+7")) //Imprve this logic
+				if (contact.Contains("+38") || contact.Contains("+1") || contact.Contains("+7")) //Improve this logic
 					return ContactType.Phone;
 
 				return ContactType.Default;

@@ -54,32 +54,37 @@
     <div class="col-md-6 text-right">        
         @if(Model.ContactType == ContactType.Facebook)
         {	
-            <a class="btn btn-success btn-contact"  target="_contact" href="@Model.Contact"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;View on Facebook</a>	
+            <a class="btn btn-success btn-contact" target="_contact" href="@Model.Contact"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;View on Facebook</a>	
         }
 
         @if(Model.ContactType == ContactType.LinkedIn)
         {
-            <a class="btn btn-success btn-contact"  target="_contact" href="@Model.Contact"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;View on LinkedIn</a>	
+            <a class="btn btn-success btn-contact" target="_contact" href="@Model.Contact"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;View on LinkedIn</a>	
         }
 
         @if(Model.ContactType == ContactType.WebSite)
         {	
-            <a class="btn btn-success btn-contact"  target="_contact" href="@Model.Contact"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;Go To Website</a>
+            <a class="btn btn-success btn-contact" target="_contact" href="@Model.Contact"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;Go To Website</a>
         }
 
         @if(Model.ContactType == ContactType.Skype)
         {
-            <a class="btn btn-success btn-contact"  target="_contact" href="skype:@Model.Contact"><i class="glyphicon glyphicon-headphones"></i>&nbsp;Skype</a>	
+            <a class="btn btn-success btn-contact" target="_contact" href="skype:@Model.Contact"><i class="glyphicon glyphicon-headphones"></i>&nbsp;Skype</a>	
         }
 
         @if(Model.ContactType == ContactType.Email)
         {
-            <a class="btn btn-success btn-contact"  target="_contact" href="mailto:@Model.Contact"><i class="glyphicon glyphicon-envelope"></i>&nbsp;Send Email</a>	
+            <a class="btn btn-success btn-contact" target="_contact" href="mailto:@Model.Contact"><i class="glyphicon glyphicon-envelope"></i>&nbsp;Send Email</a>	
         }
 
         @if(Model.ContactType == ContactType.Phone)
         {
-            <a class="btn btn-success btn-contact"  target="_contact" href="tel:"><i class="glyphicon glyphicon-earphone"></i>&nbsp;Call Now</a>
+            <a class="btn btn-success btn-contact" target="_contact" href="tel:@Model.Contact"><i class="glyphicon glyphicon-earphone"></i>&nbsp;Call Now</a>
+        }
+        
+        @if(Model.ContactType == ContactType.Telegram)
+        {
+            <a class="btn btn-success btn-contact" target="_contact" href="https://t.me/@Model.Contact"><i class="glyphicon glyphicon-envelope"></i>&nbsp;Send message via Telegram</a>
         }
 
         @if(Model.ContactType == ContactType.Default)
