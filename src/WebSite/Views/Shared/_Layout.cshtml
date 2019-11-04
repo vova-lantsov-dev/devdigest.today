@@ -14,6 +14,7 @@
 @section scripts{
     @RenderSection("scripts", required: false)
 }
+
 <div class="row">
     <div class="col-md-8">
         @RenderBody()
@@ -43,14 +44,14 @@
     
         @if (vacancies.Any())
         {
-    <div class="vacancies">
-        <h3>Hot Vacancies</h3>
-        @foreach (var v in vacancies)
-        {
-            @await Html.PartialAsync("_VacancySmallPreview", v)
-        }
-        <a href="/vacancies/1"> View all vacancies</a>.
-    </div>
+            <div class="vacancies">
+                <h3>Hot Vacancies</h3>
+                @foreach (var v in vacancies)
+                {
+                    @await Html.PartialAsync("_VacancySmallPreview", v)
+                }
+                <a href="/vacancies/1"> View all vacancies</a>.
+            </div>
         }
     </div>
 </div>
