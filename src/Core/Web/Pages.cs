@@ -13,6 +13,7 @@ namespace Core.Web
         public const string CloudDevelopersDays = "Cloud Developers Days";
         public const string Build2018 = "Build 2018";
         public const string Build2019 = "Build 2019";
+        public const string Ignite2019 = "Ignite 2019";
         public const string XamarinUkraineUserGroup = "Xamarin Ukraine User Group";
         public const string MicrosoftAzureUkraineUserGroup = "Microsoft Azure Ukraine User Group";
         public const string UkrainianNETCoreUserGroup = "Ukrainian .NET Core User Group";
