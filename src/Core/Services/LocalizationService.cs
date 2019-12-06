@@ -1,23 +1,20 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Core.Logging;
+﻿using Core.Logging;
 using Core.Repositories;
-using DAL;
-using Microsoft.Extensions.Caching.Memory;
+using System.Threading.Tasks;
 
-namespace Core.Managers
+namespace Core.Services
 {
-    public interface ILocalizationManager
+    public interface ILocalizationService
     {
         Task<int?> GetLanguageId(string code);
     }
 
-    public class LocalizationManager : ILocalizationManager
+    public class LocalizationService : ILocalizationService
     {
         private readonly ISettingsRepository _settingsRepository;
         private readonly ILogger _logger;
 
-        public LocalizationManager(ISettingsRepository settingsRepository, ILogger logger)
+        public LocalizationService(ISettingsRepository settingsRepository, ILogger logger)
         {
             _settingsRepository = settingsRepository;
             _logger = logger;

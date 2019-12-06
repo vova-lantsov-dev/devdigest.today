@@ -5,19 +5,19 @@ using Core.Logging;
 using Core.Repositories;
 using DAL;
 
-namespace Core.Managers
+namespace Core.Services
 {
-    public interface IUserManager
+    public interface IUserService
     {
         Task<User> GetBySecretKey(Guid key);
     }
 
-    public class UserManager : IUserManager
+    public class UserService : IUserService
     {
         private readonly IUserRepository _repository;
         private readonly ILogger _logger;
         
-        public UserManager(IUserRepository repository, ILogger logger)
+        public UserService(IUserRepository repository, ILogger logger)
         {
             _repository = repository;
             _logger = logger;

@@ -24,8 +24,6 @@ namespace Core.ViewModels
 			Company = vacancy.Company;
 			ViewsCount = vacancy.Views;
 			Location = vacancy.Location;
-			
-			//ViewsCount = new Random((int)DateTime.Now.Ticks).Next(10, 915);
 
 			if (vacancy.Category != null)
 			{

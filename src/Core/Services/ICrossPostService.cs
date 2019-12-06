@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 
-namespace Core.Managers
+namespace Core.Services
 {
-    public interface ICrossPostManager
+    public interface ICrossPostService
     {
         Task Send(int categoryId, string comment, string link);
     }

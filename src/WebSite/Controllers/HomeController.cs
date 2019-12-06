@@ -7,8 +7,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Core;
-using Core.Managers;
-using Core.Managers.Crosspost;
+using Core.Services;
+using Core.Services.Crosspost;
 using Core.ViewModels;
 using Core.Web;
 using Microsoft.AspNetCore.Hosting;
@@ -21,11 +21,11 @@ namespace WebSite.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly FacebookCrosspostManager _facebookCrosspostManager;
-        private readonly TwitterCrosspostManager _twitterCrosspostManager;
-        private readonly TelegramCrosspostManager _telegramCrosspostManager;
-        private readonly IPublicationManager _publicationManager;
-        private readonly IVacancyManager _vacancyManager;
+        private readonly FacebookCrosspostService _facebookCrosspostManager;
+        private readonly TwitterCrosspostService _twitterCrosspostManager;
+        private readonly TelegramCrosspostService _telegramCrosspostManager;
+        private readonly IPublicationService _publicationManager;
+        private readonly IVacancyService _vacancyManager;
         private readonly IWebHostEnvironment _env;
         private readonly IMemoryCache _cache;
         private readonly Settings _settings;
@@ -33,12 +33,12 @@ namespace WebSite.Controllers
         public HomeController(
             IMemoryCache cache, 
             IWebHostEnvironment env, 
-            IVacancyManager vacancyManager, 
-            IPublicationManager publicationManager, 
+            IVacancyService vacancyManager, 
+            IPublicationService publicationManager, 
             Settings settings, 
-            TelegramCrosspostManager telegramCrosspostManager, 
-            FacebookCrosspostManager facebookCrosspostManager,
-            TwitterCrosspostManager twitterCrosspostManager)
+            TelegramCrosspostService telegramCrosspostManager, 
+            FacebookCrosspostService facebookCrosspostManager,
+            TwitterCrosspostService twitterCrosspostManager)
         {
             _cache = cache;
             _env = env;

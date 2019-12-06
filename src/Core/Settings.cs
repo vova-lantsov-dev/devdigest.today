@@ -1,32 +1,16 @@
-using System.Net;
-using Microsoft.Extensions.Configuration;
-
 namespace Core
 {
     public class Settings
     {
-        public Settings(IConfiguration configuration)
-        {
-            ConnectionString = configuration.GetConnectionString("DefaultConnection");
-            WebSiteUrl = configuration["WebSiteUrl"];
-            WebSiteTitle = configuration["WebSiteTitle"];
-            CognitiveServicesTextAnalyticsKey = configuration["CognitiveServicesTextAnalyticsKey"];
-            DefaultDescription = WebUtility.HtmlDecode(configuration["DefaultDescription"]);
-            DefaultKeywords = WebUtility.HtmlDecode(configuration["DefaultKeywords"]);
-            SupportEmail = "dncuug@agi.net.ua";
-            FbAppId = "112150392810181";
-            Version = "2.0.0";
-        }
+        public string ConnectionString { get; set; }
 
-        public string ConnectionString { get; }
+        public string WebSiteTitle { get; set; }
 
-        public string WebSiteTitle { get; }
+        public string WebSiteUrl { get; set; }
 
-        public string WebSiteUrl { get; }
+        public string DefaultDescription { get; set; }
 
-        public string DefaultDescription { get; }
-
-        public string DefaultKeywords { get; }
+        public string DefaultKeywords { get; set; }
 
         public string FacebookImage => $"{WebSiteUrl}images/logo.png";
 
@@ -34,23 +18,23 @@ namespace Core
 
         public string RssFeedUrl => $"{WebSiteUrl}rss";
 
-        public string SupportEmail { get; }
+        public string SupportEmail { get; set; }
 
-        public string FbAppId { get; }
+        public string FbAppId { get; set; }
 
-        public string CognitiveServicesTextAnalyticsKey { get; }
-        
-        public string Version { get; }
-        
+        public string CognitiveServicesTextAnalyticsKey { get; set; }
+
+        public string Version { get; set; }
+
         public TwitterSettings Twitter { get; set; }
 
         #region Current
-        
+
         /// <summary>
         /// Settings.Current will be used in views
         /// </summary>
         /// <param name="settings"></param>
-        public static void Initialize(Settings settings) => Current = settings;
+        public static void InitializeCurrentInstance(Settings settings) => Current = settings;
 
         public static Settings Current { get; private set; }
 

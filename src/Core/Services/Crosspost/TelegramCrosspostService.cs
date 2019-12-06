@@ -8,14 +8,14 @@ using Serilog.Events;
 using Telegram.Bot;
 using ILogger = Core.Logging.ILogger;
 
-namespace Core.Managers.Crosspost
+namespace Core.Services.Crosspost
 {
-    public class TelegramCrosspostManager : ICrossPostManager
+    public class TelegramCrosspostService : ICrossPostService
     {
         private readonly ILogger _logger;
         private readonly ISocialRepository _socialRepository;
 
-        public TelegramCrosspostManager(ISocialRepository socialRepository, ILogger logger)
+        public TelegramCrosspostService(ISocialRepository socialRepository, ILogger logger)
         {
             _logger = logger;
             _socialRepository = socialRepository;

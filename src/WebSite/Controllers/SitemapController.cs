@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Core;
-using Core.Managers;
+using Core.Services;
 using Core.ViewModels;
 using DAL;
 using Microsoft.AspNetCore.Mvc;
@@ -13,15 +13,15 @@ namespace WebSite.Controllers
 {
     public class SitemapController : Controller
     {
-        private readonly IPublicationManager _publicationManager;
-        private readonly IVacancyManager _vacancyManager;
+        private readonly IPublicationService _publicationManager;
+        private readonly IVacancyService _vacancyManager;
         private readonly IMemoryCache _cache;
         private readonly Settings _settings;
         
         public SitemapController(
             IMemoryCache cache, 
-            IVacancyManager vacancyManager, 
-            IPublicationManager publicationManager, 
+            IVacancyService vacancyManager, 
+            IPublicationService publicationManager, 
             Settings settings)
         {
             _cache = cache;

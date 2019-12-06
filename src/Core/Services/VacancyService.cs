@@ -7,9 +7,9 @@ using DAL;
 using Microsoft.Extensions.Caching.Memory;
 using X.PagedList;
 
-namespace Core.Managers
+namespace Core.Services
 {
-    public interface IVacancyManager
+    public interface IVacancyService
     {
         Task<IPagedList<Vacancy>> GetVacancies(int page = 1, int pageSize = 10);
         Task<IReadOnlyCollection<Vacancy>> GetHotVacancies();
@@ -18,13 +18,13 @@ namespace Core.Managers
         Task IncreaseViewCount(int id);
     }
 
-    public class VacancyManager : IVacancyManager
+    public class VacancyService : IVacancyService
     {
         private readonly ILogger _logger;
         private readonly IMemoryCache _cache;
         private readonly IVacancyRepository _repository;
 
-        public VacancyManager(IMemoryCache cache, ILogger logger, IVacancyRepository repository)
+        public VacancyService(IMemoryCache cache, ILogger logger, IVacancyRepository repository)
         {
             _cache = cache;
             _logger = logger;

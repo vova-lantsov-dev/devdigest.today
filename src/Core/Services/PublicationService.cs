@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using X.PagedList;
 
-namespace Core.Managers
+namespace Core.Services
 {
-    public interface IPublicationManager
+    public interface IPublicationService
     {
         Task<IPagedList<Publication>> GetPublications(
             int? categoryId = null, 
@@ -26,13 +26,13 @@ namespace Core.Managers
         Task<Publication> Get(Uri uri);
     }
 
-    public class PublicationManager : IPublicationManager
+    public class PublicationService : IPublicationService
     {
         private readonly ILogger _logger;
         private readonly IMemoryCache _cache;
         private readonly IPublicationRepository _repository;
         
-        public PublicationManager(IMemoryCache cache, ILogger logger, IPublicationRepository repository)
+        public PublicationService(IMemoryCache cache, ILogger logger, IPublicationRepository repository)
         {
             _cache = cache;
             _logger = logger;

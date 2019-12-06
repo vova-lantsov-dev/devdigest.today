@@ -8,9 +8,9 @@ using DAL;
 using Serilog.Events;
 using Tweetinvi;
 
-namespace Core.Managers.Crosspost
+namespace Core.Services.Crosspost
 {
-    public class TwitterCrosspostManager : ICrossPostManager
+    public class TwitterCrosspostService : ICrossPostService
     {
         private static readonly Semaphore _semaphore = new Semaphore(1, 1);
         
@@ -20,7 +20,7 @@ namespace Core.Managers.Crosspost
         
         private const int MaxTweetLength = 280;
 
-        public TwitterCrosspostManager(
+        public TwitterCrosspostService(
             IPublicationRepository publicationRepository,
             ISocialRepository socialRepository,
             ILogger logger)

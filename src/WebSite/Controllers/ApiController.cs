@@ -1,5 +1,5 @@
 ﻿using Core;
-using Core.Managers;
+using Core.Services;
 using Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Core.Managers.Crosspost;
+using Core.Services.Crosspost;
 using Core.Services;
 using Core.Web;
 using Microsoft.Extensions.Logging;
@@ -18,24 +18,24 @@ namespace WebSite.Controllers
 {
     public class ApiController : ControllerBase
     {
-        private readonly IPublicationManager _publicationManager;
-        private readonly IVacancyManager _vacancyManager;
-        private readonly IUserManager _userManager;
-        private readonly ILocalizationManager _localizationManager;
-        private readonly IReadOnlyCollection<ICrossPostManager> _crossPostManagers;
+        private readonly IPublicationService _publicationManager;
+        private readonly IVacancyService _vacancyManager;
+        private readonly IUserService _userManager;
+        private readonly ILocalizationService _localizationManager;
+        private readonly IReadOnlyCollection<ICrossPostService> _crossPostManagers;
         private readonly Settings _settings;
         private readonly ILogger _logger;
 
         public ApiController(
-            IPublicationManager publicationManager, 
-            IVacancyManager vacancyManager, 
-            IUserManager userManager, 
-            ILocalizationManager localizationManager,
+            IPublicationService publicationManager, 
+            IVacancyService vacancyManager, 
+            IUserService userManager, 
+            ILocalizationService localizationManager,
             ILogger logger,
             Settings settings, 
-            FacebookCrosspostManager facebookCrosspostManager, 
-            TelegramCrosspostManager telegramCrosspostManager,
-            TwitterCrosspostManager twitterCrosspostManager)
+            FacebookCrosspostService facebookCrosspostManager, 
+            TelegramCrosspostService telegramCrosspostManager,
+            TwitterCrosspostService twitterCrosspostManager)
         {
             _logger = logger;
             _settings = settings;
@@ -44,7 +44,7 @@ namespace WebSite.Controllers
             _localizationManager = localizationManager;
             _publicationManager = publicationManager;
 
-            _crossPostManagers = new List<ICrossPostManager>
+            _crossPostManagers = new List<ICrossPostService>
             {
                 facebookCrosspostManager,
                 telegramCrosspostManager,

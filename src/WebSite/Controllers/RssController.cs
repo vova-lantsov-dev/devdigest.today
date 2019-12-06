@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Core;
-using Core.Managers;
+using Core.Services;
 using Core.ViewModels;
 using DAL;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +18,11 @@ namespace WebSite.Controllers
 {
     public class RssController : Controller
     {
-        private readonly IPublicationManager _publicationManager;
+        private readonly IPublicationService _publicationManager;
         private readonly IMemoryCache _cache;
         private readonly Settings _settings;
 
-        public RssController(IMemoryCache cache, IPublicationManager publicationManager, Settings settings)
+        public RssController(IMemoryCache cache, IPublicationService publicationManager, Settings settings)
         {
             _cache = cache;
             _publicationManager = publicationManager;

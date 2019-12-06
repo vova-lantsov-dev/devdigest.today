@@ -6,14 +6,14 @@ using Core.Repositories;
 using Serilog.Events;
 using X.Web.Facebook;
 
-namespace Core.Managers.Crosspost
+namespace Core.Services.Crosspost
 {
-    public class FacebookCrosspostManager : ICrossPostManager
+    public class FacebookCrosspostService : ICrossPostService
     {
         private readonly ISocialRepository _repository;
         private readonly ILogger _logger;
 
-        public FacebookCrosspostManager(ISocialRepository repository, ILogger logger)
+        public FacebookCrosspostService(ISocialRepository repository, ILogger logger)
         {
             _repository = repository;
             _logger = logger;

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core;
 using Core.Logging;
-using Core.Managers;
-using Core.Managers.Crosspost;
+using Core.Services;
+using Core.Services.Crosspost;
 using Core.Repositories;
 using DAL;
 using Moq;
@@ -38,7 +38,7 @@ namespace Tests
             ILogger logger = new SimpleLogger();
             ISocialRepository repository = repositoryMock.Object;
             
-            var manager = new FacebookCrosspostManager(repository, logger);
+            var manager = new FacebookCrosspostService(repository, logger);
 
             int categoryId = 1;
             string comment = "test";
@@ -65,7 +65,7 @@ namespace Tests
                 });
                 
 
-            var manager = new TwitterCrosspostManager(
+            var manager = new TwitterCrosspostService(
                 publicationRepositoryMock.Object,
                 socialRepositoryMock.Object,
                 logger);

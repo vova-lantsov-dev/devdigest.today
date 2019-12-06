@@ -2,8 +2,8 @@
 using System.Text.Unicode;
 using Core;
 using Core.Logging;
-using Core.Managers;
-using Core.Managers.Crosspost;
+using Core.Services;
+using Core.Services.Crosspost;
 using Core.Repositories;
 using DAL;
 using Microsoft.EntityFrameworkCore;
@@ -38,14 +38,14 @@ namespace WebSite
             services.AddSingleton(_ => _settings);
             services.AddSingleton(_ => _logger);
             
-            services.AddTransient<TelegramCrosspostManager>();
-            services.AddTransient<FacebookCrosspostManager>();
-            services.AddTransient<TwitterCrosspostManager>();
+            services.AddTransient<TelegramCrosspostService>();
+            services.AddTransient<FacebookCrosspostService>();
+            services.AddTransient<TwitterCrosspostService>();
             
-            services.AddScoped<ILocalizationManager, LocalizationManager>();
-            services.AddScoped<IPublicationManager, PublicationManager>();
-            services.AddScoped<IUserManager, UserManager>();
-            services.AddScoped<IVacancyManager, VacancyManager>();
+            services.AddScoped<ILocalizationService, LocalizationService>();
+            services.AddScoped<IPublicationService, PublicationService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IVacancyService, VacancyService>();
             
             services.AddScoped<IPublicationRepository, PublicationRepository>();
             services.AddScoped<ISettingsRepository, SettingsRepository>();
