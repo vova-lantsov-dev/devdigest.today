@@ -18,7 +18,7 @@ namespace Core.Services.Crosspost
         private readonly ISocialRepository _socialRepository;
         private readonly ILogger _logger;
         
-        private const int MaxTweetLength = 280;
+        private const int MaxTweetLength = 277;
 
         public TwitterCrosspostService(
             ISocialRepository socialRepository,
@@ -36,7 +36,7 @@ namespace Core.Services.Crosspost
             var maxMessageLength = MaxTweetLength - link.Length - tag.Length;
             var message = Substring(comment, maxMessageLength);
 
-            var text = $"{message}{tag}{link}";
+            var text = $"{message} {tag} {link}";
 
             foreach (var account in accounts)
             {
