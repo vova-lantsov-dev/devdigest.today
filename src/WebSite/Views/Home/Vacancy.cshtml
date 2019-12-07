@@ -1,6 +1,10 @@
 ﻿@using Core.Models
 @model Core.ViewModels.VacancyViewModel
 
+@{
+    var title = string.IsNullOrWhiteSpace(Model.Company) ? $"{Model.Location}" : $"{Model.Company}, {Model.Location}";
+}
+
 @section head {
     <meta property="og:title" content="@Model.Title" />
     <meta property="og:type" content="website" />
@@ -19,7 +23,7 @@
     }
 </h1>
 
-<h3>@Model.Company, @Model.Location</h3>
+<h3>@title</h3>
 
 <div class="date">
     @Model.Date.ToString("MMMM dd, yyyy") 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Core;
 using Core.Logging;
@@ -44,7 +45,7 @@ namespace Tests
             string comment = "test";
             string link = "http://example.com";
             
-            await manager.Send(categoryId, comment, link);
+            await manager.Send(categoryId, comment, link, ImmutableList<string>.Empty);
         }
 
 
@@ -53,20 +54,9 @@ namespace Tests
         {
             ILogger logger = new SimpleLogger();
             
-            var publicationRepositoryMock = new Mock<IPublicationRepository>();
             var socialRepositoryMock = new Mock<ISocialRepository>();
 
-            publicationRepositoryMock
-                .Setup(o => o.GetCategoryName(It.IsAny<int>()))
-                .Returns((int id) =>
-                {
-                    //
-                    return Task.FromResult(".NET Core");
-                });
-                
-
             var manager = new TwitterCrosspostService(
-                publicationRepositoryMock.Object,
                 socialRepositoryMock.Object,
                 logger);
 
@@ -74,7 +64,7 @@ namespace Tests
             var comment = "test";
             var link = "http://example.com";
 
-            await manager.Send(categoryId, comment, link);
+            await manager.Send(categoryId, comment, link, ImmutableList<string>.Empty);
         }
 
     }

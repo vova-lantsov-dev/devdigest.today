@@ -24,6 +24,7 @@ namespace Core.Services
         Task<Publication> Save(Publication publication);
         Task IncreaseViewCount(int id);
         Task<Publication> Get(Uri uri);
+        Task<string> GetCategoryName(int categoryId);
     }
 
     public class PublicationService : IPublicationService
@@ -83,6 +84,10 @@ namespace Core.Services
         public async Task IncreaseViewCount(int id) => await _repository.IncreasePublicationViewCount(id);
 
         public async Task<Publication> Get(Uri uri) => await _repository.GetPublication(uri);
+        public async Task<string> GetCategoryName(int categoryId)
+        {
+            return await _repository.GetCategoryName(categoryId);
+        }
 
         private static MemoryCacheEntryOptions GetMemoryCacheEntryOptions() => new MemoryCacheEntryOptions
         {

@@ -19,7 +19,7 @@ namespace Core.Services.Crosspost
             _logger = logger;
         }
 
-        public async Task Send(int categoryId, string comment, string link)
+        public async Task Send(int categoryId, string comment, string link, IReadOnlyCollection<string> tags)
         {
             var pages = await _repository.GetFacebookPages(categoryId); 
 
