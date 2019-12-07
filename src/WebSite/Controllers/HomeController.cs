@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Core;
 using Core.Services;
 using Core.Services.Crosspost;
 using Core.ViewModels;
-using Core.Web;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -82,7 +79,7 @@ namespace WebSite.Controllers
         [Route("page/{page}")]
         public async Task<IActionResult> Page(int? categoryId = null, int page = 1, string language = Language.English)
         {
-            ViewData["Title"] = $"{Pages.Page} {page}";
+            ViewData["Title"] = $"Page {page}";
 
             var pagedResult = await _publicationManager.GetPublications(categoryId, page);
             var categories = await _publicationManager.GetCategories();
@@ -98,7 +95,7 @@ namespace WebSite.Controllers
         [Route("vacancies/{page}")]
         public async Task<IActionResult> Vacancies(int page = 1)
         {
-            ViewData["Title"] = Pages.Vacancies;
+            ViewData["Title"] = "Job";
 
             var pagedResult = await _vacancyManager.GetVacancies(page);
 
@@ -153,7 +150,7 @@ namespace WebSite.Controllers
         [Route("platform")]
         public async Task<IActionResult> Platform()
         {
-            ViewData["Title"] = Pages.Platform;
+            ViewData["Title"] = "Platform";
 
             var channels = (await _telegramCrosspostManager.GetChannels())
                 .Select(o => new TelegramViewModel()
