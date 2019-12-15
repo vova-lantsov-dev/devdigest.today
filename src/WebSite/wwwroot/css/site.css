@@ -435,8 +435,7 @@ footer ul {
         display: none;
     }
 
-    .link-fb,
-    .link-twitter {
+    .social-link {
         display: none !important;
     }
 
