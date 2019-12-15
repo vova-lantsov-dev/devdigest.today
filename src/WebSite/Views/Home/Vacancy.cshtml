@@ -52,8 +52,6 @@
             @Html.Raw(@Model.Content)
         }
         <br/>
-        <br/>
-        <b>Contact details:</b> @Model.Contact
     </article>    
         
 </div>
@@ -95,17 +93,15 @@
         
         @if(Model.ContactType == ContactType.Telegram)
         {
-            
             <a class="btn btn-success btn-contact" target="_contact" href="https://t.me/@Model.Contact.Replace("@", "")"><i class="glyphicon glyphicon-envelope"></i>&nbsp;Send message via Telegram</a>
         }
 
         @if(Model.ContactType == ContactType.Default)
         {
-            
+            <br/>
+            <b>Contact details:</b> @Model.Contact
         }
     </div>
 </div>   
 
-<section class="col-md-12 comments">
-    <div class="fb-comments" data-href="@Model.ShareUrl" data-width="100%" data-numposts="10"></div>     
-</section>
+@await Html.PartialAsync("_CommentModule", Model.ShareUrl)

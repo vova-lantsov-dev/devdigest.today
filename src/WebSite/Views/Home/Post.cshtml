@@ -60,14 +60,6 @@
     </article>
 </div>
 
-<!-- <div class="row">
-    <section class="col-md-12">
-        <h3>View Also</h3>
-        <br />
-        @await Html.PartialAsync("_SmartContent")
-    </section>
-</div> -->
-
 <div class="row share">
     <div class="col-md-6">
         @await Html.PartialAsync("_SocialButtons", new Link(Model.Title, Model.ShareUrl))
@@ -82,14 +74,5 @@
 
 @await Html.PartialAsync("_PostStructuredData", Model)
 
-<section class="col-md-12 comments">
-    <script 
-        async src="https://comments.app/js/widget.js?2" 
-        data-comments-app-website="nr6tP4p1" 
-        data-limit="5" data-page-id="@Model.ShareUrl" 
-        data-color="662079" 
-        data-dislikes="1" 
-        data-outlined="1">    
-    </script>
-</section>
+@await Html.PartialAsync("_CommentModule", Model.ShareUrl)
 

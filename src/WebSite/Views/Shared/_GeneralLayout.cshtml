@@ -21,7 +21,7 @@
     };
 }
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />    
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
@@ -46,9 +46,7 @@
 </head>
 <body>
     
-    @await Html.PartialAsync("~/Views/FacebookScripts.cshtml")    
-
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -57,7 +55,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" style="font-weight: bold" href="/">//devdigest</a>
+                <a class="navbar-brand logo" href="/">//devdigest</a>
             </div>
             
             <div id="navbar" class="navbar-collapse collapse">
@@ -119,14 +117,13 @@
                             
                         </ul>
                     </li> 
-                    
-                    <li><a href="https://github.com/dncuug">GitHub</a></li>
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="/content/platform">Platform</a></li>
                             <li><a href="/content/partners">Partners</a></li>
+                            <li><a href="https://github.com/dncuug">Our GitHub</a></li>
                             <li><a href="/content/about-project">About Project</a></li>
                         </ul>
                     </li>                            
@@ -136,9 +133,9 @@
         </div>
     </nav>   
 
-@RenderSection("top", required: false)
+    @RenderSection("top", required: false)
 
-<div class="container">    
+    <div class="container">    
         <div class="content">
             @RenderBody()
         </div>
@@ -146,43 +143,41 @@
 
     <footer class="container-fluid">
         <section class="container">
-            <div class="col-md-2 col-sm-2">
-                <h4>Community</h4>
+            <div class="row">
+                <div class="col-md-3 col-sm-3">
+                    <h4>Community</h4>
 
-                <h5>Facebook</h5>
-                <ul>
-                    @foreach (var x in featuredFacebookPages)
-                    {
-                        <li><a href=@x.Url>@x.Title</a></li>
-                    }
-                </ul>
+                    <h5>Facebook</h5>
+                    <ul>
+                        @foreach (var x in featuredFacebookPages)
+                        {
+                            <li><a href=@x.Url>@x.Title</a></li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="col-md-4 col-sm-4">
+                    <h4>&nbsp;</h4>
+                    <h5>Telegram</h5>
+                    <ul>
+                        @foreach (var x in featuredTelegramChannels)
+                        {
+                            <li><a href=@x.Url>@x.Title</a></li>
+                        }
+                    </ul>
+                </div>
+                <div class="col-md-2 col-sm-2">
+                    <h4>Information</h4>
+                    <ul>
+                        <li><a href="/content/partners">Partners</a></li>
+                        <li><a href="/content/about-project">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 col-sm-3 text-right">
+                    <br/>
+                    <p>//devdigest &copy; @DateTime.Now.Year</p>
+                </div>
             </div>
-            
-            <div class="col-md-2 col-sm-2">
-                <h4>&nbsp;</h4>
-                <h5>Telegram</h5>
-                <ul>
-                    @foreach (var x in featuredTelegramChannels)
-                    {
-                        <li><a href=@x.Url>@x.Title</a></li>
-                    }
-                </ul>
-            </div>
-            <div class="col-md-2 col-sm-2">
-                <h4>Information</h4>
-                <ul>
-                    <li><a href="/content/partners">Partners</a></li>
-                    <li><a href="/content/about-project">About Us</a></li>
-                </ul>
-            </div>
-            <div class="col-md-3 col-sm-3">
-                <h4>Concept</h4>
-                Our community is a union of developers, who use and love Microsoft technology stack: .NET Core, Xamarin and Microsoft Azure.
-            </div>
-            <div class="col-md-3 col-sm-3 text-right">
-                <br />
-                <p>//devdigest &copy; @DateTime.Now.Year</p>
-            </div>            
         </section>    
     </footer>
     

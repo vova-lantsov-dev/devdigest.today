@@ -21,7 +21,6 @@ namespace WebSite
 
         public Registry(string contentRootPath, Settings settings)
         {
-            
             _settings = settings;
             _logger = new SerilogLoggerWrapper(new SerilogFactory().CreateLogger(contentRootPath));
         }

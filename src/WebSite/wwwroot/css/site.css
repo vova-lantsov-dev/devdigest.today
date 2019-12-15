@@ -1,10 +1,14 @@
-﻿body {
-    padding-top: 50px;
-}
-
-.body-content {
+﻿.body-content {
     padding-left: 15px;
     padding-right: 15px;
+}
+
+.logo{
+    font-family: 'Ubuntu', sans-serif;
+    color: #FFF !important;
+    display: table;
+    font-size: 1.3em !important;
+    background-color: #000;
 }
 
 h1,
@@ -12,12 +16,73 @@ h2,
 h3,
 h4,
 h5,
-.navbar-inverse .navbar-brand,
-.navbar-inverse .navbar-nav > li > a,
+.navbar .navbar-brand,
+.navbar .navbar-nav > li > a,
 footer,
 footer a {
     font-family: 'Ubuntu', sans-serif;
     font-weight: 300;
+    color: #000;
+}
+
+.social-link {
+    padding-left: 30px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.social-link .fa {
+    color: #FFF;
+    font-size: 2.0em;
+    margin-right: 15px;
+}
+
+.social-link a {
+    text-transform: uppercase;
+    color: #FFF;
+}
+.social-link a:hover {
+    text-decoration: none;
+}
+
+.link-fb {
+    background-color: #3b5998;
+}
+
+.link-github {
+    background-color: #000;
+}
+
+.link-twitter {
+    background-color: #1da1f2;
+}
+
+.navbar-toggle .icon-bar {
+    background-color: #662079;
+}
+
+.label {
+    border-radius: 0;
+}
+
+.navbar {
+    margin-top: -1px;
+}
+
+.navbar .navbar-nav > li > a{
+    text-transform: uppercase;
+}
+
+.navbar-fixed-top {
+    background-color: #FFF;
+}
+
+.dropdown-menu > li > a:focus, .dropdown-menu > li > a:hover,
+.nav > li > a:focus, .nav > li > a:hover {
+    background: none;
+    color: #662079;
 }
 
 .navbar-brand {
@@ -28,36 +93,14 @@ footer a {
     background: none;
 }
 
-.navbar-inverse {
-    background: #c5195d url(/images/bar_bg.jpg) no-repeat left center;
-}
-
 .dropdown-header {
     font-weight: bold;
-}
-
-@media (max-width: 767px) {
-    .dropdown-header,
-    .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {
-        color: #FFF;
-    }
-}
-
-.navbar-inverse {
-    border-color: #777;
 }
 
 .protocol {
     color: #AeAeAe;
 }
 
-.navbar-inverse .navbar-brand {
-    color: #FFF;
-}
-
-.navbar-inverse .navbar-nav > li > a {
-    color: #FFF;
-}
 
 @media screen and (min-width: 768px) {
     .jumbotron {
@@ -81,23 +124,17 @@ footer a {
     background-size: cover;
     background-position: center top;
     font-weight: 200;
-    background-color: #c5195d;
+    background-color: #FFF;
 }
 
 .jumbotron h1 {
     font-size: 25pt;
-    color: #FFF;
 }
 
 .jumbotron .social {
     padding: 10px;
     font-family: 'Ubuntu', sans-serif;
 }
-
-.jumbotron .social a {
-    color: #fff;
-}
-
 .jumbotron {
     font-family: 'Ubuntu', sans-serif;
 }
@@ -127,6 +164,7 @@ footer a {
 }
 
 .publication-preview h3 {
+    font-size: 3em;
 }
 
 .publication-preview .description,
@@ -146,6 +184,7 @@ footer a {
 }
 
 .publication-preview .image-block {
+    padding: 20px;
 }
 
 .image-block.inner {
@@ -158,8 +197,8 @@ footer a {
 
 .publication-preview .image-block img {
     width: 100%;
-    border: 1px solid #EEE;
-    border-bottom: none;
+    margin-top: 10px;
+    border: 1px solid #EEE;    
 }
 
 .share {
@@ -184,8 +223,8 @@ footer a {
 
 .publication-preview section,
 .vacancy-preview section {
-    border: 1px solid #EEE;
-    padding: 20px;
+    border-bottom: 1px solid #EEE;
+    padding-bottom: 30px;
 }
 
 .publication-preview section {
@@ -218,10 +257,15 @@ form.gsc-search-box,
 
 footer {
     color: #FFF;
-    background: #c5195d url(/images/bar_bg.jpg) no-repeat left center;
+    background: #222;
     margin-bottom: 0;
     padding-bottom: 10px;
     padding-top: 25px;   
+}
+
+footer h4,
+footer h5 {
+    color: #FFF;
 }
 
 footer a {
@@ -365,6 +409,18 @@ footer ul {
 }
 
 @media only screen and (max-width: 414px) {
+
+    #navbar{
+        text-align: center;
+    }
+    .navbar-nav {
+        border-bottom: 1px solid #AAA;
+    }
+
+    .publication-preview h3{
+        font-size: 2em;
+    }
+    
     .share .btn-default,
     .share .btn-success {
         width: 100%;
@@ -379,8 +435,8 @@ footer ul {
         display: none;
     }
 
-    .fb-page,
-    .fb_iframe_widget_fluid {
+    .link-fb,
+    .link-twitter {
         display: none !important;
     }
 
@@ -427,7 +483,6 @@ footer ul {
 }
 
 .vacancy-preview.fresh {
-    /* background-color: #ffa7001a; */
 }
 
 .vacancy-preview {
@@ -446,7 +501,7 @@ footer ul {
 .vacancy-small-preview {
     font-size: 10pt;
     padding: 20px;
-    border: 1px solid #EEE;
+    border-bottom: 1px solid #EEE;
     margin-bottom: 10px;
     text-align: justify;
 }

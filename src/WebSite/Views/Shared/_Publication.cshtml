@@ -5,26 +5,33 @@
 }
 
 <div class="publication-preview">
-    <div class="image-block">
-            @if (string.IsNullOrEmpty(Model.Image)) {
-                <img class="img-responsive" alt="@Model.Title" src="@Core.Settings.Current.DefaultPublicationImage" />
-            }
-            else{
-                <img class="img-responsive" alt="@Model.Title" src="@Model.Image" />
-            }
-    </div>
+    
     <section>
-
         <h3 class="text-left">
             @Model.Title           
         </h3>
-
-        <div class="date">
-            @Model.DateTime.ToString("MMMM dd, yyyy") 
-        </div>    
-        <div class="views" title="Views count">
-            <i class="glyphicon glyphicon-stats"></i>&nbsp; @Model.ViewsCount
+        
+        <div>
+            <div class="date">
+                @Model.DateTime.ToString("MMMM dd, yyyy") 
+            </div>
+            <div class="views" title="Views count">
+                <i class="glyphicon glyphicon-stats"></i>&nbsp; @Model.ViewsCount
+            </div>
         </div>
+        
+        <div class="image-block">
+            @if (string.IsNullOrEmpty(Model.Image)) 
+            {
+                <img class="img-responsive" alt="@Model.Title" src="@Core.Settings.Current.DefaultPublicationImage" />
+            }
+            else
+            {
+                <img class="img-responsive" alt="@Model.Title" src="@Model.Image" />
+            }
+        </div>
+
+       
         
         <div class="clear"></div>
         
@@ -35,13 +42,12 @@
         </div>
         <div class="row share">
             <div class="col-md-4">
-                @await Html.PartialAsync("_SocialButtons", new Link(Model.Title, Model.ShareUrl))
-            </div>
-            <div class="col-md-8 text-right">
                 @if (Model.Category != null)
                 {
                     <a href="@categoryLink" class="label category-label label-default">@Model.Category.Name</a>
                 }
+            </div>
+            <div class="col-md-8 text-right">
                 @if (Model.Url != null && string.IsNullOrEmpty(Model.EmbededPlayerCode))
                 {
                     <a class="btn btn-default" target="blank" href="@Model.Url">Original publication&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>
