@@ -301,3 +301,5 @@ __pycache__/
 
 out/
 .idea/
+
+.DS_Store

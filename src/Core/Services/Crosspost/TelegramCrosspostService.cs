@@ -4,19 +4,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Core.Repositories;
 using DAL;
-using Microsoft.Extensions.Logging;
 using Serilog.Events;
 using Telegram.Bot;
-using ILogger = Core.Logging.ILogger;
 
 namespace Core.Services.Crosspost
 {
     public class TelegramCrosspostService : ICrossPostService
     {
-        private readonly ILogger _logger;
+        private readonly Core.Logging.ILogger _logger;
         private readonly ISocialRepository _socialRepository;
 
-        public TelegramCrosspostService(ISocialRepository socialRepository, ILogger logger)
+        public TelegramCrosspostService(ISocialRepository socialRepository, Core.Logging.ILogger logger)
         {
             _logger = logger;
             _socialRepository = socialRepository;
@@ -38,6 +36,7 @@ namespace Core.Services.Crosspost
             sb.Append(Environment.NewLine);
             sb.Append(link);
             sb.Append(Environment.NewLine);
+            sb.Append(Environment.NewLine);
             sb.Append(string.Join(", ", tags));
             
             try
@@ -48,12 +47,12 @@ namespace Core.Services.Crosspost
                     
                     await bot.SendTextMessageAsync(channel.Name, sb.ToString());
                     
-                    _logger.Write(LogEventLevel.Information, $"Message was sent to Telegram channel `{channel.Name}`: `{message}` `{link}` Category: `{categoryId}`");
+                    _logger.Write(LogEventLevel.Information, $"Message was sent to Telegram channel `{channel.Name}`: `{sb.ToString()}` Category: `{categoryId}`");
                 }
             }
             catch (Exception ex)
             {
-                _logger.Write(LogEventLevel.Error, $"Error during send message to Telegram: `{message}` `{link}` Category: `{categoryId}`", ex);
+                _logger.Write(LogEventLevel.Error, $"Error during send message to Telegram: `{sb.ToString()}` Category: `{categoryId}`", ex);
             }
         }
 
