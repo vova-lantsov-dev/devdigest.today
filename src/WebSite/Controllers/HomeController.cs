@@ -18,33 +18,33 @@ namespace WebSite.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly FacebookCrosspostService _facebookCrosspostManager;
-        private readonly TwitterCrosspostService _twitterCrosspostManager;
-        private readonly TelegramCrosspostService _telegramCrosspostManager;
-        private readonly IPublicationService _publicationManager;
-        private readonly IVacancyService _vacancyManager;
+        private readonly FacebookCrosspostService _facebookCrosspostService;
+        private readonly TwitterCrosspostService _twitterCrosspostService;
+        private readonly TelegramCrosspostService _telegramCrosspostService;
+        private readonly IPublicationService _publicationService;
+        private readonly IVacancyService _vacancyService;
         private readonly IWebHostEnvironment _env;
         private readonly IMemoryCache _cache;
         private readonly Settings _settings;
 
         public HomeController(
-            IMemoryCache cache, 
-            IWebHostEnvironment env, 
-            IVacancyService vacancyManager, 
-            IPublicationService publicationManager, 
-            Settings settings, 
-            TelegramCrosspostService telegramCrosspostManager, 
-            FacebookCrosspostService facebookCrosspostManager,
-            TwitterCrosspostService twitterCrosspostManager)
+            IMemoryCache cache,
+            IWebHostEnvironment env,
+            IVacancyService vacancyService,
+            IPublicationService publicationService,
+            Settings settings,
+            TelegramCrosspostService telegramCrosspostService,
+            FacebookCrosspostService facebookCrosspostService,
+            TwitterCrosspostService twitterCrosspostService)
         {
-            _cache = cache;
             _env = env;
-            _vacancyManager = vacancyManager;
-            _publicationManager = publicationManager;
+            _cache = cache;
             _settings = settings;
-            _telegramCrosspostManager = telegramCrosspostManager;
-            _facebookCrosspostManager = facebookCrosspostManager;
-            _twitterCrosspostManager = twitterCrosspostManager;
+            _vacancyService = vacancyService;
+            _publicationService = publicationService;
+            _telegramCrosspostService = telegramCrosspostService;
+            _facebookCrosspostService = facebookCrosspostService;
+            _twitterCrosspostService = twitterCrosspostService;
         }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -56,7 +56,7 @@ namespace WebSite.Controllers
 
         private async Task LoadHotVacanciesToViewData()
         {
-            var vacancies = (await _vacancyManager.GetHotVacancies())
+            var vacancies = (await _vacancyService.GetHotVacancies())
                 .Select(o => new VacancyViewModel(o, _settings.WebSiteUrl))
                 .ToImmutableList();
 
@@ -67,8 +67,8 @@ namespace WebSite.Controllers
         {
             ViewData["Title"] = "Welcome!";
 
-            var pagedResult = await _publicationManager.GetPublications();
-            var categories = await _publicationManager.GetCategories();
+            var pagedResult = await _publicationService.GetPublications();
+            var categories = await _publicationService.GetCategories();
             var publications = pagedResult.Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories));
             
             var model = new StaticPagedList<PublicationViewModel>(publications, pagedResult);
@@ -81,8 +81,8 @@ namespace WebSite.Controllers
         {
             ViewData["Title"] = $"Page {page}";
 
-            var pagedResult = await _publicationManager.GetPublications(categoryId, page);
-            var categories = await _publicationManager.GetCategories();
+            var pagedResult = await _publicationService.GetPublications(categoryId, page);
+            var categories = await _publicationService.GetCategories();
             var pages = pagedResult.Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories));
             
             var model = new StaticPagedList<PublicationViewModel>(pages, pagedResult);
@@ -97,7 +97,7 @@ namespace WebSite.Controllers
         {
             ViewData["Title"] = "Job";
 
-            var pagedResult = await _vacancyManager.GetVacancies(page);
+            var pagedResult = await _vacancyService.GetVacancies(page);
 
             var model = new StaticPagedList<VacancyViewModel>(pagedResult.Select(o => new VacancyViewModel(o, _settings.WebSiteUrl)), pagedResult);
 
@@ -107,14 +107,14 @@ namespace WebSite.Controllers
         [Route("vacancy/{id}")]
         public async Task<IActionResult> Vacancy(int id)
         {
-            var vacancy = await _vacancyManager.Get(id);
+            var vacancy = await _vacancyService.Get(id);
             
             if (vacancy == null)
             {
                 return NotFound();
             }
             
-            await _vacancyManager.IncreaseViewCount(id);
+            await _vacancyService.IncreaseViewCount(id);
 
             var path = Path.Combine(_env.WebRootPath, "images/vacancy");
             var file = Directory.GetFiles(path).OrderBy(o => Guid.NewGuid()).Select(Path.GetFileName).FirstOrDefault();
@@ -130,16 +130,16 @@ namespace WebSite.Controllers
         [Route("post/{id}")]
         public async Task<IActionResult> Post(int id)
         {
-            var publication = await _publicationManager.Get(id);
+            var publication = await _publicationService.Get(id);
             
-            await _publicationManager.IncreaseViewCount(id);
+            await _publicationService.IncreaseViewCount(id);
 
             if (publication == null)
             {
                 return NotFound();
             }
 
-            var categories = await _publicationManager.GetCategories();
+            var categories = await _publicationService.GetCategories();
             var model = new PublicationViewModel(publication, _settings.WebSiteUrl, categories);
             
             ViewData["Title"] = model.Title;
@@ -152,7 +152,7 @@ namespace WebSite.Controllers
         {
             ViewData["Title"] = "Platform";
 
-            var channels = (await _telegramCrosspostManager.GetChannels())
+            var channels = (await _telegramCrosspostService.GetChannels())
                 .Select(o => new TelegramViewModel()
                 {
                     Title = o.Title,
@@ -162,7 +162,7 @@ namespace WebSite.Controllers
                 }).ToImmutableList();
 
 
-            var pages = (await _facebookCrosspostManager.GetPages())
+            var pages = (await _facebookCrosspostService.GetPages())
                 .Select(o => new FacebookViewModel()
                 {
                     Title = o.Name,
@@ -172,7 +172,7 @@ namespace WebSite.Controllers
                 }).ToImmutableList();
 
 
-            var twitters = (await _twitterCrosspostManager.GetAccounts())
+            var twitters = (await _twitterCrosspostService.GetAccounts())
                 .Select(o => new TwitterViewModel()
                 {
                     Title = o.Name,

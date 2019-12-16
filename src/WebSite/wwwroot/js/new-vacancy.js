@@ -5,7 +5,7 @@ loadCategories();
 
 function loadCategories() {
 
-    var options = $("#category-id");
+    const options = $("#category-id");
     options.html('');
 
     $.get('/api/categories',
@@ -18,26 +18,24 @@ function loadCategories() {
 }
 
 function addNewVacancy() {
+    const key = $("#security-key").val();
+    const categoryId = $("#category-id").val();
+    const comment = $("#vacancy-comment").val();
 
+    const title = $("#vacancy-title").val();
+    const description = $('#vacancy-description').val();
+    const content = $('#vacancy-content').summernote('code');
+    const contact = $("#vacancy-contact").val();
 
-    var key = $("#security-key").val();
-    var categoryId = $("#category-id").val();
-    var comment = $("#vacancy-comment").val();
+    const progress = $(".progress");
 
-    var title = $("#vacancy-title").val();
-    var description = $('#vacancy-description').val();
-    var content = $('#vacancy-content').summernote('code');
-    var contact = $("#vacancy-contact").val();
-
-    var progress = $(".progress");
-
-    var data = {
+    const data = {
         key: key,
         categoryId: categoryId,
         comment: comment,
         title: title,
         description: description,
-        content:content,
+        content: content,
         contact: contact
     };
 
@@ -48,7 +46,7 @@ function addNewVacancy() {
             progress.hide();
             window.location.replace(response.shareUrl);
         }).fail(function(err) {
-            if (!!err && err.status == 403)
+            if (!!err && err.status === 403)
                 alert('Access denied');
             else
                 console.error(err);

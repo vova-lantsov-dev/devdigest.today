@@ -16,21 +16,20 @@ namespace WebSite.Controllers
 {
     public class ApiController : ControllerBase
     {
-        
-        private readonly IUserService _userManager;
+        private readonly IUserService _userService;
         private readonly Settings _settings;
         private readonly ILogger _logger;
         private readonly IWebAppPublicationService _webAppPublicationService;
 
         public ApiController(
             IWebAppPublicationService webAppPublicationService,
-            IUserService userManager, 
+            IUserService userService, 
             ILogger logger,
             Settings settings)
         {
             _logger = logger;
             _settings = settings;
-            _userManager = userManager;
+            _userService = userService;
             _webAppPublicationService = webAppPublicationService;
         }
         
@@ -55,7 +54,7 @@ namespace WebSite.Controllers
         [Route("api/publications/new")]
         public async Task<IActionResult> AddPublication(NewPostRequest request)
         {
-            var user = await _userManager.GetBySecretKey(request.Key);
+            var user = await _userService.GetBySecretKey(request.Key);
 
             if (user == null)
             {
@@ -92,7 +91,7 @@ namespace WebSite.Controllers
         [Route("api/vacancy/new")]
         public async Task<IActionResult> AddVacancy(NewVacancyRequest request)
         {
-            var user = _userManager.GetBySecretKey(request.Key);
+            var user = _userService.GetBySecretKey(request.Key);
 
             if (user == null)
             {

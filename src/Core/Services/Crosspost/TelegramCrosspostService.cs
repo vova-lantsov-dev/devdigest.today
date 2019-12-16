@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using Core.Repositories;
 using DAL;
@@ -21,11 +22,23 @@ namespace Core.Services.Crosspost
             _socialRepository = socialRepository;
         }
 
-        public async Task Send(int categoryId, string comment, string link, IReadOnlyCollection<string> tags)
+        public async Task Send(
+            int categoryId, 
+            string message, 
+            string link,
+            IReadOnlyCollection<string> channelTags, 
+            IReadOnlyCollection<string> commonTags)
         {
             var channels = await _socialRepository.GetTelegramChannels(categoryId);
 
-            var message = comment + Environment.NewLine + Environment.NewLine + link;
+            var sb = new StringBuilder();
+            
+            sb.Append(message);
+            sb.Append(Environment.NewLine);
+            sb.Append(Environment.NewLine);
+            sb.Append(link);
+            sb.Append(Environment.NewLine);
+            sb.Append(string.Join(", ", channelTags));
             
             try
             {
@@ -33,14 +46,14 @@ namespace Core.Services.Crosspost
                 {
                     var bot = new TelegramBotClient(channel.Token);
                     
-                    await bot.SendTextMessageAsync(channel.Name, message);
+                    await bot.SendTextMessageAsync(channel.Name, sb.ToString());
                     
-                    _logger.Write(LogEventLevel.Information, $"Message was sent to Telegram channel `{channel.Name}`: `{comment}` `{link}` Category: `{categoryId}`");
+                    _logger.Write(LogEventLevel.Information, $"Message was sent to Telegram channel `{channel.Name}`: `{message}` `{link}` Category: `{categoryId}`");
                 }
             }
             catch (Exception ex)
             {
-                _logger.Write(LogEventLevel.Error, $"Error during send message to Telegram: `{comment}` `{link}` Category: `{categoryId}`", ex);
+                _logger.Write(LogEventLevel.Error, $"Error during send message to Telegram: `{message}` `{link}` Category: `{categoryId}`", ex);
             }
         }
 

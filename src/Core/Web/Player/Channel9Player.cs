@@ -9,9 +9,7 @@ namespace Core.Web.Player
         {
             var url = uri.ToString();
 
-            url = url[url.Length - 1] == '/'
-                ? url + "player"
-                : url + "/player";
+            url = url[^1] == '/' ? url + "player" : url + "/player";
 
             return url;
         }

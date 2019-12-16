@@ -18,14 +18,14 @@ namespace WebSite.Controllers
 {
     public class RssController : Controller
     {
-        private readonly IPublicationService _publicationManager;
+        private readonly IPublicationService _publicationService;
         private readonly IMemoryCache _cache;
         private readonly Settings _settings;
 
-        public RssController(IMemoryCache cache, IPublicationService publicationManager, Settings settings)
+        public RssController(IMemoryCache cache, IPublicationService publicationService, Settings settings)
         {
             _cache = cache;
-            _publicationManager = publicationManager;
+            _publicationService = publicationService;
             _settings = settings;
         }
 
@@ -39,7 +39,7 @@ namespace WebSite.Controllers
             if (string.IsNullOrEmpty(xml))
             {
                 int? categoryId = null;
-                var pagedResult = await _publicationManager.GetPublications(categoryId, 1, 50);
+                var pagedResult = await _publicationService.GetPublications(categoryId, 1, 50);
                 var lastUpdateDate = pagedResult.Select(o => o.DateTime).DefaultIfEmpty().Max();
 
                 var rss = new RssDocument

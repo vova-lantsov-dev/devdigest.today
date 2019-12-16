@@ -13,20 +13,20 @@ namespace WebSite.Controllers
 {
     public class SitemapController : Controller
     {
-        private readonly IPublicationService _publicationManager;
-        private readonly IVacancyService _vacancyManager;
+        private readonly IPublicationService _publicationService;
+        private readonly IVacancyService _vacancyService;
         private readonly IMemoryCache _cache;
         private readonly Settings _settings;
         
         public SitemapController(
             IMemoryCache cache, 
-            IVacancyService vacancyManager, 
-            IPublicationService publicationManager, 
+            IVacancyService vacancyService, 
+            IPublicationService publicationService, 
             Settings settings)
         {
             _cache = cache;
-            _vacancyManager = vacancyManager;
-            _publicationManager = publicationManager;
+            _vacancyService = vacancyService;
+            _publicationService = publicationService;
             _settings = settings;
         }
 
@@ -53,7 +53,7 @@ namespace WebSite.Controllers
 
                 do
                 {
-                    publications = await _publicationManager.GetPublications(null, page);
+                    publications = await _publicationService.GetPublications(null, page);
                     page++;
 
                     foreach (var p in publications)
@@ -68,7 +68,7 @@ namespace WebSite.Controllers
 
                 do
                 {
-                    vacancies = await _vacancyManager.GetVacancies(page);
+                    vacancies = await _vacancyService.GetVacancies(page);
                     page++;
 
                     foreach (var v in vacancies)

@@ -19,7 +19,12 @@ namespace Core.Services.Crosspost
             _logger = logger;
         }
 
-        public async Task Send(int categoryId, string comment, string link, IReadOnlyCollection<string> tags)
+        public async Task Send(
+            int categoryId, 
+            string message, 
+            string link,
+            IReadOnlyCollection<string> channelTags, 
+            IReadOnlyCollection<string> commonTags)
         {
             var pages = await _repository.GetFacebookPages(categoryId); 
 
@@ -29,15 +34,15 @@ namespace Core.Services.Crosspost
                 {
                     var facebook = new FacebookClient(page.Token);
                     
-                    await facebook.PostOnWall(comment, link);
+                    await facebook.PostOnWall(message, link);
 
-                    _logger.Write(LogEventLevel.Information, $"Message was sent to Facebook page `{page.Name}`: `{comment}` `{link}` Category: `{categoryId}`");
+                    _logger.Write(LogEventLevel.Information, $"Message was sent to Facebook page `{page.Name}`: `{message}` `{link}` Category: `{categoryId}`");
                 }
 
             }
             catch (Exception ex)
             {
-                _logger.Write(LogEventLevel.Error, $"Error during send message to Facebook: `{comment}` `{link}` Category: `{categoryId}`", ex);
+                _logger.Write(LogEventLevel.Error, $"Error during send message to Facebook: `{message}` `{link}` Category: `{categoryId}`", ex);
             }
         }
 

@@ -25,19 +25,19 @@ namespace Core.Repositories
             await _database
                 .Vacancy
                 .Include(o => o.Category)
-                .Where(o => o.Active && o.LanguageId == Language.EnglishId)
+                .Where(o => o.Active == 1 && o.LanguageId == Language.EnglishId)
                 .OrderByDescending(o => o.Id)
                 .Skip((page - 1) * size)
                 .Take(size).ToListAsync();
 
         public async Task<int> GetVacanciesCount() =>
-            await _database.Vacancy.Where(o => o.Active).CountAsync();
+            await _database.Vacancy.Where(o => o.Active == 1).CountAsync();
 
         public async Task<IReadOnlyCollection<Vacancy>> GetHotVacancies(int size) =>
             await _database
                 .Vacancy
                 .Include(o => o.Category)
-                .Where(o => o.Active && o.LanguageId == Language.EnglishId)
+                .Where(o => o.Active == 1 && o.LanguageId == Language.EnglishId)
                 .OrderByDescending(o => o.Id)
                 .Take(size)
                 .ToListAsync();

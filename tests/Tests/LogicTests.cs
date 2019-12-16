@@ -39,13 +39,13 @@ namespace Tests
             ILogger logger = new SimpleLogger();
             ISocialRepository repository = repositoryMock.Object;
             
-            var manager = new FacebookCrosspostService(repository, logger);
+            var service = new FacebookCrosspostService(repository, logger);
 
             int categoryId = 1;
             string comment = "test";
             string link = "http://example.com";
             
-            await manager.Send(categoryId, comment, link, ImmutableList<string>.Empty);
+            await service.Send(categoryId, comment, link, ImmutableList<string>.Empty, ImmutableList<string>.Empty);
         }
 
 
@@ -56,7 +56,7 @@ namespace Tests
             
             var socialRepositoryMock = new Mock<ISocialRepository>();
 
-            var manager = new TwitterCrosspostService(
+            var service = new TwitterCrosspostService(
                 socialRepositoryMock.Object,
                 logger);
 
@@ -64,7 +64,7 @@ namespace Tests
             var comment = "test";
             var link = "http://example.com";
 
-            await manager.Send(categoryId, comment, link, ImmutableList<string>.Empty);
+            await service.Send(categoryId, comment, link, ImmutableList<string>.Empty, ImmutableList<string>.Empty);
         }
 
     }

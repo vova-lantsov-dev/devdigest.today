@@ -97,12 +97,11 @@ namespace WebSite.AppCode
 
                 //If we can embed main content into site page, so we can share this page.
                 var url = string.IsNullOrEmpty(model.EmbededPlayerCode) ? model.Link : model.ShareUrl;
+                var categoryTags = await _publicationService.GetCategoryTags(request.CategoryId);
 
-                IReadOnlyCollection<string> tags = await GetTags(request.CategoryId);
-
-                foreach (var crossPostManager in _crossPostServices)
+                foreach (var service in _crossPostServices)
                 {
-                    await crossPostManager.Send(request.CategoryId, request.Comment, url, tags);
+                    await service.Send(request.CategoryId, request.Comment, url, categoryTags, GetTags(request));
                 }
 
                 return model;
@@ -111,62 +110,19 @@ namespace WebSite.AppCode
             throw new Exception("Can't save publication to database");
         }
 
-        private async Task<IReadOnlyCollection<string>> GetTags(int categoryId)
+        private IReadOnlyCollection<string> GetTags(NewPostRequest request)
         {
-            //TODO: move categories tags to database
-            
-            var categoryName = await _publicationService.GetCategoryName(categoryId);
-
-            var tags = new List<string>
+            if (request == null || string.IsNullOrWhiteSpace(request.Tags))
             {
-                "#devdigest",
-                ConvertToHashTag(categoryName)
-            };
-            
-            if (categoryId == Categories.Azure)
-            {
-                tags.AddRange(new []{ "#cloud"});
-            }
-            
-            if (categoryId == Categories.News)
-            {
-                
-            }
-            
-            if (categoryId == Categories.Xamarin)
-            {
-                tags.AddRange(new []{ "#mobile_development"});
-            }
-            
-            if (categoryId == Categories.DataScience)
-            {
-                
-            }
-            
-            if (categoryId == Categories.LiveEvents)
-            {
-                tags.AddRange(new []{ "#event #news"});
-            }
-            
-            if (categoryId == Categories.UAEvents)
-            {
-                tags.AddRange(new []{ "#event #news #ukraine"});
-            }
-            
-            if (categoryId == Categories.NETCore)
-            {
-                tags.AddRange(new []{ "#software_development"});
+                return ImmutableList<string>.Empty;
             }
 
-            return tags;
+            return request.Tags
+                .Split(' ')
+                .Where(o => !string.IsNullOrWhiteSpace(o))
+                .Select(o => o.Trim())
+                .ToImmutableList();
         }
-        
-        private static string ConvertToHashTag(string text) =>
-            "#" + text
-                .Replace(".", "")
-                .Replace("#", "")
-                .Replace(" ", "_")
-                .ToLower();
 
         public async Task<VacancyViewModel> CreateVacancy(NewVacancyRequest request, Task<User> user)
         {
@@ -178,7 +134,7 @@ namespace WebSite.AppCode
                 UserId = user.Id,
                 CategoryId = request.CategoryId,
                 Date = DateTime.Now,
-                Active = true,
+                Active = 1,
                 Content = request.Content,
                 Image = null,
                 Url = null,
@@ -190,12 +146,13 @@ namespace WebSite.AppCode
             {
                 var model = new VacancyViewModel(vacancy, _settings.WebSiteUrl);
 
-                foreach (var crossPostManager in _crossPostServices)
+                foreach (var crossPostService in _crossPostServices)
                 {
-                    await crossPostManager.Send(
+                    await crossPostService.Send(
                         request.CategoryId,
                         request.Comment,
                         model.ShareUrl,
+                        ImmutableList<string>.Empty,
                         ImmutableList<string>.Empty);
                 }
 
@@ -205,9 +162,6 @@ namespace WebSite.AppCode
             throw new Exception("Can't save vacancy to database");
         }
 
-        public async Task<IReadOnlyCollection<Category>> GetCategories()
-        {
-            return await _publicationService.GetCategories();
-        }
+        public Task<IReadOnlyCollection<Category>> GetCategories() => _publicationService.GetCategories();
     }
 }

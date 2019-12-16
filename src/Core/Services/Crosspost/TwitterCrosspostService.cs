@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Core.Repositories;
 using DAL;
 using Serilog.Events;
 using Tweetinvi;
+using Tweetinvi.Parameters;
 
 namespace Core.Services.Crosspost
 {
@@ -20,23 +22,30 @@ namespace Core.Services.Crosspost
         
         private const int MaxTweetLength = 277;
 
-        public TwitterCrosspostService(
-            ISocialRepository socialRepository,
-            ILogger logger)
+        public TwitterCrosspostService(ISocialRepository socialRepository, ILogger logger)
         {
             _logger = logger;
             _socialRepository = socialRepository;
         }
 
-        public async Task Send(int categoryId, string comment, string link, IReadOnlyCollection<string> tags)
+        public async Task Send(
+            int categoryId, 
+            string message, 
+            string link,  
+            IReadOnlyCollection<string> channelTags,
+            IReadOnlyCollection<string> commonTags)
         {
             var accounts = await _socialRepository.GetTwitterAccountsChannels(categoryId);
-            
-            var tag = string.Join(" ", tags);
-            var maxMessageLength = MaxTweetLength - link.Length - tag.Length;
-            var message = Substring(comment, maxMessageLength);
 
-            var text = $"{message} {tag} {link}";
+            var tags = string.Join(" ", channelTags.Union(commonTags)
+                .Where(o => !string.IsNullOrWhiteSpace(o))
+                .Select(o => o.Trim().ToLower())
+                .Distinct()
+                .ToImmutableList());
+            
+            var maxMessageLength = MaxTweetLength - tags.Length;
+            
+            var text = $"{Substring(message, maxMessageLength)} {tags} {link}";
 
             foreach (var account in accounts)
             {
@@ -52,11 +61,11 @@ namespace Core.Services.Crosspost
 
                     Tweet.PublishTweet(text);
 
-                    _logger.Write(LogEventLevel.Information, $"Message was sent to Twitter channel `{account.Name}`: `{comment}` `{link}` Category: `{categoryId}`");
+                    _logger.Write(LogEventLevel.Information, $"Message was sent to Twitter channel `{account.Name}`: `{text}` Category: `{categoryId}`");
                 }
                 catch (Exception ex)
                 {
-                    _logger.Write(LogEventLevel.Error, "Error in TwitterCrosspostManager.Send", ex);
+                    _logger.Write(LogEventLevel.Error, "Error in TwitterCrosspostService.Send", ex);
                 }
                 finally
                 {

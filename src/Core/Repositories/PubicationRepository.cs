@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Logging;
@@ -14,11 +15,11 @@ namespace Core.Repositories
         Task<IReadOnlyCollection<Publication>> GetPublications(int? categoryId, int languageId, int page, int pageSize);
         Task<int> GetPublicationsCount(int? categoryId, int languageId);
         Task<IReadOnlyCollection<Category>> GetCategories();
-        Task<string> GetCategoryName(int categoryId);
         Task<Publication> GetPublication(int id);
         Task<Publication> Save(Publication publication);
         Task IncreasePublicationViewCount(int id);
         Task<Publication> GetPublication(Uri uri);
+        Task<IReadOnlyCollection<string>> GetCategoryTags(int categoryId);
     }
 
     public class PublicationRepository : IPublicationRepository 
@@ -86,11 +87,18 @@ namespace Core.Repositories
 
         public Task<Publication> GetPublication(Uri uri) =>
             _database.Publication.SingleOrDefaultAsync(o => o.Link.ToLower() == uri.ToString().ToLower());
-        
-        public async Task<string> GetCategoryName(int categoryId) =>
-            _database.Category
+
+        public async Task<IReadOnlyCollection<string>> GetCategoryTags(int categoryId)
+        {
+            var value = await _database.Category
                 .Where(o => o.Id == categoryId)
-                .Select(o => o.Name)
-                .SingleOrDefault();
+                .Select(o => o.Tags)
+                .SingleOrDefaultAsync();
+            
+            if (string.IsNullOrWhiteSpace(value))
+                return ImmutableArray<string>.Empty;
+
+            return value.Split(' ').ToImmutableList();
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace Core.ViewModels
 			Description = vacancy.Description;
 			Content = vacancy.Content;
 			Contact = vacancy.Contact;
-			Active = vacancy.Active;
+			Active = vacancy.Active == 1;
 			Date = vacancy.Date;
 			Url = string.IsNullOrWhiteSpace(vacancy.Url) ? null : new Uri(vacancy.Url);
 			Category = new CategoryViewModel();
