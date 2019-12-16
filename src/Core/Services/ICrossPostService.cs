@@ -16,7 +16,7 @@ namespace Core.Services
         /// For example: `#devdigest #azure` tags in twitter channel, because
         /// twitter account aggregate all messages from different channels. 
         /// </param>
-        /// <param name="commonTags">
+        /// <param name="tags">
         /// Tags which should be added to all all posts 
         /// </param>
         /// <returns></returns>
@@ -25,6 +25,6 @@ namespace Core.Services
             string message, 
             string link, 
             IReadOnlyCollection<string> channelTags,
-            IReadOnlyCollection<string> commonTags);
+            IReadOnlyCollection<string> tags);
     }
 }

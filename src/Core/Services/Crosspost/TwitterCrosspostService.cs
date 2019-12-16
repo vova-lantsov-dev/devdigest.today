@@ -33,19 +33,19 @@ namespace Core.Services.Crosspost
             string message, 
             string link,  
             IReadOnlyCollection<string> channelTags,
-            IReadOnlyCollection<string> commonTags)
+            IReadOnlyCollection<string> tags)
         {
             var accounts = await _socialRepository.GetTwitterAccountsChannels(categoryId);
 
-            var tags = string.Join(" ", channelTags.Union(commonTags)
+            var allTags = string.Join(" ", channelTags.Union(tags)
                 .Where(o => !string.IsNullOrWhiteSpace(o))
                 .Select(o => o.Trim().ToLower())
                 .Distinct()
                 .ToImmutableList());
             
-            var maxMessageLength = MaxTweetLength - tags.Length;
+            var maxMessageLength = MaxTweetLength - allTags.Length;
             
-            var text = $"{Substring(message, maxMessageLength)} {tags} {link}";
+            var text = $"{Substring(message, maxMessageLength)} {allTags} {link}";
 
             foreach (var account in accounts)
             {

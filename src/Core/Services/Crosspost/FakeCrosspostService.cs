@@ -12,7 +12,7 @@ namespace Core.Services.Crosspost
         public FakeCrosspostService(ILogger logger) => _logger = logger;
 
         public async Task Send(int categoryId, string message, string link,
-            IReadOnlyCollection<string> channelTags, IReadOnlyCollection<string> commonTags)
+            IReadOnlyCollection<string> channelTags, IReadOnlyCollection<string> tags)
         {
             _logger.Write(LogEventLevel.Information, $"{message} {link} {categoryId}");
         }

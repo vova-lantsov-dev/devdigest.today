@@ -27,7 +27,7 @@ namespace Core.Services.Crosspost
             string message, 
             string link,
             IReadOnlyCollection<string> channelTags, 
-            IReadOnlyCollection<string> commonTags)
+            IReadOnlyCollection<string> tags)
         {
             var channels = await _socialRepository.GetTelegramChannels(categoryId);
 
@@ -38,7 +38,7 @@ namespace Core.Services.Crosspost
             sb.Append(Environment.NewLine);
             sb.Append(link);
             sb.Append(Environment.NewLine);
-            sb.Append(string.Join(", ", channelTags));
+            sb.Append(string.Join(", ", tags));
             
             try
             {

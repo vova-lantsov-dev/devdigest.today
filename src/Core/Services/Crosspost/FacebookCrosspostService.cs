@@ -24,7 +24,7 @@ namespace Core.Services.Crosspost
             string message, 
             string link,
             IReadOnlyCollection<string> channelTags, 
-            IReadOnlyCollection<string> commonTags)
+            IReadOnlyCollection<string> tags)
         {
             var pages = await _repository.GetFacebookPages(categoryId); 
 
