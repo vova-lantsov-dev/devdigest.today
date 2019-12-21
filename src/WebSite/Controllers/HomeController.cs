@@ -66,14 +66,32 @@ namespace WebSite.Controllers
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "Welcome!";
+            
+            var model = new HomePageViewModel
+            {
+                Publications = await GetPublications(),
+                TopPublications = await GetTopPublications()
+            };
+            
+            return View(model);
+        }
 
+        private async Task<IReadOnlyCollection<PublicationViewModel>> GetTopPublications()
+        {
+            var publications = await _publicationService.GetTopPublications();
+            var categories = await _publicationService.GetCategories();
+            
+            return publications
+            .Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories))
+            .ToImmutableList();
+        }
+
+        private async Task<StaticPagedList<PublicationViewModel>> GetPublications()
+        {
             var pagedResult = await _publicationService.GetPublications();
             var categories = await _publicationService.GetCategories();
             var publications = pagedResult.Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories));
-            
-            var model = new StaticPagedList<PublicationViewModel>(publications, pagedResult);
-
-            return View(model);
+            return new StaticPagedList<PublicationViewModel>(publications, pagedResult);            
         }
 
         [Route("page/{page}")]

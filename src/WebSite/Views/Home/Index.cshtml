@@ -1,6 +1,6 @@
 ﻿@using X.PagedList;
 @using X.PagedList.Mvc.Core;
-@model IPagedList<Core.ViewModels.PublicationViewModel>
+@model Core.ViewModels.HomePageViewModel
 @{
     ViewData["Title"] = "Welcome!";
 }
@@ -15,15 +15,73 @@
 
     <meta name="keywords" content="@Core.Settings.Current.DefaultKeywords" />
     <meta name="description" content="@Core.Settings.Current.DefaultDescription" />
+
+    <link rel="stylesheet" href="/css/carousel.css" />
+}
+
+@functions {
+  string GetActiveClass(int i)
+  {
+    return i == 0 ? "active" : "";
+  }
 }
 
 @section top {
-
 }
 
-@for (var i = 0; i < Model.Count(); i++)
+<!-- Carousel -->
+    <div id="carousel" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        @for (int i = 0; i < Model.TopPublications.Count; i++)
+        {
+            if(i == 0)
+            {
+              <li data-target="#carousel" data-slide-to="@i" class="active"></li>
+            }
+            else
+            {
+              <li data-target="#carousel" data-slide-to="@i"></li>
+            }
+        }
+      </ol>
+      <div class="carousel-inner" role="listbox">
+
+        @for (int i = 0; i < Model.TopPublications.Count; i++)
+        {
+            var p = Model.TopPublications.ElementAt(i);    
+            var categoryLink = $"/page/1?categoryId={p.Category.Id}";
+            
+            <div class="item @GetActiveClass(i)">          
+              <div class="container"> 
+                <div class="carousel-caption">
+                  <h3>@p.Title</h3>
+                  <h4><a href="@categoryLink" class="label @p.Category.CssClass label-default">@p.Category.Name</a></h4>
+                  <p>
+                    <span class="category @p.Category.CssClass">
+                      @p.Description
+                    </span>
+                  </p>
+                  <p>
+                    <a class="btn btn-default" target="blank" href="@p.Url">Original publication&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>                    
+                </div>
+              </div>
+            </div>
+        }
+      </div>
+      <a class="left carousel-control" href="#carousel" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#carousel" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div><!-- /.carousel -->
+
+@for (var i = 0; i < Model.Publications.Count(); i++)
 {
-    @await Html.PartialAsync("_Publication", Model[i])
+    @await Html.PartialAsync("_Publication", Model.Publications[i])
 
     if (i == 2)
     {
@@ -36,4 +94,4 @@
     }
 }
 
-@Html.PagedListPager(Model, page => $"/page/{page}")
+@Html.PagedListPager(Model.Publications, page => $"/page/{page}")
