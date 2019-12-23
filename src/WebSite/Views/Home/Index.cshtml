@@ -29,24 +29,14 @@
 @section top {
 }
 
-<!-- Carousel -->
     <div id="carousel" class="carousel slide" data-ride="carousel">
-      <!-- Indicators -->
       <ol class="carousel-indicators">
         @for (int i = 0; i < Model.TopPublications.Count; i++)
         {
-            if(i == 0)
-            {
-              <li data-target="#carousel" data-slide-to="@i" class="active"></li>
-            }
-            else
-            {
-              <li data-target="#carousel" data-slide-to="@i"></li>
-            }
+            <li data-target="#carousel" data-slide-to="@i" class="@GetActiveClass(i)"></li>
         }
       </ol>
       <div class="carousel-inner" role="listbox">
-
         @for (int i = 0; i < Model.TopPublications.Count; i++)
         {
             var p = Model.TopPublications.ElementAt(i);    
@@ -55,8 +45,7 @@
             <div class="item @GetActiveClass(i)">          
               <div class="container"> 
                 <div class="carousel-caption">
-                  <h3>@p.Title</h3>
-                  <h4><a href="@categoryLink" class="label @p.Category.CssClass label-default">@p.Category.Name</a></h4>
+                  <h3>@p.Title</h3>                  
                   <p>
                     <span class="category @p.Category.CssClass">
                       @p.Description
@@ -77,21 +66,17 @@
         <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
         <span class="sr-only">Next</span>
       </a>
-    </div><!-- /.carousel -->
+    </div>
 
 @for (var i = 0; i < Model.Publications.Count(); i++)
 {
     @await Html.PartialAsync("_Publication", Model.Publications[i])
 
     if (i == 2)
-    {
         @await Html.PartialAsync("_InFeedAd")
-    }
 
-    if (i == 0)
-    {
+    if (i == 0)    
         @await Html.PartialAsync("_SmartContent")
-    }
 }
 
 @Html.PagedListPager(Model.Publications, page => $"/page/{page}")
