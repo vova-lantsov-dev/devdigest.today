@@ -28,6 +28,8 @@ namespace WebSite
         public IServiceCollection Register(IServiceCollection services)
         {
             services
+                .AddApplicationInsightsTelemetry()
+                
                 .AddMemoryCache()
 
                 .AddEntityFrameworkMySql()

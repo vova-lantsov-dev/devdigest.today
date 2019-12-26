@@ -25,8 +25,8 @@ namespace Core
         public string CognitiveServicesTextAnalyticsKey { get; set; }
 
         public string Version { get; set; }
-
-        public TwitterSettings Twitter { get; set; }
+        
+        public ApplicationInsightsSetting ApplicationInsights { get; set; }
 
         #region Current
 
@@ -39,13 +39,10 @@ namespace Core
         public static Settings Current { get; private set; }
 
         #endregion
+    }
 
-        public class TwitterSettings
-        {
-            public string ConsumerKey { get; set; }
-            public string ConsumerSecret { get; set; }
-            public string AccessTokenSecret { get; set; }
-            public string AccessToken { get; set; }
-        }
+    public class ApplicationInsightsSetting
+    {
+        public string InstrumentationKey { get; set; }
     }
 }
