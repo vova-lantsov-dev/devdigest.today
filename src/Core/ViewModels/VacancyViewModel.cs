@@ -5,9 +5,9 @@ namespace Core.ViewModels
 {
 	public class VacancyViewModel
 	{
-		private readonly string _websiteUrl;
+		private readonly Uri _websiteUrl;
 
-		public VacancyViewModel(DAL.Vacancy vacancy, string webSiteUrl, string fallbackImage = null)
+		public VacancyViewModel(DAL.Vacancy vacancy, Uri webSiteUrl, string fallbackImage = null)
 		{
 			_websiteUrl = webSiteUrl;
 			
@@ -39,7 +39,7 @@ namespace Core.ViewModels
 		public CategoryViewModel Category { get; set; }
 		public DateTime Date { get; set; }
 		public string Description { get; set; }
-		public string ShareUrl => $"{_websiteUrl}vacancy/{Id}";
+		public Uri ShareUrl => new Uri($"{_websiteUrl}vacancy/{Id}");
 		public string Content { get; set; }
 		public string Contact { get; set; }
 		public bool Active { get; set; }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +10,6 @@ using Core.Repositories;
 using DAL;
 using Serilog.Events;
 using Tweetinvi;
-using Tweetinvi.Parameters;
 
 namespace Core.Services.Crosspost
 {
@@ -18,48 +18,44 @@ namespace Core.Services.Crosspost
         private static readonly Semaphore _semaphore = new Semaphore(1, 1);
         
         private readonly ISocialRepository _socialRepository;
+        private readonly IPublicationRepository _publicationRepository;
         private readonly ILogger _logger;
         
-        private const int MaxTweetLength = 277;
+        private const int MaxTweetLength = 186;
 
-        public TwitterCrosspostService(ISocialRepository socialRepository, ILogger logger)
+        public TwitterCrosspostService(
+            ISocialRepository socialRepository, 
+            IPublicationRepository publicationRepository,
+            ILogger logger)
         {
             _logger = logger;
+            _publicationRepository = publicationRepository;
             _socialRepository = socialRepository;
         }
 
-        public async Task Send(
-            int categoryId, 
-            string message, 
-            string link,  
-            IReadOnlyCollection<string> channelTags,
-            IReadOnlyCollection<string> tags)
+        public async Task Send(int categoryId,
+            string message,
+            Uri link,
+            [NotNull] IReadOnlyCollection<string> tags)
         {
             var accounts = await _socialRepository.GetTwitterAccountsChannels(categoryId);
-
-            var allTags = string.Join(" ", channelTags.Union(tags)
-                .Where(o => !string.IsNullOrWhiteSpace(o))
-                .Select(o => o.Trim().ToLower())
-                .Distinct()
-                .ToImmutableList());
-            
-            var maxMessageLength = MaxTweetLength - allTags.Length;
-            
-            var text = $"{Substring(message, maxMessageLength)} {allTags} {link}";
+           
+            var text = await BuildMessage(categoryId, message, link, tags);
 
             foreach (var account in accounts)
             {
                 try
                 {
                     _semaphore.WaitOne();
-                    
-                    Auth.SetUserCredentials(
+
+                    var credentials = Auth.SetUserCredentials(
                         account.ConsumerKey,
                         account.ConsumerSecret,
                         account.AccessToken,
                         account.AccessTokenSecret);
 
-                    Tweet.PublishTweet(text);
+                    var publishTweetParameters = Tweet.CreatePublishTweetParameters(text);
+                    var tweet = Tweet.PublishTweet(publishTweetParameters);
 
                     _logger.Write(LogEventLevel.Information, $"Message was sent to Twitter channel `{account.Name}`: `{text}` Category: `{categoryId}`");
                 }
@@ -74,6 +70,15 @@ namespace Core.Services.Crosspost
             }
         }
 
+        private async Task<string> BuildMessage(int categoryId, string message, Uri url, IReadOnlyCollection<string> tags)
+        {
+            var categoryTags = (await _publicationRepository.GetCategoryTags(categoryId)).ToList();
+            var tagLine = string.Join(" ", categoryTags.Union(tags).Distinct().ToImmutableList());
+
+            var maxMessageLength = MaxTweetLength - tagLine.Length;
+
+            return $"{Substring(message, maxMessageLength)} {tagLine} {url}";
+        }
 
         private static string Substring(string text, int length)
         {
@@ -83,9 +88,6 @@ namespace Core.Services.Crosspost
             return text.Length <= length ? text : $"{text.Substring(0, length - 4)}... ";
         }
 
-        public async Task<IReadOnlyCollection<TwitterAccount>> GetAccounts()
-        {
-            return await _socialRepository.GetTwitterAccounts();
-        }
+        public async Task<IReadOnlyCollection<TwitterAccount>> GetAccounts() => await _socialRepository.GetTwitterAccounts();
     }
 }

@@ -20,11 +20,9 @@ namespace Core.Services.Crosspost
             _socialRepository = socialRepository;
         }
 
-        public async Task Send(
-            int categoryId, 
-            string message, 
-            string link,
-            IReadOnlyCollection<string> channelTags, 
+        public async Task Send(int categoryId,
+            string message,
+            Uri link,
             IReadOnlyCollection<string> tags)
         {
             var channels = await _socialRepository.GetTelegramChannels(categoryId);
@@ -47,12 +45,12 @@ namespace Core.Services.Crosspost
                     
                     await bot.SendTextMessageAsync(channel.Name, sb.ToString());
                     
-                    _logger.Write(LogEventLevel.Information, $"Message was sent to Telegram channel `{channel.Name}`: `{sb.ToString()}` Category: `{categoryId}`");
+                    _logger.Write(LogEventLevel.Information, $"Message was sent to Telegram channel `{channel.Name}`: `{sb}` Category: `{categoryId}`");
                 }
             }
             catch (Exception ex)
             {
-                _logger.Write(LogEventLevel.Error, $"Error during send message to Telegram: `{sb.ToString()}` Category: `{categoryId}`", ex);
+                _logger.Write(LogEventLevel.Error, $"Error during send message to Telegram: `{sb}` Category: `{categoryId}`", ex);
             }
         }
 

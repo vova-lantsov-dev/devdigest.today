@@ -68,7 +68,7 @@ namespace WebSite.Controllers
                 var publication = await _webAppPublicationService.CreatePublication(request, user);
                 
                 if (publication != null) 
-                    return Created(new Uri(publication.ShareUrl), publication);
+                    return Created(publication.ShareUrl, publication);
 
                 return BadRequest();
             }
@@ -81,37 +81,6 @@ namespace WebSite.Controllers
             catch (Exception ex)
             {
                 _logger.Write(LogEventLevel.Error, "Error while creating new publication", ex);
-                
-                return BadRequest(ex.Message);
-            }
-        }
-        
-
-        [HttpPost]
-        [Route("api/vacancy/new")]
-        public async Task<IActionResult> AddVacancy(NewVacancyRequest request)
-        {
-            var user = _userService.GetBySecretKey(request.Key);
-
-            if (user == null)
-            {
-                _logger.Write(LogEventLevel.Warning, $"Somebody tried to login with this key: `{request.Key}`. Text: `{request.Comment}`");
-
-                return StatusCode((int)HttpStatusCode.Forbidden, "Incorrect security key");
-            }
-
-            try
-            {
-                var vacancy = await _webAppPublicationService.CreateVacancy(request, user);
-                
-                if (vacancy != null) 
-                    return Created(new Uri(vacancy.ShareUrl), vacancy);
-
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                _logger.Write(LogEventLevel.Error, "Error while creating new vacancy", ex);
                 
                 return BadRequest(ex.Message);
             }

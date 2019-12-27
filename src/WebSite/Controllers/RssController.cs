@@ -96,7 +96,7 @@ namespace WebSite.Controllers
                 Link = new RssUrl(p.ShareUrl),
                 PubDate = p.DateTime,
                 Title = p.Title,
-                Guid = new RssGuid { IsPermaLink = true, Value = p.ShareUrl },
+                Guid = new RssGuid { IsPermaLink = true, Value = p.ShareUrl.ToString() },
                 Source = new RssSource { Url = new RssUrl(p.ShareUrl) }
             };
         }

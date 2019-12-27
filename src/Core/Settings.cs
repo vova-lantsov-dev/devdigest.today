@@ -1,3 +1,5 @@
+using System;
+
 namespace Core
 {
     public class Settings
@@ -6,7 +8,7 @@ namespace Core
 
         public string WebSiteTitle { get; set; }
 
-        public string WebSiteUrl { get; set; }
+        public Uri WebSiteUrl { get; set; }
 
         public string DefaultDescription { get; set; }
 

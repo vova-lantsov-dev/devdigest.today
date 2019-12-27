@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Logging;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,13 +21,8 @@ namespace Core.Repositories
     public class SocialRepository : ISocialRepository
     {
         private readonly DatabaseContext _database;
-        private ILogger _logger;
 
-        public SocialRepository(DatabaseContext database, ILogger logger)
-        {
-            _database = database;
-            _logger = logger;
-        }
+        public SocialRepository(DatabaseContext database) => _database = database;
 
         public async Task<IReadOnlyCollection<FacebookPage>> GetFacebookPages(int categoryId) =>
             await _database.FacebookPage.Where(o => o.CategoryId == categoryId).ToListAsync();

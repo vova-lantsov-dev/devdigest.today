@@ -11,7 +11,6 @@ namespace Core.Repositories
         Task<int> GetVacanciesCount();
         Task<IReadOnlyCollection<Vacancy>> GetHotVacancies(int size);
         Task<Vacancy> GetVacancy(int id);
-        Task<Vacancy> Save(Vacancy vacancy);
         Task IncreaseVacancyViewCount(int id);
     }
     
@@ -44,15 +43,6 @@ namespace Core.Repositories
 
         public async Task<Vacancy> GetVacancy(int id) => 
             await _database.Vacancy.SingleOrDefaultAsync(o => o.Id == id);
-
-        public async Task<Vacancy> Save(Vacancy vacancy)
-        {
-            _database.Add(vacancy);
-            
-            await _database.SaveChangesAsync();
-            
-            return await _database.Vacancy.LastOrDefaultAsync();
-        }
 
         public async Task IncreaseVacancyViewCount(int id)
         {

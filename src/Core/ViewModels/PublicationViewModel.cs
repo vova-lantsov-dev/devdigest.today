@@ -12,20 +12,19 @@ namespace Core.ViewModels
         public string Content { get; set; }
         public string Description { get; set; }
         public string Image { get; set; }
-        public string Link { get; set; }
         public DateTime DateTime { get; set; }
         public string EmbededPlayerCode { get; set; }
-        public Uri Url => string.IsNullOrWhiteSpace(this.Link) ? null : new Uri(this.Link);
-        public string ShareUrl => $"{_websiteUrl}post/{Id}";
+        public Uri Url { get; set; }
+        public Uri ShareUrl => new Uri($"{_websiteUrl}post/{Id}");
         public string Keywords => X.Text.TextHelper.GetKeywords(Description, 10);
         public CategoryViewModel Category { get; set; }
         public int ViewsCount { get; set; }
         
-        private readonly string _websiteUrl;
+        private readonly Uri _websiteUrl;
 
         public PublicationViewModel(
             DAL.Publication publication, 
-            string websiteUrl, 
+            Uri websiteUrl, 
             IReadOnlyCollection<DAL.Category> categories = null)
         {
             _websiteUrl = websiteUrl;
@@ -34,7 +33,7 @@ namespace Core.ViewModels
             Title = publication.Title;
             Description = publication.Description;
             Image = publication.Image;
-            Link = publication.Link;
+            Url = new Uri(publication.Link);
             DateTime = publication.DateTime;
             Type = publication.Type;
             Content = publication.Content;

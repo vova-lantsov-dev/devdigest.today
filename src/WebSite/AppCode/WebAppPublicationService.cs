@@ -17,7 +17,6 @@ namespace WebSite.AppCode
     public interface IWebAppPublicationService
     {
         Task<PublicationViewModel> CreatePublication(NewPostRequest request, User user);
-        Task<VacancyViewModel> CreateVacancy(NewVacancyRequest request, Task<User> user);
         Task<IReadOnlyCollection<Category>> GetCategories();
     }
 
@@ -96,12 +95,12 @@ namespace WebSite.AppCode
                 var model = new PublicationViewModel(publication, _settings.WebSiteUrl);
 
                 //If we can embed main content into site page, so we can share this page.
-                var url = string.IsNullOrEmpty(model.EmbededPlayerCode) ? model.Link : model.ShareUrl;
+                var url = string.IsNullOrEmpty(model.EmbededPlayerCode) ? model.Url : model.ShareUrl;
                 var categoryTags = await _publicationService.GetCategoryTags(request.CategoryId);
 
                 foreach (var service in _crossPostServices)
                 {
-                    await service.Send(request.CategoryId, request.Comment, url, categoryTags, GetTags(request));
+                    await service.Send(request.CategoryId, request.Comment, url, GetTags(request));
                 }
 
                 return model;
@@ -122,44 +121,6 @@ namespace WebSite.AppCode
                 .Where(o => !string.IsNullOrWhiteSpace(o))
                 .Select(o => o.Trim())
                 .ToImmutableList();
-        }
-
-        public async Task<VacancyViewModel> CreateVacancy(NewVacancyRequest request, Task<User> user)
-        {
-            var vacancy = new DAL.Vacancy
-            {
-                Title = request.Title,
-                Description = request.Description,
-                Contact = request.Contact,
-                UserId = user.Id,
-                CategoryId = request.CategoryId,
-                Date = DateTime.Now,
-                Active = 1,
-                Content = request.Content,
-                Image = null,
-                Url = null,
-            };
-
-            vacancy = await _vacancyService.Save(vacancy);
-
-            if (vacancy != null)
-            {
-                var model = new VacancyViewModel(vacancy, _settings.WebSiteUrl);
-
-                foreach (var crossPostService in _crossPostServices)
-                {
-                    await crossPostService.Send(
-                        request.CategoryId,
-                        request.Comment,
-                        model.ShareUrl,
-                        ImmutableList<string>.Empty,
-                        ImmutableList<string>.Empty);
-                }
-
-                return model;
-            }
-
-            throw new Exception("Can't save vacancy to database");
         }
 
         public Task<IReadOnlyCollection<Category>> GetCategories() => _publicationService.GetCategories();

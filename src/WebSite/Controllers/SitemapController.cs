@@ -46,7 +46,7 @@ namespace WebSite.Controllers
                 IPagedList<Vacancy> vacancies;
 
                 var sitemap = new Sitemap();
-                sitemap.Add(CreateUrl(_settings.WebSiteUrl));
+                sitemap.Add(CreateUrl(_settings.WebSiteUrl.ToString()));
                 sitemap.Add(CreateUrl(_settings.WebSiteUrl + "partners/"));
 
                 page = 1;
@@ -59,7 +59,7 @@ namespace WebSite.Controllers
                     foreach (var p in publications)
                     {
                         var publication = new PublicationViewModel(p, _settings.WebSiteUrl);
-                        sitemap.Add(CreateUrl(publication.ShareUrl));
+                        sitemap.Add(CreateUrl(publication.ShareUrl.ToString()));
                     }
                 }
                 while (publications.HasNextPage);
@@ -74,7 +74,7 @@ namespace WebSite.Controllers
                     foreach (var v in vacancies)
                     {
                         var vacancy = new VacancyViewModel(v, _settings.WebSiteUrl);
-                        sitemap.Add(CreateUrl(vacancy.ShareUrl));
+                        sitemap.Add(CreateUrl(vacancy.ShareUrl.ToString()));
                     }
                 }
                 while (vacancies.HasNextPage);

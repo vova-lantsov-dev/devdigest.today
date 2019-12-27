@@ -15,13 +15,8 @@ namespace Core.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly DatabaseContext _database;
-        private ILogger _logger;
 
-        public UserRepository(DatabaseContext database, ILogger logger)
-        {
-            _database = database;
-            _logger = logger;
-        }
+        public UserRepository(DatabaseContext database, ILogger logger) => _database = database;
 
         public async Task<User> GetUserBySecretKey(Guid key) =>
             await _database.User.FirstOrDefaultAsync(o => o.Key == key.ToString());

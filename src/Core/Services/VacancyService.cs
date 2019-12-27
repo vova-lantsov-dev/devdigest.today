@@ -14,7 +14,6 @@ namespace Core.Services
         Task<IPagedList<Vacancy>> GetVacancies(int page = 1, int pageSize = 10);
         Task<IReadOnlyCollection<Vacancy>> GetHotVacancies();
         Task<Vacancy> Get(int id);
-        Task<Vacancy> Save(Vacancy vacancy);
         Task IncreaseViewCount(int id);
     }
 
@@ -80,8 +79,6 @@ namespace Core.Services
 
             return result;
         }
-
-        public async Task<Vacancy> Save(Vacancy vacancy) => await _repository.Save(vacancy);
 
         public async Task IncreaseViewCount(int id) => await _repository.IncreaseVacancyViewCount(id);
 
