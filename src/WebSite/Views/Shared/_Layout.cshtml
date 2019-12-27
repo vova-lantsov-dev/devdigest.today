@@ -1,6 +1,7 @@
-﻿@{
+﻿@using WebSite.ViewModels
+@{
     Layout = "_GeneralLayout";
-    var vacancies = ViewData["vacancies"] as IList<Core.ViewModels.VacancyViewModel> ?? new List<Core.ViewModels.VacancyViewModel>();
+    var vacancies = ViewData["vacancies"] as IList<VacancyViewModel> ?? new List<VacancyViewModel>();
 }
 
 @section head{

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Logging;
-using Core.Repositories;
 using Serilog.Events;
 using X.Web.Facebook;
 
@@ -10,40 +9,35 @@ namespace Core.Services.Crosspost
 {
     public class FacebookCrosspostService : ICrossPostService
     {
-        private readonly ISocialRepository _repository;
         private readonly ILogger _logger;
+        private readonly string _token;
+        private readonly string _name;
 
-        public FacebookCrosspostService(ISocialRepository repository, ILogger logger)
+        public FacebookCrosspostService(string token, string name, ILogger logger)
         {
-            _repository = repository;
             _logger = logger;
+            _token = token;
+            _name = name;
         }
 
-        public async Task Send(int categoryId,
-            string message,
-            Uri link,
-            IReadOnlyCollection<string> tags)
+        public async Task Send(string message, Uri link, IReadOnlyCollection<string> tags)
         {
-            var pages = await _repository.GetFacebookPages(categoryId); 
 
             try
             {
-                foreach (var page in pages)
-                {
-                    var facebook = new FacebookClient(page.Token);
-                    
-                    await facebook.PostOnWall(message, link.ToString());
+                var facebook = new FacebookClient(_token);
 
-                    _logger.Write(LogEventLevel.Information, $"Message was sent to Facebook page `{page.Name}`: `{message}` `{link}` Category: `{categoryId}`");
-                }
+                await facebook.PostOnWall(message, link.ToString());
+
+                _logger.Write(LogEventLevel.Information,
+                    $"Message was sent to Facebook page `{_name}`: `{message}` `{link}`");
+
 
             }
             catch (Exception ex)
             {
-                _logger.Write(LogEventLevel.Error, $"Error during send message to Facebook: `{message}` `{link}` Category: `{categoryId}`", ex);
+                _logger.Write(LogEventLevel.Error, $"Error during send message to Facebook: `{message}` `{link}`", ex);
             }
         }
-
-        public async Task<IReadOnlyCollection<DAL.FacebookPage>> GetPages() => await _repository.GetFacebookPages();
     }
 }

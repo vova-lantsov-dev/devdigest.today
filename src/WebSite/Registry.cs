@@ -29,7 +29,7 @@ namespace WebSite
         {
             services
                 .AddApplicationInsightsTelemetry()
-                
+
                 .AddMemoryCache()
 
                 .AddEntityFrameworkMySql()
@@ -38,10 +38,8 @@ namespace WebSite
 
                 .AddSingleton(_ => _settings)
                 .AddSingleton(_ => _logger)
-
-                .AddTransient<TelegramCrosspostService>()
-                .AddTransient<FacebookCrosspostService>()
-                .AddTransient<TwitterCrosspostService>()
+                
+                .AddSingleton<CrossPostServiceFactory>()
 
                 .AddScoped<ILocalizationService, LocalizationService>()
                 .AddScoped<IPublicationService, PublicationService>()
@@ -54,6 +52,11 @@ namespace WebSite
                 .AddScoped<IUserRepository, UserRepository>()
                 .AddScoped<IVacancyRepository, VacancyRepository>()
                 .AddScoped<IWebAppPublicationService, WebAppPublicationService>()
+
+                .AddScoped<ILanguageAnalyzerService>(options =>
+                {
+                    return new LanguageAnalyzerService(_settings.CognitiveServicesTextAnalyticsKey, _logger);
+                })
 
                 .Configure<WebEncoderOptions>(options =>
                 {

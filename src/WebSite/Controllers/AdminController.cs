@@ -10,8 +10,5 @@ namespace WebSite.Controllers
 
         [Route("admin/post/create")]
         public async Task<IActionResult> CreatePost() => View("~/Views/Admin/NewPost.cshtml");
-
-        [Route("admin/vacancy/create")]
-        public async Task<IActionResult> CreateVacancy() => View("~/Views/Admin/NewVacancy.cshtml");
     }
 }

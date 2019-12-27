@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Data;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Core;
 using Core.Logging;
+using Core.Models;
+using Core.Repositories;
 using Core.Services;
 using Core.Services.Crosspost;
-using Core.ViewModels;
 using Core.Web;
 using DAL;
+using WebSite.ViewModels;
+using X.Web.MetaExtractor;
 
 namespace WebSite.AppCode
 {
@@ -18,36 +22,37 @@ namespace WebSite.AppCode
     {
         Task<PublicationViewModel> CreatePublication(NewPostRequest request, User user);
         Task<IReadOnlyCollection<Category>> GetCategories();
+        Task<IReadOnlyCollection<SocialAccount>> GetTelegramChannels();
+        Task<IReadOnlyCollection<SocialAccount>> GetFacebookPages();
+        Task<IReadOnlyCollection<SocialAccount>> GetTwitterAccounts();
     }
 
     public class WebAppPublicationService : IWebAppPublicationService
     {
         private readonly ILocalizationService _localizationService;
         private readonly IPublicationService _publicationService;
-        private readonly IVacancyService _vacancyService;
-        private readonly IReadOnlyCollection<ICrossPostService> _crossPostServices;
+        private readonly ISocialRepository _socialRepository;
         private readonly Settings _settings;
         private readonly ILogger _logger;
-        private readonly LanguageAnalyzerService _languageAnalyzer;
+        private readonly ILanguageAnalyzerService _languageAnalyzer;
+        private readonly CrossPostServiceFactory _factory;
 
         public WebAppPublicationService(
-            ILocalizationService localizationService, 
-            IPublicationService publicationService, 
-            IVacancyService vacancyService, 
+            ILocalizationService localizationService,
+            IPublicationService publicationService,
+            ISocialRepository socialRepository,
+            CrossPostServiceFactory factory,
             Settings settings,
-            FacebookCrosspostService facebookService, 
-            TelegramCrosspostService telegramService,
-            TwitterCrosspostService twitterService, 
-            ILogger logger)
+            ILogger logger, 
+            ILanguageAnalyzerService languageAnalyzer)
         {
+            _logger = logger;
+            _languageAnalyzer = languageAnalyzer;
+            _factory = factory;
+            _settings = settings;
+            _socialRepository = socialRepository;
             _localizationService = localizationService;
             _publicationService = publicationService;
-            _vacancyService = vacancyService;
-            _settings = settings;
-            _logger = logger;
-
-            _crossPostServices = ImmutableList.Create<ICrossPostService>(facebookService, telegramService, twitterService);
-            _languageAnalyzer = new LanguageAnalyzerService(_settings.CognitiveServicesTextAnalyticsKey, _logger);
         }
 
         public async Task<PublicationViewModel> CreatePublication(NewPostRequest request, User user)
@@ -65,30 +70,16 @@ namespace WebSite.AppCode
 
             var languageCode = _languageAnalyzer.GetTextLanguage(metadata.Description);
             var languageId = await _localizationService.GetLanguageId(languageCode) ?? Core.Language.EnglishId;
-            var image = metadata.Images.FirstOrDefault();
-
-            var publication = new DAL.Publication
-            {
-                Title = metadata.Title,
-                Description = metadata.Description,
-                Link = metadata.Url,
-                Image = string.IsNullOrWhiteSpace(image) || image.Length > 250 ? string.Empty : image,
-                Type = "article",
-                DateTime = DateTime.Now,
-                UserId = user.Id,
-                CategoryId = request.CategoryId,
-                Comment = request.Comment,
-                LanguageId = languageId
-            };
-
             var player = EmbeddedPlayerFactory.CreatePlayer(request.Link);
+            var playerCode = player != null ? await player.GetEmbeddedPlayerUrl(request.Link) : null;
 
-            if (player != null)
-            {
-                publication.EmbededPlayerCode = await player.GetEmbeddedPlayerUrl(request.Link);
-            }
-
-            publication = await _publicationService.Save(publication);
+            var publication = await _publicationService.CreatePublication(
+                metadata,
+                user.Id,
+                languageId,
+                playerCode,
+                request.CategoryId,
+                request.Comment);
 
             if (publication != null)
             {
@@ -96,11 +87,12 @@ namespace WebSite.AppCode
 
                 //If we can embed main content into site page, so we can share this page.
                 var url = string.IsNullOrEmpty(model.EmbededPlayerCode) ? model.Url : model.ShareUrl;
-                var categoryTags = await _publicationService.GetCategoryTags(request.CategoryId);
-
-                foreach (var service in _crossPostServices)
+                
+                var services = await GetServices(publication);
+                
+                foreach (var service in services)
                 {
-                    await service.Send(request.CategoryId, request.Comment, url, GetTags(request));
+                    await service.Send(request.Comment, url, GetTags(request));
                 }
 
                 return model;
@@ -109,7 +101,45 @@ namespace WebSite.AppCode
             throw new Exception("Can't save publication to database");
         }
 
-        private IReadOnlyCollection<string> GetTags(NewPostRequest request)
+        private async Task<IReadOnlyCollection<ICrossPostService>> GetServices(Publication publication)
+        {
+            var categoryId = publication.CategoryId;
+            
+            var telegramChannels = await _socialRepository.GetTelegramChannels(categoryId);
+            var facebookPages = await _socialRepository.GetFacebookPages(categoryId);
+            var twitterAccounts = await _socialRepository.GetTwitterAccounts();
+
+            var services = new List<ICrossPostService>();
+            
+            foreach (var telegramChannel in telegramChannels)
+            {
+                services.Add(_factory.CreateTelegramService(
+                    telegramChannel.Token,
+                    telegramChannel.Name));
+            }
+
+            foreach (var facebookPage in facebookPages)
+            {
+                services.Add(_factory.CreateFacebookService(
+                    facebookPage.Token,
+                    facebookPage.Name));
+            }
+
+            foreach (var twitterAccount in twitterAccounts)
+            {
+                services.Add(_factory.CreateTwitterService(
+                    twitterAccount.ConsumerKey,
+                    twitterAccount.ConsumerSecret,
+                    twitterAccount.AccessToken,
+                    twitterAccount.AccessTokenSecret,
+                    twitterAccount.Name,
+                    await _publicationService.GetCategoryTags(categoryId)));
+            }
+
+            return services.ToImmutableList();
+        }
+
+        private static IReadOnlyCollection<string> GetTags(NewPostRequest request)
         {
             if (request == null || string.IsNullOrWhiteSpace(request.Tags))
             {
@@ -124,5 +154,38 @@ namespace WebSite.AppCode
         }
 
         public Task<IReadOnlyCollection<Category>> GetCategories() => _publicationService.GetCategories();
+        
+        public async Task<IReadOnlyCollection<SocialAccount>> GetTelegramChannels() =>
+            (await _socialRepository.GetTelegramChannels())
+            .Select(o => new SocialAccount
+            {
+                Description = o.Description,
+                Logo = o.Logo,
+                Title = o.Title,
+                Url = $"https://t.me/{o.Name.Replace("@", "")}"
+            })
+            .ToImmutableList();
+
+        public async Task<IReadOnlyCollection<SocialAccount>> GetFacebookPages() =>
+            (await _socialRepository.GetFacebookPages())
+            .Select(o => new SocialAccount
+            {
+                Description = o.Description,
+                Logo = o.Logo,
+                Title = o.Name,
+                Url = o.Url
+            })
+            .ToImmutableList();
+
+        public async Task<IReadOnlyCollection<SocialAccount>> GetTwitterAccounts() =>
+            (await _socialRepository.GetTwitterAccounts())
+            .Select(o => new SocialAccount
+            {
+                Description = o.Description,
+                Logo = o.Logo,
+                Title = o.Name,
+                Url = o.Url
+            })
+            .ToImmutableList();
     }
 }

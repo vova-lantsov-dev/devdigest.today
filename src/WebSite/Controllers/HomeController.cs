@@ -5,46 +5,38 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Core;
+using Core.Models;
 using Core.Services;
-using Core.Services.Crosspost;
-using Core.ViewModels;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Caching.Memory;
+using WebSite.AppCode;
+using WebSite.ViewModels;
 using X.PagedList;
 
 namespace WebSite.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly FacebookCrosspostService _facebookCrosspostService;
-        private readonly TwitterCrosspostService _twitterCrosspostService;
-        private readonly TelegramCrosspostService _telegramCrosspostService;
         private readonly IPublicationService _publicationService;
         private readonly IVacancyService _vacancyService;
-        private readonly IWebHostEnvironment _env;
         private readonly IMemoryCache _cache;
         private readonly Settings _settings;
 
+        private readonly IWebAppPublicationService _webAppPublicationService;
+
         public HomeController(
             IMemoryCache cache,
-            IWebHostEnvironment env,
             IVacancyService vacancyService,
             IPublicationService publicationService,
-            Settings settings,
-            TelegramCrosspostService telegramCrosspostService,
-            FacebookCrosspostService facebookCrosspostService,
-            TwitterCrosspostService twitterCrosspostService)
+            Settings settings, 
+            IWebAppPublicationService webAppPublicationService)
         {
-            _env = env;
             _cache = cache;
             _settings = settings;
             _vacancyService = vacancyService;
             _publicationService = publicationService;
-            _telegramCrosspostService = telegramCrosspostService;
-            _facebookCrosspostService = facebookCrosspostService;
-            _twitterCrosspostService = twitterCrosspostService;
+            _webAppPublicationService = webAppPublicationService;
         }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -134,9 +126,7 @@ namespace WebSite.Controllers
             
             await _vacancyService.IncreaseViewCount(id);
 
-            var path = Path.Combine(_env.WebRootPath, "images/vacancy");
-            var file = Directory.GetFiles(path).OrderBy(o => Guid.NewGuid()).Select(Path.GetFileName).FirstOrDefault();
-            var image = $"{_settings.WebSiteUrl}images/vacancy/{file}";
+            var image = _vacancyService.GetVacancyImage();
 
             var model = new VacancyViewModel(vacancy, _settings.WebSiteUrl, image);
             
@@ -170,42 +160,14 @@ namespace WebSite.Controllers
         {
             ViewData["Title"] = "Platform";
 
-            var channels = (await _telegramCrosspostService.GetChannels())
-                .Select(o => new TelegramViewModel()
-                {
-                    Title = o.Title,
-                    Description = o.Description,
-                    Logo = o.Logo,
-                    Link = $"https://t.me/{o.Name.Replace("@", "")}"
-                }).ToImmutableList();
+            var model = new PlatformViewModel
+            {
+                Telegram = await _webAppPublicationService.GetTelegramChannels(),
+                Facebook = await _webAppPublicationService.GetFacebookPages(),
+                Twitter = await _webAppPublicationService.GetTwitterAccounts()
+            };
 
-
-            var pages = (await _facebookCrosspostService.GetPages())
-                .Select(o => new FacebookViewModel()
-                {
-                    Title = o.Name,
-                    Description = o.Description,
-                    Logo = o.Logo,
-                    Link = o.Url,
-                }).ToImmutableList();
-
-
-            var twitters = (await _twitterCrosspostService.GetAccounts())
-                .Select(o => new TwitterViewModel()
-                {
-                    Title = o.Name,
-                    Description = o.Description,
-                    Logo = o.Logo,
-                    Link = o.Url
-                }).ToImmutableList();
-
-            var result = new List<SocialNetworkViewModel>();
-            
-            result.AddRange(pages);
-            result.AddRange(channels);
-            result.AddRange(twitters);
-
-            return View("~/Views/Home/Platform.cshtml", result);
+            return View("~/Views/Home/Platform.cshtml", model);
         }
     }
 }

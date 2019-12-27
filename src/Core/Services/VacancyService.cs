@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Core.Logging;
 using Core.Repositories;
@@ -15,6 +17,7 @@ namespace Core.Services
         Task<IReadOnlyCollection<Vacancy>> GetHotVacancies();
         Task<Vacancy> Get(int id);
         Task IncreaseViewCount(int id);
+        string GetVacancyImage();
     }
 
     public class VacancyService : IVacancyService
@@ -22,12 +25,14 @@ namespace Core.Services
         private readonly ILogger _logger;
         private readonly IMemoryCache _cache;
         private readonly IVacancyRepository _repository;
+        private readonly Settings _settings;
 
-        public VacancyService(IMemoryCache cache, ILogger logger, IVacancyRepository repository)
+        public VacancyService(IMemoryCache cache, ILogger logger, IVacancyRepository repository, Settings settings)
         {
             _cache = cache;
             _logger = logger;
             _repository = repository;
+            _settings = settings;
         }
 
         public async Task<IPagedList<Vacancy>> GetVacancies(int page = 1, int pageSize = 10)
@@ -81,6 +86,14 @@ namespace Core.Services
         }
 
         public async Task IncreaseViewCount(int id) => await _repository.IncreaseVacancyViewCount(id);
+
+        public string GetVacancyImage()
+        {
+            var path = Path.Combine(_settings.WebRootPath, "images/vacancy");
+            var file = Directory.GetFiles(path).OrderBy(o => Guid.NewGuid()).Select(Path.GetFileName).FirstOrDefault();
+            
+            return $"{_settings.WebSiteUrl}images/vacancy/{file}";
+        }
 
         private static MemoryCacheEntryOptions GetMemoryCacheEntryOptions() => new MemoryCacheEntryOptions
         {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Core.Models;
 
-namespace Core.ViewModels
+namespace WebSite.ViewModels
 {
 	public class VacancyViewModel
 	{

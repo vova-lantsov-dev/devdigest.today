@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using Core;
 using Core.Services;
-using Core.ViewModels;
 using DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using WebSite.ViewModels;
 using X.PagedList;
 using X.Web.Sitemap;
 

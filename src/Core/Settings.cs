@@ -39,6 +39,7 @@ namespace Core
         public static void InitializeCurrentInstance(Settings settings) => Current = settings;
 
         public static Settings Current { get; private set; }
+        public string WebRootPath { get; set; }
 
         #endregion
     }

@@ -21,6 +21,7 @@ namespace WebSite
 
             configuration.Bind(_settings);
             _settings.ConnectionString = configuration.GetConnectionString("DefaultConnection");
+            _settings.WebRootPath = hostEnvironment.WebRootPath;
 
             Settings.InitializeCurrentInstance(_settings);
         }

@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Core.Logging;
 using Core.Repositories;
 using DAL;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using X.PagedList;
+using X.Web.MetaExtractor;
 
 namespace Core.Services
 {
@@ -20,13 +20,24 @@ namespace Core.Services
             int languageId = Language.EnglishId);
         
         Task<IReadOnlyCollection<Publication>> GetTopPublications(int languageId = Language.EnglishId);
-
+        
         Task<IReadOnlyCollection<Category>> GetCategories();
+        
         Task<Publication> Get(int id);
-        Task<Publication> Save(Publication publication);
+        
         Task IncreaseViewCount(int id);
+        
         Task<Publication> Get(Uri uri);
-        Task<IReadOnlyCollection<string>> GetCategoryTags(int requestCategoryId);
+        
+        Task<Publication> CreatePublication(
+            Metadata metadata,
+            int userId,
+            int languageId,
+            string playerCode, 
+            int categoryId, 
+            string comment);
+
+        Task<IReadOnlyCollection<string>> GetCategoryTags(int categoryId);
     }
 
     public class PublicationService : IPublicationService
@@ -80,15 +91,42 @@ namespace Core.Services
 
             return await Task.FromResult(result);
         }
-
-        public async Task<Publication> Save(Publication publication) => await _repository.Save(publication);
-
+        
         public async Task IncreaseViewCount(int id) => await _repository.IncreasePublicationViewCount(id);
 
         public async Task<Publication> Get(Uri uri) => await _repository.GetPublication(uri);
-        public Task<IReadOnlyCollection<string>> GetCategoryTags(int requestCategoryId)
+
+        public async Task<Publication> CreatePublication(
+            Metadata metadata,
+            int userId,
+            int languageId,
+            string playerCode, 
+            int categoryId,
+            string comment)
         {
-            return _repository.GetCategoryTags(requestCategoryId);
+            var image = metadata.Images.FirstOrDefault();
+            
+            var publication = new DAL.Publication
+            {
+                Title = metadata.Title,
+                Description = metadata.Description,
+                Link = metadata.Url,
+                Image = string.IsNullOrWhiteSpace(image) || image.Length > 250 ? string.Empty : image,
+                Type = "article",
+                DateTime = DateTime.Now,
+                UserId = userId,
+                CategoryId = categoryId,
+                Comment = comment,
+                LanguageId = languageId,
+                EmbededPlayerCode = playerCode
+            };
+
+            return await _repository.Save(publication);
+        }
+
+        public Task<IReadOnlyCollection<string>> GetCategoryTags(int categoryId)
+        {
+            return _repository.GetCategoryTags(categoryId);
         }
 
         private static MemoryCacheEntryOptions GetMemoryCacheEntryOptions() => new MemoryCacheEntryOptions

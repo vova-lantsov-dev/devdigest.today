@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Core.Repositories;
+using Core.Logging;
 using DAL;
 using Serilog.Events;
 using Telegram.Bot;
@@ -12,23 +12,20 @@ namespace Core.Services.Crosspost
     public class TelegramCrosspostService : ICrossPostService
     {
         private readonly Core.Logging.ILogger _logger;
-        private readonly ISocialRepository _socialRepository;
+        private readonly string _token;
+        private readonly string _name;
 
-        public TelegramCrosspostService(ISocialRepository socialRepository, Core.Logging.ILogger logger)
+        public TelegramCrosspostService(string token, string name, ILogger logger)
         {
             _logger = logger;
-            _socialRepository = socialRepository;
+            _token = token;
+            _name = name;
         }
 
-        public async Task Send(int categoryId,
-            string message,
-            Uri link,
-            IReadOnlyCollection<string> tags)
+        public async Task Send(string message, Uri link, IReadOnlyCollection<string> tags)
         {
-            var channels = await _socialRepository.GetTelegramChannels(categoryId);
-
             var sb = new StringBuilder();
-            
+
             sb.Append(message);
             sb.Append(Environment.NewLine);
             sb.Append(Environment.NewLine);
@@ -36,24 +33,21 @@ namespace Core.Services.Crosspost
             sb.Append(Environment.NewLine);
             sb.Append(Environment.NewLine);
             sb.Append(string.Join(", ", tags));
-            
+
             try
             {
-                foreach (var channel in channels)
-                {
-                    var bot = new TelegramBotClient(channel.Token);
-                    
-                    await bot.SendTextMessageAsync(channel.Name, sb.ToString());
-                    
-                    _logger.Write(LogEventLevel.Information, $"Message was sent to Telegram channel `{channel.Name}`: `{sb}` Category: `{categoryId}`");
-                }
+
+                var bot = new TelegramBotClient(_token);
+
+                await bot.SendTextMessageAsync(_name, sb.ToString());
+
+                _logger.Write(LogEventLevel.Information, $"Message was sent to Telegram channel `{_name}`: `{sb}`");
+
             }
             catch (Exception ex)
             {
-                _logger.Write(LogEventLevel.Error, $"Error during send message to Telegram: `{sb}` Category: `{categoryId}`", ex);
+                _logger.Write(LogEventLevel.Error, $"Error during send message to Telegram: `{sb}`", ex);
             }
         }
-
-        public async Task<IReadOnlyCollection<Channel>> GetChannels() => await _socialRepository.GetTelegramChannels();
     }
 }

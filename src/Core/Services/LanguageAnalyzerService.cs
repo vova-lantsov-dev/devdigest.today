@@ -9,7 +9,12 @@ using Serilog.Events;
 
 namespace Core.Services
 {
-    public class LanguageAnalyzerService
+    public interface ILanguageAnalyzerService
+    {
+        string GetTextLanguage(string text);
+    }
+
+    public class LanguageAnalyzerService : ILanguageAnalyzerService
     {
         private readonly IRestClient _client;
         private readonly ILogger _logger;

@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 using Core;
 using Core.Logging;
 using Core.Services;
-using Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Serilog.Events;
 using WebSite.AppCode;
+using WebSite.ViewModels;
 
 namespace WebSite.Controllers
 {
