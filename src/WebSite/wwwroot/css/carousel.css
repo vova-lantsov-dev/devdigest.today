@@ -12,6 +12,18 @@
     margin: 0 !important;
 }
 
+.carousel-control .glyphicon-chevron-left, 
+.carousel-control .icon-prev{
+    margin-left: 5px !important;
+    color: #FFF !important;
+}
+
+.carousel-control .glyphicon-chevron-right, 
+.carousel-control .icon-next {
+    margin-right: 5px !important;
+    color: #FFF !important;
+}
+
 .carousel-indicators .active {
     color: #d53b07 !important;
     background-color: #d53b07 !important;
@@ -30,12 +42,16 @@
     font-size: 7pt;
 }
 
+.carousel-caption h3 {
+    color: #FFF;
+}
 
 /* Declare heights because of positioning of img element */
 
-.carousel,    
+.carousel,
+.carousel-caption,
 .carousel .item {
-    height: 550px;
+    height: 300px;
 }
 
 .carousel-control {
@@ -98,7 +114,7 @@
 }
 
 .carousel-caption p {
-    color: #000;
+    color: #FFF;
 }
 
 
@@ -134,7 +150,7 @@
     /* Bump up size of carousel content */
     .carousel-caption p {
         margin-bottom: 20px;
-        font-size: 2em;
+        font-size: 1em;
         line-height: 1.4;
     }
 

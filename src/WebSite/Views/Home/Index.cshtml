@@ -42,12 +42,12 @@
             var p = Model.TopPublications.ElementAt(i);    
             var categoryLink = $"/page/1?categoryId={p.Category.Id}";
             
-            <div class="item @GetActiveClass(i)">          
+            <div class="item @GetActiveClass(i) @p.Category.CssClass">          
               <div class="container"> 
                 <div class="carousel-caption">
                   <h3>@p.Title</h3>                  
                   <p>
-                    <span class="category @p.Category.CssClass">
+                    <span class="category">
                       @p.Description
                     </span>
                   </p>
