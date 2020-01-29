@@ -93,7 +93,10 @@
     color: #FFF;
 }
 
-.category-7 {}
+.category-7 {
+    background-color: #000 !important;
+    color: #FFF;
+}
 
 .carousel-control .glyphicon {
     text-shadow: none;
