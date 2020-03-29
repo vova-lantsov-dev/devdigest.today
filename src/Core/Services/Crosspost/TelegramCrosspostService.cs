@@ -32,7 +32,7 @@ namespace Core.Services.Crosspost
             sb.Append(link);
             sb.Append(Environment.NewLine);
             sb.Append(Environment.NewLine);
-            sb.Append(string.Join(", ", tags));
+            sb.Append(string.Join(" ", tags));
 
             try
             {

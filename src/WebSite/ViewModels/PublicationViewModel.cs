@@ -33,7 +33,7 @@ namespace WebSite.ViewModels
             Title = publication.Title;
             Description = publication.Description;
             Image = publication.Image;
-            Url = new Uri(publication.Link);
+            Url = string.IsNullOrWhiteSpace(publication.Link) ? null : new Uri(publication.Link);
             DateTime = publication.DateTime;
             Type = publication.Type;
             Content = publication.Content;
@@ -58,6 +58,8 @@ namespace WebSite.ViewModels
 
         }
         
-        public override string ToString() => $"{Title}\r\n{Description}\r\n{Url}";
+        public override string ToString() => $"{Title}\r\n{GetShortDescription()}\r\n{Url}";
+
+        public string GetShortDescription() => X.Text.TextHelper.Substring(Description, 256, "...");
     }
 }
