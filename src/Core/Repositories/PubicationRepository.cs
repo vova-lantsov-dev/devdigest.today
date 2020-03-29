@@ -104,17 +104,15 @@ namespace Core.Repositories
 
         public async Task<IReadOnlyCollection<Publication>> GetTopPublications(int languageId)
         {
-            var categories = _database.Category.Select(o => o.Id).ToImmutableHashSet();
-
-            var publications = await _database.Publication
+           var publications = await _database.Publication
                 .Where(p => p.LanguageId == languageId)
                 .Where(p => p.DateTime > DateTime.Now.AddDays(-30))
                 .ToListAsync();
 
-            return publications
-                .GroupBy(p => p.CategoryId)
-                .Select(g => g.FirstOrDefault())
-                .ToImmutableList();
+           return publications
+               .GroupBy(p => p.CategoryId)
+               .Select(g => g.OrderByDescending(o => o.DateTime).FirstOrDefault())
+               .ToImmutableList();
         }
     }
 }

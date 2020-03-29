@@ -51,8 +51,7 @@ namespace WebSite.ViewModels
                 Category = new CategoryViewModel
                 {
                     Id = publication.CategoryId,
-                    Name = categoryName,
-                    CssClass = $"category-{publication.CategoryId}"
+                    Name = categoryName
                 };
             }
 

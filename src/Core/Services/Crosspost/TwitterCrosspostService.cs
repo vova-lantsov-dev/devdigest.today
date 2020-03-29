@@ -12,7 +12,7 @@ namespace Core.Services.Crosspost
 {
     public class TwitterCrosspostService : ICrossPostService
     {
-        private static readonly Semaphore _semaphore = new Semaphore(1, 1);
+        private static readonly Semaphore Semaphore = new Semaphore(1, 1);
 
         private readonly ILogger _logger;
         private readonly string _consumerKey;
@@ -52,7 +52,7 @@ namespace Core.Services.Crosspost
             
             try
             {
-                _semaphore.WaitOne();
+                Semaphore.WaitOne();
 
                 Auth.SetUserCredentials(_consumerKey, _consumerSecret, _accessToken, _accessTokenSecret);
 
@@ -67,7 +67,7 @@ namespace Core.Services.Crosspost
             }
             finally
             {
-                _semaphore.Release();
+                Semaphore.Release();
             }
         }
 

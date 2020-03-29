@@ -74,8 +74,8 @@ namespace WebSite.Controllers
             var categories = await _publicationService.GetCategories();
             
             return publications
-            .Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories))
-            .ToImmutableList();
+                .Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories))
+                .ToImmutableList();
         }
 
         private async Task<StaticPagedList<PublicationViewModel>> GetPublications()
