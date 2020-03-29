@@ -208,7 +208,7 @@ footer a {
 }
 
 .share {
-    margin-top: 25px;
+    margin-top: 15px;
 }
 
 .share .text-right .btn {
@@ -229,12 +229,17 @@ footer a {
 
 .publication-preview section,
 .vacancy-preview section {
-    border-bottom: 1px solid #EEE;
-    padding-bottom: 30px;
+    padding-bottom: 10px;
 }
 
 .publication-preview section {
     border-top: none;
+}
+
+.vacancy-preview,
+.publication-preview {
+    border-bottom: 1px solid #EEE;
+    padding-bottom: 20px;
 }
 
 .gsc-cursor-page {
