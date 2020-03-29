@@ -498,3 +498,43 @@ footer ul {
     font-size: 12pt;
     font-weight: bold;
 }
+
+.category {
+    padding: 3px;
+    box-decoration-break: clone;
+}
+
+.category-1 {
+    background-color: #662079 !important;
+    color: #FFF;
+}
+
+.category-2 {
+    background-color: #6296d0 !important;
+    color: #FFF;
+}
+
+.category-3 {
+    background-color: #4972b0 !important;
+    color: #FFF;
+}
+
+.category-4 {
+    background-color: #e08244 !important;
+    color: #FFF;
+}
+
+.category-5 {
+    background-color: #4fac5b !important;
+    color: #FFF;
+}
+
+.category-6 {
+    background-color: #d53b07 !important;
+    color: #FFF;
+}
+
+.category-7 {
+    background-color: #000 !important;
+    color: #FFF;
+}

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Core;
-using Core.Models;
 using Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -78,9 +75,9 @@ namespace WebSite.Controllers
                 .ToImmutableList();
         }
 
-        private async Task<StaticPagedList<PublicationViewModel>> GetPublications()
+        private async Task<StaticPagedList<PublicationViewModel>> GetPublications(int? categoryId = null, int page = 1)
         {
-            var pagedResult = await _publicationService.GetPublications();
+            var pagedResult = await _publicationService.GetPublications(categoryId, page);
             var categories = await _publicationService.GetCategories();
             var publications = pagedResult.Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories));
             return new StaticPagedList<PublicationViewModel>(publications, pagedResult);            
@@ -91,11 +88,7 @@ namespace WebSite.Controllers
         {
             ViewData["Title"] = $"Page {page}";
 
-            var pagedResult = await _publicationService.GetPublications(categoryId, page);
-            var categories = await _publicationService.GetCategories();
-            var pages = pagedResult.Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories));
-            
-            var model = new StaticPagedList<PublicationViewModel>(pages, pagedResult);
+            var model = await GetPublications(categoryId, page);
 
             ViewBag.CategoryId = categoryId;
 
