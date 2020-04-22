@@ -1,20 +1,22 @@
 @model IReadOnlyCollection<WebSite.ViewModels.PublicationViewModel>
 
 @section head {
-    <meta property="og:title" content="@Core.Settings.Current.WebSiteTitle" />
+    <meta property="og:title" content="@ViewBag.Title" />
     <meta property="og:type" content="website" />
 
-    <meta property="og:image" content="@Core.Settings.Current.FacebookImage" />
-    <meta property="og:description" content="@Core.Settings.Current.DefaultDescription" />
+    <meta property="og:image" content="https://127fc3e2e552.blob.core.windows.net/devdigest-images/white-red-and-blue-flower-petals-3993212.jpg" />
+    <meta property="og:description" content="Coronavirus disease 2019 (COVID-19) is an infectious disease caused by severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2). A lot of pandemic related news and events are happening in IT. We have gathered here the news and publications that directly relate to  coronavirus COVID-19. " />
 
-    <meta name="keywords" content="@Core.Settings.Current.DefaultKeywords" />
-    <meta name="description" content="@Core.Settings.Current.DefaultDescription" />
+    <meta name="keywords" content="covid, coronavirus, covid-19" />
+    <meta name="description" content="Coronavirus disease 2019 (COVID-19) is an infectious disease caused by severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2). A lot of pandemic related news and events are happening in IT. We have gathered here the news and publications that directly relate to  coronavirus COVID-19. " />
 }
 
-<h1>COVID-19</h1>
+<h1>@ViewBag.Title</h1>
 
 <blockquote>
 Coronavirus disease 2019 (COVID-19) is an infectious disease caused by severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2). The disease was first identified in December 2019 in Wuhan, the capital of China's Hubei province, and has since spread globally, resulting in the ongoing 2019–20 coronavirus pandemic. The first confirmed case of what was then an unknown coronavirus was traced back to November 2019 in Hubei province.Common symptoms include fever, cough, and shortness of breath. Other symptoms may include fatigue, muscle pain, diarrhoea, sore throat, loss of smell, and abdominal pain. The time from exposure to onset of symptoms is typically around five days but may range from two to fourteen days.
+<br />
+<img src="https://127fc3e2e552.blob.core.windows.net/devdigest-images/white-red-and-blue-flower-petals-3993212.jpg" class="img-responsive">
 </blockquote>
 
 A lot of pandemic related news and events are happening in IT. We have gathered here the news and publications that directly relate to  coronavirus COVID-19. 

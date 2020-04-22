@@ -32,7 +32,7 @@ namespace WebSite.Controllers
         {
             var model = await _service.FindPublications("covid", "coronavirus");
             
-            ViewBag.Title = $"COVID'19 - info";
+            ViewBag.Title = $"Coronavirus – information";
 
             return View("~/Views/Home/Covid.cshtml", model);
         }
