@@ -21,4 +21,11 @@
         <Folder Include="logs" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Update="Views\Home\Covid.cshtml">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>

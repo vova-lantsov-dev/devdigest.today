@@ -38,6 +38,7 @@ namespace Core.Services
             string comment);
 
         Task<IReadOnlyCollection<string>> GetCategoryTags(int categoryId);
+        Task<IReadOnlyCollection<Publication>> FindPublications(params string[] keywords);
     }
 
     public class PublicationService : IPublicationService
@@ -127,6 +128,11 @@ namespace Core.Services
         public Task<IReadOnlyCollection<string>> GetCategoryTags(int categoryId)
         {
             return _repository.GetCategoryTags(categoryId);
+        }
+
+        public Task<IReadOnlyCollection<Publication>> FindPublications(params string[] keywords)
+        {
+            return _repository.FindPublications(keywords);
         }
 
         private static MemoryCacheEntryOptions GetMemoryCacheEntryOptions() => new MemoryCacheEntryOptions

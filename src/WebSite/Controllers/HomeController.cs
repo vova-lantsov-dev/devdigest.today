@@ -1,95 +1,48 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Threading.Tasks;
-using Core;
-using Core.Services;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Caching.Memory;
 using WebSite.AppCode;
-using WebSite.ViewModels;
-using X.PagedList;
 
 namespace WebSite.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IPublicationService _publicationService;
-        private readonly IVacancyService _vacancyService;
-        private readonly IMemoryCache _cache;
-        private readonly Settings _settings;
+        private readonly IWebAppPublicationService _service;
 
-        private readonly IWebAppPublicationService _webAppPublicationService;
-
-        public HomeController(
-            IMemoryCache cache,
-            IVacancyService vacancyService,
-            IPublicationService publicationService,
-            Settings settings, 
-            IWebAppPublicationService webAppPublicationService)
-        {
-            _cache = cache;
-            _settings = settings;
-            _vacancyService = vacancyService;
-            _publicationService = publicationService;
-            _webAppPublicationService = webAppPublicationService;
-        }
+        public HomeController(IWebAppPublicationService service) => _service = service;
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            await LoadHotVacanciesToViewData();
+            ViewBag.Vacancies = await _service.LoadHotVacancies();
 
             await base.OnActionExecutionAsync(context, next);
         }
 
-        private async Task LoadHotVacanciesToViewData()
-        {
-            var vacancies = (await _vacancyService.GetHotVacancies())
-                .Select(o => new VacancyViewModel(o, _settings.WebSiteUrl))
-                .ToImmutableList();
-
-            ViewData["vacancies"] = vacancies;
-        }
-
         public async Task<IActionResult> Index()
         {
-            ViewData["Title"] = "Welcome!";
+            var model = await _service.GetHomePageInformation();
             
-            var model = new HomePageViewModel
-            {
-                Publications = await GetPublications(),
-                TopPublications = await GetTopPublications()
-            };
-            
+            ViewBag.Title = "Welcome!";
+
             return View(model);
         }
-
-        private async Task<IReadOnlyCollection<PublicationViewModel>> GetTopPublications()
+        
+        [Route("covid")]
+        public async Task<IActionResult> Covid()
         {
-            var publications = await _publicationService.GetTopPublications();
-            var categories = await _publicationService.GetCategories();
+            var model = await _service.FindPublications("covid", "coronavirus");
             
-            return publications
-                .Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories))
-                .ToImmutableList();
-        }
+            ViewBag.Title = $"COVID'19 - info";
 
-        private async Task<StaticPagedList<PublicationViewModel>> GetPublications(int? categoryId = null, int page = 1)
-        {
-            var pagedResult = await _publicationService.GetPublications(categoryId, page);
-            var categories = await _publicationService.GetCategories();
-            var publications = pagedResult.Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories));
-            return new StaticPagedList<PublicationViewModel>(publications, pagedResult);            
+            return View("~/Views/Home/Covid.cshtml", model);
         }
 
         [Route("page/{page}")]
-        public async Task<IActionResult> Page(int? categoryId = null, int page = 1, string language = Language.English)
+        public async Task<IActionResult> Page(int? categoryId = null, int page = 1, string language = Core.Language.English)
         {
-            ViewData["Title"] = $"Page {page}";
-
-            var model = await GetPublications(categoryId, page);
-
+            var model = await _service.GetPublications(categoryId, page);
+            
+            ViewBag.Title = $"Page {page}";
             ViewBag.CategoryId = categoryId;
 
             return View("~/Views/Home/Page.cshtml", model);
@@ -98,32 +51,24 @@ namespace WebSite.Controllers
         [Route("vacancies/{page}")]
         public async Task<IActionResult> Vacancies(int page = 1)
         {
-            ViewData["Title"] = "Job";
-
-            var pagedResult = await _vacancyService.GetVacancies(page);
-
-            var model = new StaticPagedList<VacancyViewModel>(pagedResult.Select(o => new VacancyViewModel(o, _settings.WebSiteUrl)), pagedResult);
-
+            var model= await _service.GetVacancies(page);
+            
+            ViewBag.Title = "Job";
+            
             return View("~/Views/Home/Vacancies.cshtml", model);
         }
 
         [Route("vacancy/{id}")]
         public async Task<IActionResult> Vacancy(int id)
         {
-            var vacancy = await _vacancyService.Get(id);
+            var model = await _service.GetVacancy(id);
             
-            if (vacancy == null)
+            if (model == null)
             {
                 return NotFound();
             }
             
-            await _vacancyService.IncreaseViewCount(id);
-
-            var image = _vacancyService.GetVacancyImage();
-
-            var model = new VacancyViewModel(vacancy, _settings.WebSiteUrl, image);
-            
-            ViewData["Title"] = model.Title;
+            ViewBag.Title = model.Title;
 
             return View("~/Views/Home/Vacancy.cshtml", model);
         }
@@ -131,34 +76,24 @@ namespace WebSite.Controllers
         [Route("post/{id}")]
         public async Task<IActionResult> Post(int id)
         {
-            var publication = await _publicationService.Get(id);
+            var publication = await _service.GetPublication(id);
             
-            await _publicationService.IncreaseViewCount(id);
-
             if (publication == null)
             {
                 return NotFound();
             }
 
-            var categories = await _publicationService.GetCategories();
-            var model = new PublicationViewModel(publication, _settings.WebSiteUrl, categories);
-            
-            ViewData["Title"] = model.Title;
+            ViewBag.Title = publication.Title;
 
-            return View("~/Views/Home/Post.cshtml", model);
+            return View("~/Views/Home/Post.cshtml", publication);
         }
         
         [Route("platform")]
         public async Task<IActionResult> Platform()
         {
-            ViewData["Title"] = "Platform";
-
-            var model = new PlatformViewModel
-            {
-                Telegram = await _webAppPublicationService.GetTelegramChannels(),
-                Facebook = await _webAppPublicationService.GetFacebookPages(),
-                Twitter = await _webAppPublicationService.GetTwitterAccounts()
-            };
+            var model = await _service.GetPlatformInformation();
+            
+            ViewBag.Title = "Platform";
 
             return View("~/Views/Home/Platform.cshtml", model);
         }

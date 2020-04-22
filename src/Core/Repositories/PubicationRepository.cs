@@ -21,6 +21,7 @@ namespace Core.Repositories
         Task<Publication> GetPublication(Uri uri);
         Task<IReadOnlyCollection<string>> GetCategoryTags(int categoryId);
         Task<IReadOnlyCollection<Publication>> GetTopPublications(int languageId);
+        Task<IReadOnlyCollection<Publication>> FindPublications(params string[] keywords);
     }
 
     public class PublicationRepository : IPublicationRepository
@@ -113,6 +114,31 @@ namespace Core.Repositories
                .GroupBy(p => p.CategoryId)
                .Select(g => g.OrderByDescending(o => o.DateTime).FirstOrDefault())
                .ToImmutableList();
+        }
+
+        public async Task<IReadOnlyCollection<Publication>> FindPublications(params string[] keywords)
+        {
+            var result = new List<Publication>();
+            
+            foreach (var keyword in keywords)
+            {
+                var items = await _database.Publication
+                    .Where(p =>
+                        EF.Functions.Like(p.Title, $"%{keyword}%") ||
+                        EF.Functions.Like(p.Description, $"%{keyword}%") ||
+                        EF.Functions.Like(p.Content, $"%{keyword}%") ||
+                        EF.Functions.Like(p.Comment, $"%{keyword}%"))
+                    .OrderBy(o => o.DateTime)
+                    .ToListAsync();
+                
+                if (items.Any())
+                {
+                    result.AddRange(items);
+                }
+            }
+
+            return result.Distinct().ToImmutableList();
+
         }
     }
 }

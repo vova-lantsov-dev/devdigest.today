@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Data;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Core;
 using Core.Logging;
@@ -14,7 +13,7 @@ using Core.Services.Crosspost;
 using Core.Web;
 using DAL;
 using WebSite.ViewModels;
-using X.Web.MetaExtractor;
+using X.PagedList;
 
 namespace WebSite.AppCode
 {
@@ -22,9 +21,14 @@ namespace WebSite.AppCode
     {
         Task<PublicationViewModel> CreatePublication(NewPostRequest request, User user);
         Task<IReadOnlyCollection<Category>> GetCategories();
-        Task<IReadOnlyCollection<SocialAccount>> GetTelegramChannels();
-        Task<IReadOnlyCollection<SocialAccount>> GetFacebookPages();
-        Task<IReadOnlyCollection<SocialAccount>> GetTwitterAccounts();
+        Task<StaticPagedList<PublicationViewModel>> GetPublications(int? categoryId = null, int page = 1);
+        Task<IReadOnlyCollection<PublicationViewModel>> FindPublications(params  string[] keywords);
+        Task<PublicationViewModel> GetPublication(int id);
+        Task<IReadOnlyCollection<VacancyViewModel>> LoadHotVacancies();
+        Task<IPagedList<VacancyViewModel>> GetVacancies(int page = 1);
+        Task<VacancyViewModel> GetVacancy(int id);
+        Task<PlatformViewModel> GetPlatformInformation();
+        Task<HomePageViewModel> GetHomePageInformation();
     }
 
     public class WebAppPublicationService : IWebAppPublicationService
@@ -32,10 +36,13 @@ namespace WebSite.AppCode
         private readonly ILocalizationService _localizationService;
         private readonly IPublicationService _publicationService;
         private readonly ISocialRepository _socialRepository;
-        private readonly Settings _settings;
-        private readonly ILogger _logger;
         private readonly ILanguageAnalyzerService _languageAnalyzer;
         private readonly CrossPostServiceFactory _factory;
+        private readonly IVacancyService _vacancyService;
+        private readonly Settings _settings;
+        private readonly ILogger _logger;
+        
+        private IReadOnlyCollection<Category> _categories;
 
         public WebAppPublicationService(
             ILocalizationService localizationService,
@@ -44,10 +51,12 @@ namespace WebSite.AppCode
             CrossPostServiceFactory factory,
             Settings settings,
             ILogger logger, 
-            ILanguageAnalyzerService languageAnalyzer)
+            ILanguageAnalyzerService languageAnalyzer, 
+            IVacancyService vacancyService)
         {
             _logger = logger;
             _languageAnalyzer = languageAnalyzer;
+            _vacancyService = vacancyService;
             _factory = factory;
             _settings = settings;
             _socialRepository = socialRepository;
@@ -101,7 +110,7 @@ namespace WebSite.AppCode
             throw new Exception("Can't save publication to database");
         }
 
-        private async Task<IReadOnlyCollection<ICrossPostService>> GetServices(Publication publication)
+        public async Task<IReadOnlyCollection<ICrossPostService>> GetServices(Publication publication)
         {
             var categoryId = publication.CategoryId;
             
@@ -153,9 +162,12 @@ namespace WebSite.AppCode
                 .ToImmutableList();
         }
 
-        public Task<IReadOnlyCollection<Category>> GetCategories() => _publicationService.GetCategories();
-        
-        public async Task<IReadOnlyCollection<SocialAccount>> GetTelegramChannels() =>
+        public async Task<IReadOnlyCollection<Category>> GetCategories()
+        {
+            return _categories ??= await _publicationService.GetCategories();
+        }
+
+        private async Task<IReadOnlyCollection<SocialAccount>> GetTelegramChannels() =>
             (await _socialRepository.GetTelegramChannels())
             .Select(o => new SocialAccount
             {
@@ -166,7 +178,7 @@ namespace WebSite.AppCode
             })
             .ToImmutableList();
 
-        public async Task<IReadOnlyCollection<SocialAccount>> GetFacebookPages() =>
+        private async Task<IReadOnlyCollection<SocialAccount>> GetFacebookPages() =>
             (await _socialRepository.GetFacebookPages())
             .Select(o => new SocialAccount
             {
@@ -177,7 +189,7 @@ namespace WebSite.AppCode
             })
             .ToImmutableList();
 
-        public async Task<IReadOnlyCollection<SocialAccount>> GetTwitterAccounts() =>
+        private async Task<IReadOnlyCollection<SocialAccount>> GetTwitterAccounts() =>
             (await _socialRepository.GetTwitterAccounts())
             .Select(o => new SocialAccount
             {
@@ -187,5 +199,102 @@ namespace WebSite.AppCode
                 Url = o.Url
             })
             .ToImmutableList();
+        
+        public async Task<IReadOnlyCollection<PublicationViewModel>> GetTopPublications()
+        {
+            var publications = await _publicationService.GetTopPublications();
+            var categories = await GetCategories();
+            
+            return publications
+                .Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories))
+                .ToImmutableList();
+        }
+
+        public async Task<IReadOnlyCollection<PublicationViewModel>> FindPublications(params string[] keywords)
+        {
+            var publications = await _publicationService.FindPublications(keywords);
+            var categories = await GetCategories();
+            
+            return publications
+                .Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories))
+                .ToImmutableList();
+        }
+
+        public async Task<PublicationViewModel> GetPublication(int id)
+        {
+            var publication = await _publicationService.Get(id);
+            var categories = await GetCategories();
+            
+            if (publication != null)
+            {
+                await _publicationService.IncreaseViewCount(id);
+                return new PublicationViewModel(publication, _settings.WebSiteUrl, categories);
+            }
+
+            return null;
+        }
+
+        public Task IncreaseViewCount(int publicationId)
+        {
+            return _publicationService.IncreaseViewCount(publicationId);
+        }
+
+        public async Task<IReadOnlyCollection<VacancyViewModel>> LoadHotVacancies()
+        {
+            var vacancies = (await _vacancyService.GetHotVacancies())
+                .Select(o => new VacancyViewModel(o, _settings.WebSiteUrl))
+                .ToImmutableList();
+
+            return vacancies;
+        }
+
+        public async Task<IPagedList<VacancyViewModel>> GetVacancies(int page)
+        {
+            var vacancies = await _vacancyService.GetVacancies(page);
+            var subset = vacancies.Select(o => new VacancyViewModel(o, _settings.WebSiteUrl));
+            
+            return new StaticPagedList<VacancyViewModel>(subset, vacancies);
+        }
+
+        public async Task<VacancyViewModel> GetVacancy(int id)
+        {
+            var vacancy = await _vacancyService.Get(id);
+            await _vacancyService.IncreaseViewCount(id);
+
+            var image = _vacancyService.GetVacancyImage();
+
+            return new VacancyViewModel(vacancy, _settings.WebSiteUrl, image);
+        }
+
+        public async Task<PlatformViewModel> GetPlatformInformation()
+        {
+            return new PlatformViewModel
+            {
+                Telegram = await GetTelegramChannels(),
+                Facebook = await GetFacebookPages(),
+                Twitter = await GetTwitterAccounts()
+            };
+        }
+
+        public async Task<HomePageViewModel> GetHomePageInformation()
+        {
+            return new HomePageViewModel
+            {
+                Publications = await GetPublications(),
+                TopPublications = await GetTopPublications()
+            };
+        }
+
+        public async Task<StaticPagedList<PublicationViewModel>> GetPublications(int? categoryId = null, int page = 1)
+        {
+            var categories = await GetCategories();
+            var pagedResult = await _publicationService.GetPublications(categoryId, page);
+
+            var publications = pagedResult
+                .Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories))
+                .ToImmutableList();
+            
+            return new StaticPagedList<PublicationViewModel>(publications, pagedResult);            
+        }
     }
 }
