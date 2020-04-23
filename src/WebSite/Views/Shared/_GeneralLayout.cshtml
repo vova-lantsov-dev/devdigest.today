@@ -73,8 +73,6 @@
                     </li>  
                     <li><a href="/vacancies/1">Job</a></li>
                     
-                    <li><a href="/covid">COVID-19&nbsp;<span class="label label-danger">Hot!</span></a></li>
-                    
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                             Events&nbsp; <span class="caret"></span>
@@ -140,6 +138,17 @@
     </nav>
 
     @await RenderSectionAsync("top", required: false)
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">     
+                <a href="/covid" class="green-info">
+                    <img alt="coronavirus" src="https://pixabay.com/images/download/corona-5024649_640.png" height="50px">
+                    Read latest COVID-19 coverage
+                </a>
+            </div>
+        </div>
+    </div>
 
     <div class="container">    
         <div class="content">

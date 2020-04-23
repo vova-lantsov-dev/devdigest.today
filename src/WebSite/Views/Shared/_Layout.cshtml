@@ -57,12 +57,13 @@
         @if (vacancies.Any())
         {
             <div class="vacancies">
-                <h3>Hot Vacancies</h3>
+                <h3>
+                    <a href="/vacancies/1">Hot Vacancies</a>
+                </h3>
                 @foreach (var v in vacancies)
                 {
                     @await Html.PartialAsync("_VacancySmallPreview", v)
                 }
-                <a href="/vacancies/1"> View all vacancies</a>
             </div>
         }
     </div>

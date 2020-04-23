@@ -1,5 +1,4 @@
-﻿@using Core.Models
-@model WebSite.ViewModels.PublicationViewModel
+﻿@model WebSite.ViewModels.PublicationViewModel
 @{
     var categoryLink = $"/page/1?categoryId={Model.Category.Id}";
 }
@@ -7,10 +6,13 @@
 <div class="publication-preview">
     <div class="row">
         <div class="col-md-12">
-            <h3 class="text-left">@Model.Title</h3>
+            <h3 class="text-left">
+                <a href="@Model.ShareUrl">
+                    @Model.Title
+                </a>
+            </h3>
         </div>
     </div>
-    
     
     <div class="row">
         <div class="col-md-12">

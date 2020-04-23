@@ -543,3 +543,30 @@ footer ul {
     background-color: #000 !important;
     color: #FFF;
 }
+
+.green-info {
+    background: -webkit-linear-gradient(160deg, #aad300, #00a5aa 50%, #4fbb5b);
+    background: linear-gradient(160deg, #aad300, #00a5aa 50%, #4fbb5b);
+    padding: 5px 10px;
+    font-size: 12pt;
+    text-transform: uppercase;
+    font-family: 'Ubuntu', sans-serif;
+    display: block;
+    color: #FFF;
+}
+
+.green-info:hover {
+    color: #FFF;
+    text-decoration: none;
+}
+
+
+.navbar > .container .navbar-brand, 
+.navbar > .container-fluid .navbar-brand {
+    margin-left: 0 !important;
+}
+
+.vacancies h3 a,
+.publication-preview h3 a{
+    color: #000;
+}
