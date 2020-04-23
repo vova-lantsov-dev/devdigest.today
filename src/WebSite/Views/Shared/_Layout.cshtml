@@ -5,15 +5,15 @@
 }
 
 @section head{
-    @RenderSection("head",  required: false)
+    @await RenderSectionAsync("head",  required: false)
 }
 
 @section top{
-    @RenderSection("top",  required: false)
+    @await RenderSectionAsync("top",  required: false)
 }
 
 @section scripts{
-    @RenderSection("scripts", required: false)
+    @await RenderSectionAsync("scripts", required: false)
 }
 
 <div class="row">
