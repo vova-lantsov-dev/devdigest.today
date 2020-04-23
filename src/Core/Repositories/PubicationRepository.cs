@@ -128,7 +128,6 @@ namespace Core.Repositories
                         EF.Functions.Like(p.Description, $"%{keyword}%") ||
                         EF.Functions.Like(p.Content, $"%{keyword}%") ||
                         EF.Functions.Like(p.Comment, $"%{keyword}%"))
-                    .OrderBy(o => o.DateTime)
                     .ToListAsync();
                 
                 if (items.Any())
@@ -137,7 +136,10 @@ namespace Core.Repositories
                 }
             }
 
-            return result.Distinct().ToImmutableList();
+            return result
+                .Distinct()
+                .OrderByDescending(o => o.DateTime)
+                .ToImmutableList();
 
         }
     }

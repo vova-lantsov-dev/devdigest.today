@@ -1,12 +1,10 @@
-﻿@using System.Collections.Immutable
-@model WebSite.ViewModels.PlatformViewModel
-
+﻿@model WebSite.ViewModels.PlatformViewModel
 @{
     Layout = "_GeneralLayout";
 }
 
 @section head {
-    <meta property="og:title" content="@ViewData["Title"]" />
+    <meta property="og:title" content="@ViewBag.Title" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="@Core.Settings.Current.WebSiteUrl" />
     <meta property="og:image" content="@Core.Settings.Current.FacebookImage" />

@@ -1,4 +1,7 @@
 @model IReadOnlyCollection<WebSite.ViewModels.PublicationViewModel>
+@{
+    Layout = "_GeneralLayout";
+}
 
 @section head {
     <meta property="og:title" content="@ViewBag.Title" />
@@ -13,20 +16,31 @@
 
 <h1>@ViewBag.Title</h1>
 
-<blockquote>
-Coronavirus disease 2019 (COVID-19) is an infectious disease caused by severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2). The disease was first identified in December 2019 in Wuhan, the capital of China's Hubei province, and has since spread globally, resulting in the ongoing 2019–20 coronavirus pandemic. The first confirmed case of what was then an unknown coronavirus was traced back to November 2019 in Hubei province.Common symptoms include fever, cough, and shortness of breath. Other symptoms may include fatigue, muscle pain, diarrhoea, sore throat, loss of smell, and abdominal pain. The time from exposure to onset of symptoms is typically around five days but may range from two to fourteen days.
-<br />
-<img alt="coronavirus" src="https://127fc3e2e552.blob.core.windows.net/devdigest-images/white-red-and-blue-flower-petals-3993212.jpg" class="img-responsive">
-</blockquote>
+<div class="row">
+    <div class="col-md-8">
+        <blockquote>
+        Coronavirus disease 2019 (COVID-19) is an infectious disease caused by severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2). The disease was first identified in December 2019 in Wuhan, the capital of China's Hubei province, and has since spread globally, resulting in the ongoing 2019–20 coronavirus pandemic. The first confirmed case of what was then an unknown coronavirus was traced back to November 2019 in Hubei province.Common symptoms include fever, cough, and shortness of breath. Other symptoms may include fatigue, muscle pain, diarrhoea, sore throat, loss of smell, and abdominal pain. The time from exposure to onset of symptoms is typically around five days but may range from two to fourteen days.
+        <br />
+        <img alt="coronavirus" src="https://127fc3e2e552.blob.core.windows.net/devdigest-images/white-red-and-blue-flower-petals-3993212.jpg" class="img-responsive">
+        </blockquote>
+        
+        A lot of pandemic related news and events are happening in IT. We have gathered here the news and publications that directly relate to  coronavirus COVID-19.
+        
+        @for (var i = 0; i < Model.Count(); i++)
+        {
+            @await Html.PartialAsync("_Publication", Model.ElementAt(i))
 
-A lot of pandemic related news and events are happening in IT. We have gathered here the news and publications that directly relate to  coronavirus COVID-19. 
+            if (i == 2)
+            {
+                @await Html.PartialAsync("_InFeedAd")
+            }
+        }
 
-@for (var i = 0; i < Model.Count(); i++)
-{
-    @await Html.PartialAsync("_Publication", Model.ElementAt(i))
+    </div>
+    <div class="col-md-4">
+        <div class="bingwidget" data-type="covid19" data-market="en-us" data-language="en-us" data-app="bingwidget"></div>
+        
+        <script src="https://www.bing.com/widget/bootstrap.answer.js" async=""></script>
+    </div>
+</div>
 
-    if (i == 2)
-    {
-        @await Html.PartialAsync("_InFeedAd")
-    }
-}

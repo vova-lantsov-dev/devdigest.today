@@ -15,7 +15,7 @@ namespace WebSite.Controllers
         [Route("info")]
         public ActionResult Info(int? code)
         {
-            ViewData["Title"] = "Error";
+            ViewBag.Title = "Error";
 
             var statusCode = code ?? HttpContext.Response.StatusCode;
             

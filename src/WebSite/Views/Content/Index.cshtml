@@ -5,7 +5,7 @@
 }
 
 @section head {
-    <meta property="og:title" content="@ViewData["Title"]" />
+    <meta property="og:title" content="@ViewBag.Title" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="@Core.Settings.Current.WebSiteUrl" />
     <meta property="og:image" content="@Core.Settings.Current.FacebookImage" />
@@ -15,6 +15,6 @@
     <meta name="description" content="@Core.Settings.Current.DefaultDescription" />
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1>@ViewBag.Title</h1>
 
 @Html.Raw(Model)

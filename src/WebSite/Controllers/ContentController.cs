@@ -27,7 +27,7 @@ namespace WebSite.Controllers
             if (string.IsNullOrWhiteSpace(html))
                 return NotFound();
 
-            ViewData["Title"] = string.Join(" ", name.Split('-').Select(UppercaseFirstLetter));
+            ViewBag.Title = string.Join(" ", name.Split('-').Select(UppercaseFirstLetter));
 
             return View((object) html);
         }

@@ -214,7 +214,7 @@ namespace WebSite.AppCode
         {
             var publications = await _publicationService.FindPublications(keywords);
             var categories = await GetCategories();
-            
+
             return publications
                 .Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories))
                 .ToImmutableList();
