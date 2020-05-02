@@ -1,4 +1,6 @@
-﻿.body-content {
+﻿@import url('/css/night.css') only screen and (prefers-color-scheme: dark);
+
+.body-content {
     padding-left: 15px;
     padding-right: 15px;
 }
