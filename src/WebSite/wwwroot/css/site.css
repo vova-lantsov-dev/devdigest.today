@@ -345,7 +345,7 @@ footer ul {
     border-radius: 0;
 }
 
-.ad {
+.ad, .promo {
     width: 100%;
     overflow: hidden;
     margin-top: 20px;
@@ -354,7 +354,7 @@ footer ul {
     padding: 20px;
 }
 
-.ad img {
+.ad img, .promo img {
     width: 100%;
 }
 
