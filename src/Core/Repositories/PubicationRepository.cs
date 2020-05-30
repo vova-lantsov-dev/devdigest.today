@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Logging;
 using DAL;
 using Microsoft.EntityFrameworkCore;
-using Serilog.Events;
+using Microsoft.Extensions.Logging;
 
 namespace Core.Repositories
 {
@@ -29,7 +28,7 @@ namespace Core.Repositories
         private readonly DatabaseContext _database;
         private readonly ILogger _logger;
 
-        public PublicationRepository(DatabaseContext database, ILogger logger)
+        public PublicationRepository(DatabaseContext database, ILogger<PublicationRepository> logger)
         {
             _database = database;
             _logger = logger;
@@ -70,8 +69,8 @@ namespace Core.Repositories
             await _database.SaveChangesAsync();
 
             publication = await _database.Publication.OrderBy(o => o.DateTime).LastOrDefaultAsync();
-
-            _logger.Write(LogEventLevel.Information, $"Publication `{publication.Title}`  was saved. Id: {publication.Id}");
+            
+            _logger.LogInformation($"Publication `{publication.Title}`  was saved. Id: {publication.Id}");
 
             return publication;
         }

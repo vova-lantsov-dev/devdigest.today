@@ -5,10 +5,9 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Core;
-using Core.Logging;
 using Core.Services;
 using Microsoft.AspNetCore.Mvc;
-using Serilog.Events;
+using Microsoft.Extensions.Logging;
 using WebSite.AppCode;
 using WebSite.ViewModels;
 
@@ -23,9 +22,9 @@ namespace WebSite.Controllers
 
         public ApiController(
             IWebAppPublicationService webAppPublicationService,
-            IUserService userService, 
-            ILogger logger,
-            Settings settings)
+            IUserService userService,
+            Settings settings,
+            ILogger<ApiController> logger)
         {
             _logger = logger;
             _settings = settings;
@@ -58,7 +57,7 @@ namespace WebSite.Controllers
 
             if (user == null)
             {
-                _logger.Write(LogEventLevel.Warning, $"Somebody tried to login with this key: `{request.Key}`. Text: `{request.Comment}`");
+                _logger.LogWarning($"Somebody tried to login with this key: `{request.Key}`. Text: `{request.Comment}`");
 
                 return StatusCode((int)HttpStatusCode.Forbidden, "Incorrect security key");
             }
@@ -74,13 +73,13 @@ namespace WebSite.Controllers
             }
             catch (DuplicateNameException ex)
             {
-                _logger.Write(LogEventLevel.Error, "Error while creating new publication", ex);
+                _logger.LogError(ex, "Error while creating new publication");
                 
                 return StatusCode((int) HttpStatusCode.Conflict, ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.Write(LogEventLevel.Error, "Error while creating new publication", ex);
+                _logger.LogError(ex, "Error while creating new publication");
                 
                 return BadRequest(ex.Message);
             }

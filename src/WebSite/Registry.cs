@@ -1,15 +1,14 @@
 ﻿using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Core;
-using Core.Logging;
 using Core.Repositories;
 using Core.Services;
 using Core.Services.Crosspost;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.WebEncoders;
-using Serilog.Events;
 using WebSite.AppCode;
 
 namespace WebSite
@@ -17,12 +16,12 @@ namespace WebSite
     public class Registry
     {
         private readonly Settings _settings;
-        private readonly ILogger _logger;
+        //private readonly ILogger _logger;
 
         public Registry(string contentRootPath, Settings settings)
         {
             _settings = settings;
-            _logger = new SerilogLoggerWrapper(new SerilogFactory().CreateLogger(contentRootPath));
+            //_logger = new SerilogLoggerWrapper(new SerilogFactory().CreateLogger(contentRootPath));
         }
 
         public IServiceCollection Register(IServiceCollection services)
@@ -37,8 +36,7 @@ namespace WebSite
                 .AddDbContext<DatabaseContext>(options => options.UseMySql(_settings.ConnectionString))
 
                 .AddSingleton(_ => _settings)
-                .AddSingleton(_ => _logger)
-                
+
                 .AddSingleton<CrossPostServiceFactory>()
 
                 .AddScoped<ILocalizationService, LocalizationService>()
@@ -53,17 +51,17 @@ namespace WebSite
                 .AddScoped<IVacancyRepository, VacancyRepository>()
                 .AddScoped<IWebAppPublicationService, WebAppPublicationService>()
 
-                .AddScoped<ILanguageAnalyzerService>(options =>
+                .AddScoped<ILanguageAnalyzerService>(provider =>
                 {
-                    return new LanguageAnalyzerService(_settings.CognitiveServicesTextAnalyticsKey, _logger);
+                    var logger = provider.GetService<ILogger<LanguageAnalyzerService>>();
+
+                    return new LanguageAnalyzerService(_settings.CognitiveServicesTextAnalyticsKey, logger);
                 })
 
                 .Configure<WebEncoderOptions>(options =>
                 {
                     options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
                 });
-            
-            _logger.Write(LogEventLevel.Information, "DI container initialized");
 
             return services;
         }

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Linq;
-using Core.Logging;
 using Core.Models.CognitiveServices;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using RestSharp;
-using Serilog.Events;
 
 namespace Core.Services
 {
@@ -19,7 +18,7 @@ namespace Core.Services
         private readonly IRestClient _client;
         private readonly ILogger _logger;
 
-        public LanguageAnalyzerService(string key, ILogger logger)
+        public LanguageAnalyzerService(string key, ILogger<LanguageAnalyzerService> logger)
         {
             _logger = logger;
 
@@ -60,7 +59,7 @@ namespace Core.Services
             }
             catch(Exception ex)
             {
-                _logger.Write(LogEventLevel.Error, $"Error in `{nameof(GetTextLanguage)}` method", ex);
+                _logger.LogError(ex, $"Error in `{nameof(GetTextLanguage)}` method");
                 
                 return string.Empty;
             }

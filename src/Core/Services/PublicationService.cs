@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Logging;
 using Core.Repositories;
 using DAL;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using X.PagedList;
 using X.Web.MetaExtractor;
 
@@ -47,7 +47,10 @@ namespace Core.Services
         private readonly IMemoryCache _cache;
         private readonly IPublicationRepository _repository;
         
-        public PublicationService(IMemoryCache cache, ILogger logger, IPublicationRepository repository)
+        public PublicationService(
+            IMemoryCache cache,
+            IPublicationRepository repository,
+            ILogger<PublicationService> logger)
         {
             _cache = cache;
             _logger = logger;

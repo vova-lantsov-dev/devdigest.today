@@ -1,9 +1,8 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Core.Logging;
 using Core.Repositories;
 using DAL;
+using Microsoft.Extensions.Logging;
 
 namespace Core.Services
 {
@@ -17,7 +16,7 @@ namespace Core.Services
         private readonly IUserRepository _repository;
         private readonly ILogger _logger;
         
-        public UserService(IUserRepository repository, ILogger logger)
+        public UserService(IUserRepository repository, ILogger<UserService> logger)
         {
             _repository = repository;
             _logger = logger;

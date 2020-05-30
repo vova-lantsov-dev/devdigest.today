@@ -1,6 +1,6 @@
-﻿using Core.Logging;
-using Core.Repositories;
+﻿using Core.Repositories;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Core.Services
 {
@@ -14,7 +14,7 @@ namespace Core.Services
         private readonly ISettingsRepository _settingsRepository;
         private readonly ILogger _logger;
 
-        public LocalizationService(ISettingsRepository settingsRepository, ILogger logger)
+        public LocalizationService(ISettingsRepository settingsRepository, ILogger<LocalizationService> logger)
         {
             _settingsRepository = settingsRepository;
             _logger = logger;

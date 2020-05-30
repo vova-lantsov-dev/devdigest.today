@@ -4,8 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Core.Logging;
-using Serilog.Events;
+using Microsoft.Extensions.Logging;
 using Tweetinvi;
 
 namespace Core.Services.Crosspost
@@ -31,7 +30,7 @@ namespace Core.Services.Crosspost
             string accessTokenSecret,
             string name,
             IReadOnlyCollection<string> defaultTags,
-            ILogger logger)
+            ILogger<TwitterCrosspostService> logger)
         {
             _logger = logger;
             _defaultTags = defaultTags;
@@ -57,13 +56,14 @@ namespace Core.Services.Crosspost
                 Auth.SetUserCredentials(_consumerKey, _consumerSecret, _accessToken, _accessTokenSecret);
 
                 var publishTweetParameters = Tweet.CreatePublishTweetParameters(text);
-                var tweet = Tweet.PublishTweet(publishTweetParameters);
-
-                _logger.Write(LogEventLevel.Information, $"Message was sent to Twitter channel `{_name}`: `{text}`");
+                
+                Tweet.PublishTweet(publishTweetParameters);
+                
+                _logger.LogInformation($"Message was sent to Twitter channel `{_name}`: `{text}`");
             }
             catch (Exception ex)
             {
-                _logger.Write(LogEventLevel.Error, "Error in TwitterCrosspostService.Send", ex);
+                _logger.LogError(ex, "Error in TwitterCrosspostService.Send");
             }
             finally
             {

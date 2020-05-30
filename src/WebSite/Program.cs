@@ -1,8 +1,10 @@
-using Core.Logging;
+using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Events;
 
 namespace WebSite
 {
@@ -10,14 +12,37 @@ namespace WebSite
     {
         public static void Main(string[] args)
         {
-            var loggerFactory = new SerilogFactory();
-            Serilog.Log.Logger = loggerFactory.CreateLogger(); 
-            CreateHostBuilder(args).Build().Run();
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .CreateLogger();
+
+            try
+            {
+                Log.Information("Starting web host");
+                CreateHostBuilder(args).Build().Run();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Host terminated unexpectedly");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host
                 .CreateDefaultBuilder(args)
+                .ConfigureLogging(builder =>
+                {
+                    builder.ClearProviders();
+                    
+                    builder.AddSerilog();
+                })
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     var env = hostingContext.HostingEnvironment;
@@ -29,6 +54,9 @@ namespace WebSite
                         .AddEnvironmentVariables();
                 })
                 .UseSerilog()
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
     }
 }

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Logging;
 using Core.Repositories;
 using DAL;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using X.PagedList;
 
 namespace Core.Services
@@ -27,7 +27,11 @@ namespace Core.Services
         private readonly IVacancyRepository _repository;
         private readonly Settings _settings;
 
-        public VacancyService(IMemoryCache cache, ILogger logger, IVacancyRepository repository, Settings settings)
+        public VacancyService(
+            IMemoryCache cache, 
+            IVacancyRepository repository, 
+            Settings settings,
+            ILogger<VacancyService> logger)
         {
             _cache = cache;
             _logger = logger;

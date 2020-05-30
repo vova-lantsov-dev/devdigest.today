@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Core.Logging;
-using Serilog.Events;
+using Microsoft.Extensions.Logging;
 
 namespace Core.Services.Crosspost
 {
@@ -10,12 +9,13 @@ namespace Core.Services.Crosspost
     {
         private readonly ILogger _logger;
 
-        public FakeCrosspostService(ILogger logger) => _logger = logger;
+        public FakeCrosspostService(ILogger<FakeCrosspostService> logger) =>
+            _logger = logger;
 
         public async Task Send(string message, Uri link, IReadOnlyCollection<string> tags)
         {
-            _logger.Write(LogEventLevel.Information, $"{message} {link}");
-
+            _logger.LogInformation($"{message} {link}");
+            
             Console.WriteLine($"{message} {link}");
         }
     }

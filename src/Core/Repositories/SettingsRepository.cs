@@ -1,9 +1,7 @@
-using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Core.Logging;
 using DAL;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Core.Repositories
 {
@@ -17,7 +15,7 @@ namespace Core.Repositories
         private readonly DatabaseContext _database;
         private ILogger _logger;
 
-        public SettingsRepository(DatabaseContext database, ILogger logger)
+        public SettingsRepository(DatabaseContext database, ILogger<SettingsRepository> logger)
         {
             _database = database;
             _logger = logger;

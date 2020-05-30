@@ -5,13 +5,13 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Core;
-using Core.Logging;
 using Core.Models;
 using Core.Repositories;
 using Core.Services;
 using Core.Services.Crosspost;
 using Core.Web;
 using DAL;
+using Microsoft.Extensions.Logging;
 using WebSite.ViewModels;
 using X.PagedList;
 
@@ -50,9 +50,9 @@ namespace WebSite.AppCode
             ISocialRepository socialRepository,
             CrossPostServiceFactory factory,
             Settings settings,
-            ILogger logger, 
             ILanguageAnalyzerService languageAnalyzer, 
-            IVacancyService vacancyService)
+            IVacancyService vacancyService,
+            ILogger<WebAppPublicationService> logger)
         {
             _logger = logger;
             _languageAnalyzer = languageAnalyzer;
