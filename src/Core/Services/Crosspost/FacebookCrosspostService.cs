@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Core.Logging;
-using Serilog.Events;
+using Microsoft.Extensions.Logging;
 using X.Web.Facebook;
 
 namespace Core.Services.Crosspost
@@ -13,7 +12,7 @@ namespace Core.Services.Crosspost
         private readonly string _token;
         private readonly string _name;
 
-        public FacebookCrosspostService(string token, string name, ILogger logger)
+        public FacebookCrosspostService(string token, string name, ILogger<FacebookCrosspostService> logger)
         {
             _logger = logger;
             _token = token;
@@ -29,14 +28,11 @@ namespace Core.Services.Crosspost
 
                 await facebook.PostOnWall(message, link.ToString());
 
-                _logger.Write(LogEventLevel.Information,
-                    $"Message was sent to Facebook page `{_name}`: `{message}` `{link}`");
-
-
+                _logger.LogInformation($"Message was sent to Facebook page `{_name}`: `{message}` `{link}`");
             }
             catch (Exception ex)
             {
-                _logger.Write(LogEventLevel.Error, $"Error during send message to Facebook: `{message}` `{link}`", ex);
+                _logger.LogError(ex, $"Error during send message to Facebook: `{message}` `{link}`");
             }
         }
     }
