@@ -113,7 +113,7 @@ namespace Core.Services
             var publication = new DAL.Publication
             {
                 Title = metadata.Title,
-                Description = metadata.Description,
+                Description = X.Text.TextHelper.Substring(metadata?.Description, 4500, "..."),
                 Link = metadata.Url,
                 Image = string.IsNullOrWhiteSpace(image) || image.Length > 250 ? string.Empty : image,
                 Type = "article",

@@ -16,12 +16,10 @@ namespace WebSite
     public class Registry
     {
         private readonly Settings _settings;
-        //private readonly ILogger _logger;
 
         public Registry(string contentRootPath, Settings settings)
         {
             _settings = settings;
-            //_logger = new SerilogLoggerWrapper(new SerilogFactory().CreateLogger(contentRootPath));
         }
 
         public IServiceCollection Register(IServiceCollection services)
@@ -43,7 +41,6 @@ namespace WebSite
                 .AddScoped<IPublicationService, PublicationService>()
                 .AddScoped<IUserService, UserService>()
                 .AddScoped<IVacancyService, VacancyService>()
-
                 .AddScoped<IPublicationRepository, PublicationRepository>()
                 .AddScoped<ISettingsRepository, SettingsRepository>()
                 .AddScoped<ISocialRepository, SocialRepository>()
@@ -65,6 +62,5 @@ namespace WebSite
 
             return services;
         }
-
     }
 }

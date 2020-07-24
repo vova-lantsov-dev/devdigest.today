@@ -64,8 +64,8 @@ namespace Core.Repositories
 
         public async Task<Publication> Save(Publication publication)
         {
-
             _database.Add(publication);
+            
             await _database.SaveChangesAsync();
 
             publication = await _database.Publication.OrderBy(o => o.DateTime).LastOrDefaultAsync();
