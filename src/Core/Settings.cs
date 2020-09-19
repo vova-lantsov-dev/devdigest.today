@@ -24,6 +24,8 @@ namespace Core
 
         public string FbAppId { get; set; }
 
+        public string TwitterAccountName { get; set; }
+
         public string CognitiveServicesTextAnalyticsKey { get; set; }
 
         public string Version { get; set; }

@@ -2,14 +2,20 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using WebSite.AppCode;
+using Core;
 
 namespace WebSite.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IWebAppPublicationService _service;
+        private readonly Settings _settings;
 
-        public HomeController(IWebAppPublicationService service) => _service = service;
+        public HomeController(IWebAppPublicationService service, Settings settings) 
+        {
+            _settings = settings;
+            _service = service;
+        }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
@@ -84,6 +90,7 @@ namespace WebSite.Controllers
             }
 
             ViewBag.Title = publication.Title;
+            ViewBag.Configuration = _settings;
 
             return View("~/Views/Home/Post.cshtml", publication);
         }
@@ -94,6 +101,7 @@ namespace WebSite.Controllers
             var model = await _service.GetPlatformInformation();
             
             ViewBag.Title = "Platform";
+            ViewBag.Description = "This project is an information space for people who live in the modern world of IT technologies. For developers, analysts, architects, and engineers.";
 
             return View("~/Views/Home/Platform.cshtml", model);
         }
