@@ -10,10 +10,11 @@ namespace WebSite.ViewModels
 		public VacancyViewModel(DAL.Vacancy vacancy, Uri webSiteUrl, string fallbackImage = null)
 		{
 			_websiteUrl = webSiteUrl;
+			var fallbackImageUrl = string.IsNullOrWhiteSpace(fallbackImage) ? null : new Uri(fallbackImage); 
 			
 			Id = vacancy.Id;
 			Title = vacancy.Title;
-			Image = string.IsNullOrEmpty(vacancy.Image) ? new Uri(fallbackImage) : new Uri(vacancy.Image);
+			Image = string.IsNullOrEmpty(vacancy.Image) ? fallbackImageUrl : new Uri(vacancy.Image);
 			Description = vacancy.Description;
 			Content = vacancy.Content;
 			Contact = vacancy.Contact;
