@@ -44,6 +44,7 @@ namespace WebSite
                 .AddScoped<IPublicationRepository, PublicationRepository>()
                 .AddScoped<ISettingsRepository, SettingsRepository>()
                 .AddScoped<ISocialRepository, SocialRepository>()
+                .AddScoped<IPageRepository, PageRepository>()
                 .AddScoped<IUserRepository, UserRepository>()
                 .AddScoped<IVacancyRepository, VacancyRepository>()
                 .AddScoped<IWebAppPublicationService, WebAppPublicationService>()

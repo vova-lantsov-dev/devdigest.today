@@ -1,28 +1,6 @@
 ﻿@using Core.Models
 @model WebSite.ViewModels.PublicationViewModel
 
-@{
-    var settings = ViewBag.Configuration as Core.Settings;
-}
-
-@section head {
-    <meta property="og:title" content="@Model.Title" />
-    <meta property="og:type" content="article" />
-    <meta property="og:url" content="@Model.ShareUrl" />
-    <meta property="og:image" content="@Model.Image" />
-    <meta property="og:description" content="@Model.Description" />
-
-    <meta name="keywords" content="@Model.Keywords" />
-    <meta name="description" content="@Model.Description" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@settings.TwitterAccountName" />
-    <meta name="twitter:creator" content="@settings.TwitterAccountName" />
-    <meta name="twitter:title" content="@Model.Title" />
-    <meta name="twitter:description" content="@Model.Description" />
-    <meta name="twitter:image" content="@Model.Image" />
-}
-
 <h1>@Model.Title</h1>
 
 <div class="date">

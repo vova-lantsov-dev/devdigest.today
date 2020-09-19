@@ -2,17 +2,9 @@
 @model WebSite.ViewModels.VacancyViewModel
 
 @{
-    var title = string.IsNullOrWhiteSpace(Model.Company) ? $"{Model.Location}" : $"{Model.Company}, {Model.Location}";
-}
-
-@section head {
-    <meta property="og:title" content="@Model.Title" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="@Model.ShareUrl" />
-    <meta property="og:image" content="@Model.Image" />
-    <meta property="og:description" content="@Model.Description" />    
-
-    <meta name="description" content="@Model.Description" />
+    var title = string.IsNullOrWhiteSpace(Model.Company) 
+        ? $"{Model.Location}" 
+        : $"{Model.Company}, {Model.Location}";
 }
 
 <h1>
@@ -36,7 +28,7 @@
 
 <div class="row">
     <article class="col-md-12">
-        @if (!string.IsNullOrWhiteSpace(Model.Image))
+        @if (Model.Image != null)
         {
             <img class="img-responsive" src="@Model.Image" alt="@Model.Title"/>    
             <br />

@@ -6,6 +6,8 @@ namespace DAL
 {
     public partial class DatabaseContext : DbContext
     {
+        private readonly string _connectionString;
+        
         public DatabaseContext()
         {
         }
@@ -15,11 +17,18 @@ namespace DAL
         {
         }
 
+        public DatabaseContext(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
+
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<Channel> Channel { get; set; }
         public virtual DbSet<Event> Event { get; set; }
         public virtual DbSet<FacebookPage> FacebookPage { get; set; }
         public virtual DbSet<Language> Language { get; set; }
+        public virtual DbSet<Page> Page { get; set; }
         public virtual DbSet<Publication> Publication { get; set; }
         public virtual DbSet<TwitterAccount> TwitterAccount { get; set; }
         public virtual DbSet<User> User { get; set; }
@@ -29,8 +38,7 @@ namespace DAL
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("server=server2.agi.net.ua;user id=dot_net_in_ua;password=ZQRvbUYmD7Gr;database=dot_net_in_ua;charset=utf8");
+                optionsBuilder.UseMySql(_connectionString);
             }
         }
 
@@ -230,6 +238,38 @@ namespace DAL
 
                 entity.Property(e => e.Name)
                     .HasColumnType("varchar(25)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
+            });
+
+            modelBuilder.Entity<Page>(entity =>
+            {
+                entity.HasIndex(e => e.Name)
+                    .HasName("Page_Name_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.Content)
+                    .IsRequired()
+                    .HasColumnType("text")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasColumnType("varchar(5000)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnType("varchar(50)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
+
+                entity.Property(e => e.Title)
+                    .HasColumnType("varchar(100)")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_unicode_ci");
             });

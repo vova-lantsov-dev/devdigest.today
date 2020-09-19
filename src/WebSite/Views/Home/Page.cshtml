@@ -7,17 +7,6 @@
     var category = categoryId.HasValue ? Model.Select(o => o.Category.Name).FirstOrDefault()?.ToLower() : string.Empty;
 }
 
-@section head {
-    <meta property="og:title" content="@Core.Settings.Current.WebSiteTitle" />
-    <meta property="og:type" content="website" />
-
-    <meta property="og:image" content="@Core.Settings.Current.FacebookImage" />
-    <meta property="og:description" content="@Core.Settings.Current.DefaultDescription" />
-
-    <meta name="keywords" content="@Core.Settings.Current.DefaultKeywords" />
-    <meta name="description" content="@Core.Settings.Current.DefaultDescription" />
-}
-
 @if (categoryId.HasValue)
 {
     <h1><span class="protocol">stream://&nbsp;</span>@category</h1>

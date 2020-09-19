@@ -21,6 +21,9 @@
     {
         new Link("//devdigest on Twitter","https://twitter.com/devdigest_today")
     };
+
+    var twitterAccountName = "@devdigest_today";
+    var meta = ViewBag.PageMetaData as PageMetaData;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -32,7 +35,7 @@
     
     <meta property="fb:pages" content="2024104024583154" />
     <meta property="fb:app_id" content="@Core.Settings.Current.FbAppId" />
-    <meta property="og:site_name" content="@Core.Settings.Current.WebSiteTitle" />
+    
     <meta property="author" content="@Core.Settings.Current.WebSiteTitle" />
     <meta property="article:author" content="https://www.facebook.com/dncuug/">
 
@@ -44,7 +47,25 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/5.1.1/bootstrap-social.min.css" />
     <link rel="stylesheet" href="/css/site.css?v=20200515" />
 
-    <title>@ViewBag.Title - //devdigest | developers digest | All news about .NET Core, Microsoft Azure and Xamarin</title>
+    <meta property="og:site_name" content="@Core.Settings.Current.WebSiteTitle" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="" />
+    <meta property="og:image" content="@meta.Image" />
+    <meta property="og:description" content="@meta.Description" />
+
+    <meta name="keywords" content="@meta.Keywords" />
+    <meta name="description" content="@meta.Description" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@twitterAccountName" />
+    <meta name="twitter:creator" content="@twitterAccountName" />
+    <meta name="twitter:title" content="@meta.Title" />
+    <meta name="twitter:description" content="@meta.Description" />
+    <meta name="twitter:image" content="@meta.Image" />    
+
+    <title>@meta.Title - //devdigest | developers digest | All news about .NET Core, Microsoft Azure and Xamarin</title>
 </head>
 <body>
     

@@ -13,7 +13,7 @@ namespace WebSite.ViewModels
 			
 			Id = vacancy.Id;
 			Title = vacancy.Title;
-			Image = vacancy.Image ?? fallbackImage;
+			Image = string.IsNullOrEmpty(vacancy.Image) ? new Uri(fallbackImage) : new Uri(vacancy.Image);
 			Description = vacancy.Description;
 			Content = vacancy.Content;
 			Contact = vacancy.Contact;
@@ -35,7 +35,7 @@ namespace WebSite.ViewModels
 		public int ViewsCount { get; set; }
 		public int Id { get; set; }
 		public string Title { get; set; }
-		public string Image { get; set; }
+		public Uri Image { get; set; }
 		public CategoryViewModel Category { get; set; }
 		public DateTime Date { get; set; }
 		public string Description { get; set; }
