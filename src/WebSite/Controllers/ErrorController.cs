@@ -8,10 +8,6 @@ namespace WebSite.Controllers
     [Route("error")]
     public class ErrorController : Controller
     {
-        public ErrorController()
-        {
-        }
-
         [Route("info")]
         public ActionResult Info(int? code)
         {

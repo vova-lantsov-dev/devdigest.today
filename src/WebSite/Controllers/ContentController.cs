@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Core;
+using Core.Models;
 using Core.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -29,16 +30,19 @@ namespace WebSite.Controllers
             if (page == null)
                 return NotFound();
 
-            ViewBag.PageMetaData = new Core.Models.PageMetaData
+            var model = new PageViewModel
             {
                 Title = page.Title,
                 Description = page.Description,
                 Url = new Uri($"{_settings.WebSiteUrl}content/{page.Name}"),
                 Image = _settings.FacebookImage,
-                Keywords = _settings.DefaultDescription
+                Keywords = _settings.DefaultDescription,
+                Content = page.Content
             };
+            
+            ViewBag.PageMetaData = model;
 
-            return View((object) page.Content);
+            return View(model);
         }
 
         [Route("content/telegram")]

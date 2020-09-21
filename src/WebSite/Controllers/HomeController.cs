@@ -29,32 +29,32 @@ namespace WebSite.Controllers
         public async Task<IActionResult> Index()
         {
             var model = await _service.GetHomePageInformation();
-            
-            ViewBag.PageMetaData = new Core.Models.PageMetaData
+
+            SetPageMetaData(new PageMetaData
             {
                 Title = "Welcome!",
-                Description = _settings.DefaultDescription,
-                Url = _settings.WebSiteUrl,
-                Image = _settings.FacebookImage,
-                Keywords = _settings.DefaultKeywords
-            };
-
+                Url = _settings.WebSiteUrl
+            });
+            
             return View(model);
         }
-        
+
         [Route("covid")]
         public async Task<IActionResult> Covid()
         {
             var model = await _service.FindPublications("covid", "coronavirus");
-            
-            ViewBag.PageMetaData = new Core.Models.PageMetaData
+
+            SetPageMetaData(new PageMetaData
             {
-                Title = $"COVID-19  – news and updates",
-                Description = "Coronavirus disease 2019 (COVID-19) is an infectious disease caused by severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2). A lot of pandemic related news and events are happening in IT. We have gathered here the news and publications that directly relate to  coronavirus COVID-19. ",
+                Title = "COVID-19  – news and updates",
+                Description = "Coronavirus disease 2019 (COVID-19) is an infectious disease caused by severe acute " +
+                              "respiratory syndrome coronavirus 2 (SARS-CoV-2). A lot of pandemic related news and " +
+                              "events are happening in IT. We have gathered here the news and publications that " +
+                              "directly relate to  coronavirus COVID-19. ",
                 Url = new Uri($"{_settings.WebSiteUrl}covid"),
                 Image = new Uri("https://127fc3e2e552.blob.core.windows.net/devdigest-images/white-red-and-blue-flower-petals-3993212.jpg"),
                 Keywords = "covid, coronavirus, covid-19"
-            };
+            });
 
             return View("~/Views/Home/Covid.cshtml", model);
         }
@@ -66,15 +66,12 @@ namespace WebSite.Controllers
             
             ViewBag.Title = $"Page {page}";
             ViewBag.CategoryId = categoryId;
-            
-            ViewBag.PageMetaData = new PageMetaData
+
+            SetPageMetaData(new PageMetaData
             {
                 Title = ViewBag.Title,
-                Description = _settings.DefaultDescription,
-                Url = new Uri($"{_settings.WebSiteUrl}page/{page}"),
-                Image = _settings.FacebookImage,
-                Keywords = _settings.DefaultKeywords
-            };
+                Url = new Uri($"{_settings.WebSiteUrl}page/{page}")
+            });
 
             return View("~/Views/Home/Page.cshtml", model);
         }
@@ -85,15 +82,12 @@ namespace WebSite.Controllers
             var model= await _service.GetVacancies(page);
             
             ViewBag.Title = "Job";
-            
-            ViewBag.PageMetaData = new PageMetaData
+
+            SetPageMetaData(new PageMetaData
             {
                 Title = "Job",
-                Description = _settings.DefaultDescription,
                 Url = new Uri($"{_settings.WebSiteUrl}vacancies/{page}"),
-                Image = _settings.FacebookImage,
-                Keywords = _settings.DefaultDescription
-            };
+            });
             
             return View("~/Views/Home/Vacancies.cshtml", model);
         }
@@ -107,16 +101,15 @@ namespace WebSite.Controllers
             {
                 return NotFound();
             }
-            
-            ViewBag.PageMetaData = new PageMetaData
+
+            SetPageMetaData(new PageMetaData
             {
                 Title = model.Title,
-                Description = _settings.DefaultDescription,
                 Url = model.ShareUrl,
                 Image = model.Image,
                 Keywords = model.Description
-            };
-
+            });
+            
             return View("~/Views/Home/Vacancy.cshtml", model);
         }
 
@@ -129,15 +122,14 @@ namespace WebSite.Controllers
             {
                 return NotFound();
             }
-            
-            ViewBag.PageMetaData = new PageMetaData 
+
+            SetPageMetaData(new PageMetaData
             {
                 Title = publication.Title,
                 Description = publication.Description,
                 Url = publication.ShareUrl,
-                Image = new Uri(publication.Image),        
-                Keywords = _settings.DefaultKeywords
-            };
+                Image = new Uri(publication.Image)
+            });
 
             return View("~/Views/Home/Post.cshtml", publication);
         }
@@ -147,17 +139,35 @@ namespace WebSite.Controllers
         {
             var model = await _service.GetPlatformInformation();
 
-            ViewBag.PageMetaData = new PageMetaData
+            SetPageMetaData(new PageMetaData
             {
                 Title = "Platform",
                 Description = "This project is an information space for people who live in the modern " +
                               "world of IT technologies. For developers, analysts, architects, and engineers.",
                 Url = new Uri($"{_settings.WebSiteUrl}platform"),
-                Image = _settings.FacebookImage,
-                Keywords = _settings.DefaultKeywords
-            };
+            });
 
             return View("~/Views/Home/Platform.cshtml", model);
+        }
+        
+        private void SetPageMetaData(PageMetaData meta)
+        {
+            if (string.IsNullOrWhiteSpace(meta.Description))
+            {
+                meta.Description = _settings.DefaultDescription;
+            }
+            
+            if (string.IsNullOrWhiteSpace(meta.Keywords))
+            {
+                meta.Keywords = _settings.DefaultKeywords;
+            }
+            
+            if (meta.Image == null)
+            {
+                meta.Image = _settings.FacebookImage;
+            }
+
+            ViewBag.PageMetaData = meta;
         }
     }
 }

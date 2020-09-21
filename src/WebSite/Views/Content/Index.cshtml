@@ -1,9 +1,9 @@
-﻿@model string
+﻿@model Core.Models.PageViewModel
 
 @{
     Layout = "_GeneralLayout";
 }
 
-<h1>@ViewBag.Title</h1>
+<h1>@Model.Title</h1>
 
-@Html.Raw(Model)
+@Html.Raw(Model.Content)
