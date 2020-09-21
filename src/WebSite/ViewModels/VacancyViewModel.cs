@@ -88,5 +88,7 @@ namespace WebSite.ViewModels
 				return ContactType.Default;
 			}
 		}
+
+		public string Place => string.IsNullOrWhiteSpace(Company) ? $"{Location}" : $"{Company}, {Location}";
 	}
 }

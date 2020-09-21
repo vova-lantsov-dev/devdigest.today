@@ -31,6 +31,10 @@ namespace Core
         public string Version { get; set; }
         
         public ApplicationInsightsSetting ApplicationInsights { get; set; }
+        
+        public string WebRootPath { get; set; }
+        
+        public string FacebookPageUrl { get; set; }
 
         #region Current
 
@@ -41,7 +45,6 @@ namespace Core
         public static void InitializeCurrentInstance(Settings settings) => Current = settings;
 
         public static Settings Current { get; private set; }
-        public string WebRootPath { get; set; }
 
         #endregion
     }

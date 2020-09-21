@@ -28,7 +28,6 @@
 
 @if (!string.IsNullOrEmpty(Model.EmbededPlayerCode))
 {
-
     <div class="row">
         <div class="col-md-12 video">
             @await Html.PartialAsync("_EmbededPlayer", Model.EmbededPlayerCode)

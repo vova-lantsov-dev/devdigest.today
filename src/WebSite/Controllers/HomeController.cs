@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using WebSite.AppCode;
 using Core;
 using Core.Models;
+using WebSite.ViewModels;
 
 namespace WebSite.Controllers
 {
@@ -62,33 +63,36 @@ namespace WebSite.Controllers
         [Route("page/{page}")]
         public async Task<IActionResult> Page(int? categoryId = null, int page = 1, string language = Core.Language.English)
         {
-            var model = await _service.GetPublications(categoryId, page);
+            var publications = await _service.GetPublications(categoryId, page);
             
-            ViewBag.Title = $"Page {page}";
-            ViewBag.CategoryId = categoryId;
-
             SetPageMetaData(new PageMetaData
             {
-                Title = ViewBag.Title,
+                Title = $"Page {page}",
                 Url = new Uri($"{_settings.WebSiteUrl}page/{page}")
             });
 
-            return View("~/Views/Home/Page.cshtml", model);
+            return View("~/Views/Home/Page.cshtml", new PublicationListViewModel
+            {
+                List = publications,
+                CategoryId = categoryId
+            });
         }
 
         [Route("vacancies/{page}")]
-        public async Task<IActionResult> Vacancies(int page = 1)
+        public async Task<IActionResult> Vacancies(int page = 1, int? categoryId = null)
         {
-            var model= await _service.GetVacancies(page);
-            
-            ViewBag.Title = "Job";
-
             SetPageMetaData(new PageMetaData
             {
                 Title = "Job",
-                Url = new Uri($"{_settings.WebSiteUrl}vacancies/{page}"),
+                Url = new Uri($"{_settings.WebSiteUrl}vacancies/{page}")
             });
-            
+
+            var model = new VacancyListViewModel
+            {
+                List = await _service.GetVacancies(page),
+                CategoryId = categoryId
+            };
+
             return View("~/Views/Home/Vacancies.cshtml", model);
         }
 
@@ -107,7 +111,8 @@ namespace WebSite.Controllers
                 Title = model.Title,
                 Url = model.ShareUrl,
                 Image = model.Image,
-                Keywords = model.Description
+                Keywords = model.Description,
+                Description = model.Description
             });
             
             return View("~/Views/Home/Vacancy.cshtml", model);
@@ -127,6 +132,7 @@ namespace WebSite.Controllers
             {
                 Title = publication.Title,
                 Description = publication.Description,
+                Keywords = publication.Keywords,
                 Url = publication.ShareUrl,
                 Image = new Uri(publication.Image)
             });

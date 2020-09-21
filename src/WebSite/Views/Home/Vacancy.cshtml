@@ -1,12 +1,6 @@
 ﻿@using Core.Models
 @model WebSite.ViewModels.VacancyViewModel
 
-@{
-    var title = string.IsNullOrWhiteSpace(Model.Company) 
-        ? $"{Model.Location}" 
-        : $"{Model.Company}, {Model.Location}";
-}
-
 <h1>
     @Model.Title
     @if (!Model.Active)
@@ -15,7 +9,7 @@
     }
 </h1>
 
-<h3>@title</h3>
+<h3>@Model.Place</h3>
 
 <div class="date">
     @Model.Date.ToString("MMMM dd, yyyy") 

@@ -8,6 +8,7 @@ using Core.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using WebSite.ViewModels;
 
 namespace WebSite.Controllers
 {
@@ -30,7 +31,7 @@ namespace WebSite.Controllers
             if (page == null)
                 return NotFound();
 
-            var model = new PageViewModel
+            var model = new ContentPageViewModel
             {
                 Title = page.Title,
                 Description = page.Description,

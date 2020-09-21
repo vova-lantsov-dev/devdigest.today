@@ -1,21 +1,16 @@
-﻿@using X.PagedList;
-@using X.PagedList.Mvc.Core;
-@model IPagedList<WebSite.ViewModels.PublicationViewModel>
+﻿@using X.PagedList.Mvc.Core;
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model WebSite.ViewModels.PublicationListViewModel
 
-@{
-    var categoryId = ViewBag.CategoryId as int?;
-    var category = categoryId.HasValue ? Model.Select(o => o.Category.Name).FirstOrDefault()?.ToLower() : string.Empty;
-}
-
-@if (categoryId.HasValue)
+@if (Model.CategoryId.HasValue)
 {
-    <h1><span class="protocol">stream://&nbsp;</span>@category</h1>
+    <h1><span class="protocol">stream://&nbsp;</span>@Model.CategoryName</h1>
     <br />
 }
 
-@for (var i = 0; i < Model.Count(); i++)
+@for (var i = 0; i < Model.List.Count(); i++)
 {
-    @await Html.PartialAsync("_Publication", Model[i])
+    @await Html.PartialAsync("_Publication", Model.List[i])
 
     if (i == 2)
     {
@@ -23,11 +18,11 @@
     }
 }
 
-@if (categoryId != null)
+@if (Model.CategoryId != null)
 {
-    @Html.PagedListPager(Model, page => $"/page/{page}?categoryId={categoryId}")
+    @Html.PagedListPager(Model.List, page => $"/page/{page}?categoryId={Model.CategoryId}")
 }
 else
 {
-    @Html.PagedListPager(Model, page => $"/page/{page}")
+    @Html.PagedListPager(Model.List, page => $"/page/{page}")
 }
