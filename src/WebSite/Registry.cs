@@ -59,6 +59,8 @@ namespace WebSite
 
                     return new LanguageAnalyzerService(_settings.CognitiveServicesTextAnalyticsKey, logger);
                 })
+                
+                .AddApplicationInsightsTelemetry(_settings.ApplicationInsights.InstrumentationKey)
 
                 .Configure<WebEncoderOptions>(options =>
                 {
