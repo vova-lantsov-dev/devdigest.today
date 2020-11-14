@@ -22,6 +22,6 @@ namespace Core.Repositories
         }
         
         public async Task<DAL.Language> GetLanguage(string code) =>
-            await _database.Language.FirstOrDefaultAsync(o => o.Code == code);
+            await _database.Languages.FirstOrDefaultAsync(o => o.Code == code);
     }
 }

@@ -30,7 +30,7 @@ namespace Core.Repositories
             name = name?.Trim().ToLower();
 
             return await _database
-                .Page
+                .Pages
                 .Where(o => o.Name == name)
                 .SingleOrDefaultAsync();
         }

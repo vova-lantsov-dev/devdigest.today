@@ -25,20 +25,20 @@ namespace Core.Repositories
         public SocialRepository(DatabaseContext database) => _database = database;
 
         public async Task<IReadOnlyCollection<FacebookPage>> GetFacebookPages(int categoryId) =>
-            await _database.FacebookPage.Where(o => o.CategoryId == categoryId).ToListAsync();
+            await _database.FacebookPages.Where(o => o.CategoryId == categoryId).ToListAsync();
 
         public async Task<IReadOnlyCollection<Channel>> GetTelegramChannels(int categoryId) =>
-            await _database.Channel.Where(o => o.CategoryId == categoryId).ToListAsync();
+            await _database.Channels.Where(o => o.CategoryId == categoryId).ToListAsync();
 
         public async Task<IReadOnlyCollection<Channel>> GetTelegramChannels() =>
-            await _database.Channel.ToListAsync();
+            await _database.Channels.ToListAsync();
 
         public async Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccountsChannels(int categoryId)
-            => await _database.TwitterAccount.ToListAsync();
+            => await _database.TwitterAccounts.ToListAsync();
 
-        public async Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccounts() => await _database.TwitterAccount.ToListAsync();
+        public async Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccounts() => await _database.TwitterAccounts.ToListAsync();
 
         public async Task<IReadOnlyCollection<FacebookPage>> GetFacebookPages() =>
-            await _database.FacebookPage.ToListAsync();
+            await _database.FacebookPages.ToListAsync();
     }
 }

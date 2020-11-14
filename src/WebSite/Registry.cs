@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.WebEncoders;
+using MySqlConnector;
 using WebSite.AppCode;
 
 namespace WebSite
@@ -31,7 +32,10 @@ namespace WebSite
 
                 .AddEntityFrameworkMySql()
 
-                .AddDbContext<DatabaseContext>(options => options.UseMySql(_settings.ConnectionString))
+                .AddDbContext<DatabaseContext>(options =>
+                {
+                    options.UseMySql(_settings.ConnectionString, ServerVersion.FromString("5.7.32-mysql"));
+                })
 
                 .AddSingleton(_ => _settings)
 

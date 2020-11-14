@@ -39,7 +39,7 @@ namespace Core.Repositories
             var skip = (page - 1) * pageSize;
 
             return await _database
-                .Publication
+                .Publications
                 .Where(o => o.CategoryId == categoryId || categoryId == null)
                 .Where(o => o.LanguageId == languageId)
                 .OrderByDescending(o => o.DateTime)
@@ -49,17 +49,17 @@ namespace Core.Repositories
         }
 
         public Task<int> GetPublicationsCount(int? categoryId, int languageId) =>
-            _database.Publication
+            _database.Publications
                 .Where(o => o.CategoryId == categoryId || categoryId == null)
                 .Where(o => o.LanguageId == languageId)
                 .CountAsync();
 
         public async Task<IReadOnlyCollection<Category>> GetCategories() =>
-            await _database.Category.ToListAsync();
+            await _database.Categories.ToListAsync();
 
         public Task<Publication> GetPublication(int id)
         {
-            return _database.Publication.SingleOrDefaultAsync(o => o.Id == id);
+            return _database.Publications.SingleOrDefaultAsync(o => o.Id == id);
         }
 
         public async Task<Publication> Save(Publication publication)
@@ -68,7 +68,7 @@ namespace Core.Repositories
             
             await _database.SaveChangesAsync();
 
-            publication = await _database.Publication.OrderBy(o => o.DateTime).LastOrDefaultAsync();
+            publication = await _database.Publications.OrderBy(o => o.DateTime).LastOrDefaultAsync();
             
             _logger.LogInformation($"Publication `{publication.Title}`  was saved. Id: {publication.Id}");
 
@@ -77,7 +77,7 @@ namespace Core.Repositories
 
         public async Task IncreasePublicationViewCount(int id)
         {
-            var publication = _database.Publication.SingleOrDefault(o => o.Id == id);
+            var publication = _database.Publications.SingleOrDefault(o => o.Id == id);
 
             if (publication != null)
             {
@@ -87,11 +87,11 @@ namespace Core.Repositories
         }
 
         public Task<Publication> GetPublication(Uri uri) =>
-            _database.Publication.SingleOrDefaultAsync(o => o.Link.ToLower() == uri.ToString().ToLower());
+            _database.Publications.SingleOrDefaultAsync(o => o.Link.ToLower() == uri.ToString().ToLower());
 
         public async Task<IReadOnlyCollection<string>> GetCategoryTags(int categoryId)
         {
-            var value = await _database.Category
+            var value = await _database.Categories
                 .Where(o => o.Id == categoryId)
                 .Select(o => o.Tags)
                 .SingleOrDefaultAsync();
@@ -104,7 +104,7 @@ namespace Core.Repositories
 
         public async Task<IReadOnlyCollection<Publication>> GetTopPublications(int languageId)
         {
-           var publications = await _database.Publication
+           var publications = await _database.Publications
                 .Where(p => p.LanguageId == languageId)
                 .Where(p => p.DateTime > DateTime.Now.AddDays(-30))
                 .ToListAsync();
@@ -121,7 +121,7 @@ namespace Core.Repositories
             
             foreach (var keyword in keywords)
             {
-                var items = await _database.Publication
+                var items = await _database.Publications
                     .Where(p =>
                         EF.Functions.Like(p.Title, $"%{keyword}%") ||
                         EF.Functions.Like(p.Description, $"%{keyword}%") ||

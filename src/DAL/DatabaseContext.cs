@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
+#nullable disable
+
 namespace DAL
 {
     public partial class DatabaseContext : DbContext
@@ -23,22 +25,22 @@ namespace DAL
         }
 
 
-        public virtual DbSet<Category> Category { get; set; }
-        public virtual DbSet<Channel> Channel { get; set; }
-        public virtual DbSet<Event> Event { get; set; }
-        public virtual DbSet<FacebookPage> FacebookPage { get; set; }
-        public virtual DbSet<Language> Language { get; set; }
-        public virtual DbSet<Page> Page { get; set; }
-        public virtual DbSet<Publication> Publication { get; set; }
-        public virtual DbSet<TwitterAccount> TwitterAccount { get; set; }
-        public virtual DbSet<User> User { get; set; }
-        public virtual DbSet<Vacancy> Vacancy { get; set; }
+        public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<Channel> Channels { get; set; }
+        public virtual DbSet<Event> Events { get; set; }
+        public virtual DbSet<FacebookPage> FacebookPages { get; set; }
+        public virtual DbSet<Language> Languages { get; set; }
+        public virtual DbSet<Page> Pages { get; set; }
+        public virtual DbSet<Publication> Publications { get; set; }
+        public virtual DbSet<TwitterAccount> TwitterAccounts { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Vacancy> Vacancies { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql(_connectionString);
+                optionsBuilder.UseMySql(_connectionString, ServerVersion.FromString("5.7.32-mysql"));
             }
         }
 
@@ -46,8 +48,9 @@ namespace DAL
         {
             modelBuilder.Entity<Category>(entity =>
             {
-                entity.HasIndex(e => e.Name)
-                    .HasName("Category_Name_uindex")
+                entity.ToTable("Category");
+
+                entity.HasIndex(e => e.Name, "Category_Name_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
@@ -71,11 +74,11 @@ namespace DAL
 
             modelBuilder.Entity<Channel>(entity =>
             {
-                entity.HasIndex(e => e.CategoryId)
-                    .HasName("Channel_Category_Id_fk");
+                entity.ToTable("Channel");
 
-                entity.HasIndex(e => e.Name)
-                    .HasName("Channel_Name_uindex")
+                entity.HasIndex(e => e.CategoryId, "Channel_Category_Id_fk");
+
+                entity.HasIndex(e => e.Name, "Channel_Name_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
@@ -110,18 +113,18 @@ namespace DAL
                     .HasCollation("utf8_general_ci");
 
                 entity.HasOne(d => d.Category)
-                    .WithMany(p => p.Channel)
+                    .WithMany(p => p.Channels)
                     .HasForeignKey(d => d.CategoryId)
                     .HasConstraintName("Channel_Category_Id_fk");
             });
 
             modelBuilder.Entity<Event>(entity =>
             {
-                entity.HasIndex(e => e.CategoryId)
-                    .HasName("Event_Category_Id_fk");
+                entity.ToTable("Event");
 
-                entity.HasIndex(e => e.UserId)
-                    .HasName("Event_User_Id_fk");
+                entity.HasIndex(e => e.CategoryId, "Event_Category_Id_fk");
+
+                entity.HasIndex(e => e.UserId, "Event_User_Id_fk");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
@@ -158,27 +161,26 @@ namespace DAL
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
 
                 entity.HasOne(d => d.Category)
-                    .WithMany(p => p.Event)
+                    .WithMany(p => p.Events)
                     .HasForeignKey(d => d.CategoryId)
                     .HasConstraintName("Event_Category_Id_fk");
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.Event)
+                    .WithMany(p => p.Events)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("Event_User_Id_fk");
             });
 
             modelBuilder.Entity<FacebookPage>(entity =>
             {
-                entity.HasIndex(e => e.CategoryId)
-                    .HasName("FacebookPage_Category_Id_fk");
+                entity.ToTable("FacebookPage");
 
-                entity.HasIndex(e => e.Id)
-                    .HasName("FacebookPages_Id_uindex")
+                entity.HasIndex(e => e.CategoryId, "FacebookPage_Category_Id_fk");
+
+                entity.HasIndex(e => e.Id, "FacebookPages_Id_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Token)
-                    .HasName("FacebookPages_Token_uindex")
+                entity.HasIndex(e => e.Token, "FacebookPages_Token_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
@@ -217,7 +219,7 @@ namespace DAL
                     .HasCollation("utf8_general_ci");
 
                 entity.HasOne(d => d.Category)
-                    .WithMany(p => p.FacebookPage)
+                    .WithMany(p => p.FacebookPages)
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FacebookPage_Category_Id_fk");
@@ -225,8 +227,9 @@ namespace DAL
 
             modelBuilder.Entity<Language>(entity =>
             {
-                entity.HasIndex(e => e.Id)
-                    .HasName("Language_Id_uindex")
+                entity.ToTable("Language");
+
+                entity.HasIndex(e => e.Id, "Language_Id_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
@@ -244,8 +247,9 @@ namespace DAL
 
             modelBuilder.Entity<Page>(entity =>
             {
-                entity.HasIndex(e => e.Name)
-                    .HasName("Page_Name_uindex")
+                entity.ToTable("Page");
+
+                entity.HasIndex(e => e.Name, "Page_Name_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
@@ -276,18 +280,16 @@ namespace DAL
 
             modelBuilder.Entity<Publication>(entity =>
             {
-                entity.HasIndex(e => e.CategoryId)
-                    .HasName("Publication_Category_Id_fk");
+                entity.ToTable("Publication");
 
-                entity.HasIndex(e => e.LanguageId)
-                    .HasName("Publication_Language_Id_fk");
+                entity.HasIndex(e => e.CategoryId, "Publication_Category_Id_fk");
 
-                entity.HasIndex(e => e.Link)
-                    .HasName("Publication_Link_uindex")
+                entity.HasIndex(e => e.LanguageId, "Publication_Language_Id_fk");
+
+                entity.HasIndex(e => e.Link, "Publication_Link_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.UserId)
-                    .HasName("Publication_User_Id_fk");
+                entity.HasIndex(e => e.UserId, "Publication_User_Id_fk");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
@@ -348,46 +350,42 @@ namespace DAL
                 entity.Property(e => e.Visible).HasColumnType("bit(1)");
 
                 entity.HasOne(d => d.Category)
-                    .WithMany(p => p.Publication)
+                    .WithMany(p => p.Publications)
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Publication_Category_Id_fk");
 
                 entity.HasOne(d => d.Language)
-                    .WithMany(p => p.Publication)
+                    .WithMany(p => p.Publications)
                     .HasForeignKey(d => d.LanguageId)
                     .HasConstraintName("Publication_Language_Id_fk");
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.Publication)
+                    .WithMany(p => p.Publications)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("Publication_User_Id_fk");
             });
 
             modelBuilder.Entity<TwitterAccount>(entity =>
             {
-                entity.HasIndex(e => e.AccessToken)
-                    .HasName("TwitterAccount_AccessToken_uindex")
+                entity.ToTable("TwitterAccount");
+
+                entity.HasIndex(e => e.AccessTokenSecret, "TwitterAccount_AccessTokenSecret_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.AccessTokenSecret)
-                    .HasName("TwitterAccount_AccessTokenSecret_uindex")
+                entity.HasIndex(e => e.AccessToken, "TwitterAccount_AccessToken_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.ConsumerKey)
-                    .HasName("TwitterAccount_ConsumerKey_uindex")
+                entity.HasIndex(e => e.ConsumerKey, "TwitterAccount_ConsumerKey_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.ConsumerSecret)
-                    .HasName("TwitterAccount_ConsumerSecret_uindex")
+                entity.HasIndex(e => e.ConsumerSecret, "TwitterAccount_ConsumerSecret_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Name)
-                    .HasName("TwitterAccount_Name_uindex")
+                entity.HasIndex(e => e.Name, "TwitterAccount_Name_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Url)
-                    .HasName("TwitterAccount_Url_uindex")
+                entity.HasIndex(e => e.Url, "TwitterAccount_Url_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
@@ -443,8 +441,9 @@ namespace DAL
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasIndex(e => e.Key)
-                    .HasName("User_Key_uindex")
+                entity.ToTable("User");
+
+                entity.HasIndex(e => e.Key, "User_Key_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
@@ -464,22 +463,19 @@ namespace DAL
 
             modelBuilder.Entity<Vacancy>(entity =>
             {
-                entity.HasIndex(e => e.CategoryId)
-                    .HasName("Vacancy_Category_Id_fk");
+                entity.ToTable("Vacancy");
 
-                entity.HasIndex(e => e.Id)
-                    .HasName(" Vacancy_Id_uindex")
+                entity.HasIndex(e => e.Id, " Vacancy_Id_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Image)
-                    .HasName(" Vacancy_Image_uindex")
+                entity.HasIndex(e => e.Image, " Vacancy_Image_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.LanguageId)
-                    .HasName("Vacancy_Language_Id_fk");
+                entity.HasIndex(e => e.CategoryId, "Vacancy_Category_Id_fk");
 
-                entity.HasIndex(e => e.UserId)
-                    .HasName("Vacancy_User_Id_fk");
+                entity.HasIndex(e => e.LanguageId, "Vacancy_Language_Id_fk");
+
+                entity.HasIndex(e => e.UserId, "Vacancy_User_Id_fk");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
@@ -543,18 +539,18 @@ namespace DAL
                     .HasDefaultValueSql("'1'");
 
                 entity.HasOne(d => d.Category)
-                    .WithMany(p => p.Vacancy)
+                    .WithMany(p => p.Vacancies)
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Vacancy_Category_Id_fk");
 
                 entity.HasOne(d => d.Language)
-                    .WithMany(p => p.Vacancy)
+                    .WithMany(p => p.Vacancies)
                     .HasForeignKey(d => d.LanguageId)
                     .HasConstraintName("Vacancy_Language_Id_fk");
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.Vacancy)
+                    .WithMany(p => p.Vacancies)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Vacancy_User_Id_fk");

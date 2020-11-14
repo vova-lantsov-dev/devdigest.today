@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable disable
+
 namespace DAL
 {
     public partial class Category
     {
         public Category()
         {
-            Channel = new HashSet<Channel>();
-            Event = new HashSet<Event>();
-            FacebookPage = new HashSet<FacebookPage>();
-            Publication = new HashSet<Publication>();
-            Vacancy = new HashSet<Vacancy>();
+            Channels = new HashSet<Channel>();
+            Events = new HashSet<Event>();
+            FacebookPages = new HashSet<FacebookPage>();
+            Publications = new HashSet<Publication>();
+            Vacancies = new HashSet<Vacancy>();
         }
 
         public int Id { get; set; }
@@ -19,10 +21,10 @@ namespace DAL
         public string Description { get; set; }
         public string Tags { get; set; }
 
-        public virtual ICollection<Channel> Channel { get; set; }
-        public virtual ICollection<Event> Event { get; set; }
-        public virtual ICollection<FacebookPage> FacebookPage { get; set; }
-        public virtual ICollection<Publication> Publication { get; set; }
-        public virtual ICollection<Vacancy> Vacancy { get; set; }
+        public virtual ICollection<Channel> Channels { get; set; }
+        public virtual ICollection<Event> Events { get; set; }
+        public virtual ICollection<FacebookPage> FacebookPages { get; set; }
+        public virtual ICollection<Publication> Publications { get; set; }
+        public virtual ICollection<Vacancy> Vacancies { get; set; }
     }
 }

@@ -19,6 +19,6 @@ namespace Core.Repositories
             _database = database;
 
         public async Task<User> GetUserBySecretKey(Guid key) =>
-            await _database.User.FirstOrDefaultAsync(o => o.Key == key.ToString());
+            await _database.Users.FirstOrDefaultAsync(o => o.Key == key.ToString());
     }
 }

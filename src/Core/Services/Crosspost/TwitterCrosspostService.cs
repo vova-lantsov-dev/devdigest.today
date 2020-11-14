@@ -6,6 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Tweetinvi;
+using Tweetinvi.Core.Models;
+using Tweetinvi.Parameters;
 
 namespace Core.Services.Crosspost
 {
@@ -20,6 +22,7 @@ namespace Core.Services.Crosspost
         private readonly string _accessTokenSecret;
         private readonly string _name;
         private readonly IReadOnlyCollection<string> _defaultTags;
+        private TwitterClient _client;
 
         private const int MaxTweetLength = 186;
 
@@ -27,7 +30,7 @@ namespace Core.Services.Crosspost
             string consumerKey, 
             string consumerSecret,
             string accessToken,
-            string accessTokenSecret,
+            string userAccessSecret,
             string name,
             IReadOnlyCollection<string> defaultTags,
             ILogger<TwitterCrosspostService> logger)
@@ -37,8 +40,10 @@ namespace Core.Services.Crosspost
             _consumerKey = consumerKey;
             _consumerSecret = consumerSecret;
             _accessToken = accessToken;
-            _accessTokenSecret = accessTokenSecret;
+            _accessTokenSecret = userAccessSecret;
             _name = name;
+            
+            _client = new TwitterClient(consumerKey, consumerSecret, accessToken, userAccessSecret);
         }
 
         public async Task Send(string message, Uri link, [NotNull] IReadOnlyCollection<string> tags)
@@ -53,11 +58,7 @@ namespace Core.Services.Crosspost
             {
                 Semaphore.WaitOne();
 
-                Auth.SetUserCredentials(_consumerKey, _consumerSecret, _accessToken, _accessTokenSecret);
-
-                var publishTweetParameters = Tweet.CreatePublishTweetParameters(text);
-                
-                Tweet.PublishTweet(publishTweetParameters);
+                await _client.Tweets.PublishTweetAsync(new PublishTweetParameters(message));
                 
                 _logger.LogInformation($"Message was sent to Twitter channel `{_name}`: `{text}`");
             }
