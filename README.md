@@ -1,6 +1,5 @@
 ## Developers Digest Website
 
-[![Build status](https://dev.azure.com/devdigest/devdigest.today/_apis/build/status/devdigest%20CI)](https://dev.azure.com/devdigest/devdigest.today/_build/latest?definitionId=1)
 <a href="https://github.com/dncuug/devdigest.today/graphs/contributors" alt="Contributors">
   <img src="https://img.shields.io/github/contributors/dncuug/devdigest.today" />
 </a>
@@ -8,6 +7,7 @@
   <img src="https://img.shields.io/twitter/follow/devdigest_today?style=social&logo=twitter" alt="follow on Twitter">
 </a>
 
-Welcome to Developers Digest website https://devdigest.today 
+Welcome to Developers Digest <a href="https://devdigest.today">website</a>!
 
-Project supported by .NET Core Ukrainian User Group,  Microsoft Azure Ukraine User Group and Xamarin Ukraine User Group.
+Project supported by 
+<a href="https://www.facebook.com/dncuug/">Ukrainian .NET Developer Community</a>,  <a href="https://www.facebook.com/groups/azure.ua/">Microsoft Azure Ukraine User Group</a>, and <a href="https://www.facebook.com/groups/xamarin.ua">Xamarin Ukraine User Group</a>.
