@@ -11,22 +11,29 @@ namespace WebSite
     {
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly Settings _settings;
+        
+        public IConfiguration Configuration { get; }
 
         public Startup(IWebHostEnvironment hostEnvironment, IConfiguration configuration)
         {
             Configuration = configuration;
             
             _hostEnvironment = hostEnvironment;
-            _settings = new Settings();
-
-            configuration.Bind(_settings);
-            _settings.ConnectionString = configuration.GetConnectionString("DefaultConnection");
-            _settings.WebRootPath = hostEnvironment.WebRootPath;
+            _settings = LoadSettings(hostEnvironment, configuration);
 
             Settings.InitializeCurrentInstance(_settings);
         }
 
-        public IConfiguration Configuration { get; }
+        private static Settings LoadSettings(IWebHostEnvironment hostEnvironment, IConfiguration configuration)
+        {
+            var settings = new Settings();
+
+            configuration.Bind(settings);
+            settings.ConnectionString = configuration.GetConnectionString("DefaultConnection");
+            settings.WebRootPath = hostEnvironment.WebRootPath;
+            
+            return settings;
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)

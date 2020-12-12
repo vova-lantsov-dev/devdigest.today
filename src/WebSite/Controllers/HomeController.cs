@@ -134,12 +134,13 @@ namespace WebSite.Controllers
                 Description = publication.Description,
                 Keywords = publication.Keywords,
                 Url = publication.ShareUrl,
-                Image = new Uri(publication.Image)
+                Image = Uri.TryCreate(publication.Image, UriKind.RelativeOrAbsolute, out var uri) ? uri : _settings.FacebookImage
             });
 
             return View("~/Views/Home/Post.cshtml", publication);
         }
-        
+
+
         [Route("platform")]
         public async Task<IActionResult> Platform()
         {
