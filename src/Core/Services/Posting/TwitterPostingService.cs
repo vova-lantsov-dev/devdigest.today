@@ -9,9 +9,9 @@ using Microsoft.Extensions.Logging;
 using Tweetinvi;
 using Tweetinvi.Parameters;
 
-namespace Core.Services.Crosspost
+namespace Core.Services.Posting
 {
-    public class TwitterCrosspostService : ICrossPostService
+    public class TwitterPostingService : IPostingService
     {
         private static readonly Semaphore Semaphore = new(1, 1);
 
@@ -22,14 +22,14 @@ namespace Core.Services.Crosspost
 
         private const int MaxTweetLength = 186;
 
-        public TwitterCrosspostService(
+        public TwitterPostingService(
             string consumerKey, 
             string consumerSecret,
             string accessToken,
             string accessSecret,
             string name,
             IReadOnlyCollection<string> defaultTags,
-            ILogger<TwitterCrosspostService> logger)
+            ILogger<TwitterPostingService> logger)
         {
             _logger = logger;
             _defaultTags = defaultTags;
@@ -61,7 +61,7 @@ namespace Core.Services.Crosspost
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error in {nameof(TwitterCrosspostService)}.{nameof(Send)}");
+                _logger.LogError(ex, $"Error in {nameof(TwitterPostingService)}.{nameof(Send)}");
             }
             finally
             {

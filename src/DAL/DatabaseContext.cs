@@ -32,6 +32,7 @@ namespace DAL
         public virtual DbSet<Language> Languages { get; set; }
         public virtual DbSet<Page> Pages { get; set; }
         public virtual DbSet<Publication> Publications { get; set; }
+        public virtual DbSet<Slack> Slacks { get; set; }
         public virtual DbSet<TwitterAccount> TwitterAccounts { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Vacancy> Vacancies { get; set; }
@@ -40,7 +41,7 @@ namespace DAL
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql(_connectionString, ServerVersion.FromString("5.7.32-mysql"));
+                optionsBuilder.UseMySql(_connectionString, ServerVersion.FromString("5.7.33-mysql"));
             }
         }
 
@@ -364,6 +365,31 @@ namespace DAL
                     .WithMany(p => p.Publications)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("Publication_User_Id_fk");
+            });
+
+            modelBuilder.Entity<Slack>(entity =>
+            {
+                entity.ToTable("Slack");
+
+                entity.HasIndex(e => e.Name, "Slack_Name_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.WebHookUrl, "Slack_WebHookUrl_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnType("varchar(100)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
+
+                entity.Property(e => e.WebHookUrl)
+                    .IsRequired()
+                    .HasColumnType("varchar(512)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
             });
 
             modelBuilder.Entity<TwitterAccount>(entity =>

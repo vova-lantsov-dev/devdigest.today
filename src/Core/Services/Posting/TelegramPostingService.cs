@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 
-namespace Core.Services.Crosspost
+namespace Core.Services.Posting
 {
-    public class TelegramCrosspostService : ICrossPostService
+    public class TelegramPostingService : IPostingService
     {
         private readonly ILogger _logger;
         private readonly string _token;
         private readonly string _name;
 
-        public TelegramCrosspostService(string token, string name, ILogger<TelegramCrosspostService> logger)
+        public TelegramPostingService(string token, string name, ILogger<TelegramPostingService> logger)
         {
             _logger = logger;
             _token = token;
@@ -34,7 +34,6 @@ namespace Core.Services.Crosspost
 
             try
             {
-
                 var bot = new TelegramBotClient(_token);
 
                 await bot.SendTextMessageAsync(_name, sb.ToString());

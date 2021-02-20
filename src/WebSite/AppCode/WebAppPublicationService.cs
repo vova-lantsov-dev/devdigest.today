@@ -8,7 +8,7 @@ using Core;
 using Core.Models;
 using Core.Repositories;
 using Core.Services;
-using Core.Services.Crosspost;
+using Core.Services.Posting;
 using Core.Web;
 using DAL;
 using Microsoft.Extensions.Logging;
@@ -37,7 +37,7 @@ namespace WebSite.AppCode
         private readonly IPublicationService _publicationService;
         private readonly ISocialRepository _socialRepository;
         private readonly ILanguageAnalyzerService _languageAnalyzer;
-        private readonly CrossPostServiceFactory _factory;
+        private readonly PostingServiceFactory _factory;
         private readonly IVacancyService _vacancyService;
         private readonly Settings _settings;
         private readonly ILogger _logger;
@@ -48,7 +48,7 @@ namespace WebSite.AppCode
             ILocalizationService localizationService,
             IPublicationService publicationService,
             ISocialRepository socialRepository,
-            CrossPostServiceFactory factory,
+            PostingServiceFactory factory,
             Settings settings,
             ILanguageAnalyzerService languageAnalyzer, 
             IVacancyService vacancyService,
@@ -110,15 +110,16 @@ namespace WebSite.AppCode
             throw new Exception("Can't save publication to database");
         }
 
-        public async Task<IReadOnlyCollection<ICrossPostService>> GetServices(Publication publication)
+        public async Task<IReadOnlyCollection<IPostingService>> GetServices(Publication publication)
         {
             var categoryId = publication.CategoryId;
             
             var telegramChannels = await _socialRepository.GetTelegramChannels(categoryId);
             var facebookPages = await _socialRepository.GetFacebookPages(categoryId);
             var twitterAccounts = await _socialRepository.GetTwitterAccounts();
+            var slackApplications = await _socialRepository.GetSlackApplications();
 
-            var services = new List<ICrossPostService>();
+            var services = new List<IPostingService>();
             
             foreach (var telegramChannel in telegramChannels)
             {
@@ -143,6 +144,11 @@ namespace WebSite.AppCode
                     twitterAccount.AccessTokenSecret,
                     twitterAccount.Name,
                     await _publicationService.GetCategoryTags(categoryId)));
+            }
+            
+            foreach (var slack in slackApplications)
+            {
+                services.Add(_factory.CreateSlackService(slack.WebHookUrl));
             }
 
             return services.ToImmutableList();

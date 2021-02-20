@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using X.Web.Facebook;
 
-namespace Core.Services.Crosspost
+namespace Core.Services.Posting
 {
-    public class FacebookCrosspostService : ICrossPostService
+    public class FacebookPostingService : IPostingService
     {
         private readonly ILogger _logger;
         private readonly string _token;
         private readonly string _name;
 
-        public FacebookCrosspostService(string token, string name, ILogger<FacebookCrosspostService> logger)
+        public FacebookPostingService(string token, string name, ILogger<FacebookPostingService> logger)
         {
             _logger = logger;
             _token = token;

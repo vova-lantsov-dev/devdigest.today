@@ -3,13 +3,12 @@ using System.Text.Unicode;
 using Core;
 using Core.Repositories;
 using Core.Services;
-using Core.Services.Crosspost;
+using Core.Services.Posting;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.WebEncoders;
-using MySqlConnector;
 using WebSite.AppCode;
 
 namespace WebSite
@@ -39,7 +38,7 @@ namespace WebSite
 
                 .AddSingleton(_ => _settings)
 
-                .AddSingleton<CrossPostServiceFactory>()
+                .AddSingleton<PostingServiceFactory>()
 
                 .AddScoped<ILocalizationService, LocalizationService>()
                 .AddScoped<IPublicationService, PublicationService>()

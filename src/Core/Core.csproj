@@ -9,6 +9,7 @@
     <PackageReference Include="RestSharp" Version="106.11.7" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="5.0.0" />
     <PackageReference Include="Telegram.Bot" Version="15.7.1" />
+    <PackageReference Include="Slack.Webhooks" Version="1.1.5" />
     <PackageReference Include="TweetinviAPI" Version="5.0.2" />
     <PackageReference Include="X.PagedList" Version="8.0.7" />
     <PackageReference Include="X.Text" Version="2.0.0" />

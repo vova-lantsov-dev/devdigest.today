@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Core.Services
 {
-    public interface ICrossPostService
+    public interface IPostingService
     {
         /// <summary>
         /// 

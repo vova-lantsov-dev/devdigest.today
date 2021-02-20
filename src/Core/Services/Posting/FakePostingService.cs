@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace Core.Services.Crosspost
+namespace Core.Services.Posting
 {
-    public class FakeCrosspostService : ICrossPostService
+    public class FakePostingService : IPostingService
     {
         private readonly ILogger _logger;
 
-        public FakeCrosspostService(ILogger<FakeCrosspostService> logger) =>
+        public FakePostingService(ILogger<FakePostingService> logger) =>
             _logger = logger;
 
         public async Task Send(string message, Uri link, IReadOnlyCollection<string> tags)
