@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Slack.Webhooks;
+using Slack.Webhooks.Blocks;
+using Slack.Webhooks.Elements;
 
 namespace Core.Services.Posting
 {
@@ -25,8 +26,30 @@ namespace Core.Services.Posting
                 var slackMessage = new SlackMessage
                 {
                     Channel = "#general",
-                    Text = $"{message}\n {link}",
-                    IconEmoji = Emoji.Newspaper
+                    IconEmoji = Emoji.Newspaper,
+                    Blocks = new List<Block>
+                    {
+                        new Header()
+                        {
+                            Text = new TextObject($"Новости")
+                        },
+                        new Section
+                        {
+                            Text = new TextObject($":newspaper: {message}")
+                            {
+                                Emoji = true,
+                                Type = TextObject.TextType.PlainText
+                            }
+                        },
+                        new Divider(),
+                        new Section
+                        {
+                            Text = new TextObject($"Узнать подробности: <{link}>")
+                            {
+                                Type = TextObject.TextType.Markdown, Verbatim = false
+                            }
+                        }
+                    },
                 };
 
                 await _client.PostAsync(slackMessage);
