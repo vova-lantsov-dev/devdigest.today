@@ -7,7 +7,7 @@ namespace Core.Web.Player
 {
     public class YouTubePlayer : IPlayer
     {
-        public async Task<string> GetEmbeddedPlayerUrl(Uri uri)
+        public Task<string> GetEmbeddedPlayerUrl(Uri uri)
         {
             var query = HttpUtility.ParseQueryString(uri.Query);
 
@@ -15,7 +15,7 @@ namespace Core.Web.Player
                 ? query["v"]
                 : uri.Segments.Last();
 
-            return $"https://www.youtube.com/embed/{videoId}?rel=0&amp;showinfo=0";
+            return Task.FromResult($"https://www.youtube.com/embed/{videoId}?rel=0&amp;showinfo=0");
         }
     }
 }

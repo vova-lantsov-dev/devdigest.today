@@ -1,13 +1,8 @@
 using System;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Core;
-using Core.Models;
 using Core.Repositories;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using WebSite.ViewModels;
 
 namespace WebSite.Controllers

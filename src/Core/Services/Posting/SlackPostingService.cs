@@ -27,6 +27,7 @@ namespace Core.Services.Posting
                 {
                     Channel = "#general",
                     IconEmoji = Emoji.Newspaper,
+                    Text = message,
                     Blocks = new List<Block>
                     {
                         new Header()

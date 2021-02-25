@@ -12,11 +12,13 @@ namespace Core.Services.Posting
         public FakePostingService(ILogger<FakePostingService> logger) =>
             _logger = logger;
 
-        public async Task Send(string message, Uri link, IReadOnlyCollection<string> tags)
+        public Task Send(string message, Uri link, IReadOnlyCollection<string> tags)
         {
             _logger.LogInformation($"{message} {link}");
             
             Console.WriteLine($"{message} {link}");
+
+            return Task.CompletedTask;
         }
     }
 }
