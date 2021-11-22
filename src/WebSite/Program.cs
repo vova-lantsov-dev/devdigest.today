@@ -19,7 +19,6 @@ builder.Logging
 builder.Configuration
     .AddJsonFile($"appsettings.json", false, true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true)
-    .AddJsonFile($"/Users/andrew/pub/dd.settings.json", false, true)
     .AddEnvironmentVariables();
 
 var settings = LoadSettings(builder.Environment, builder.Configuration);
