@@ -5,45 +5,44 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 
-namespace Core.Services.Posting
+namespace Core.Services.Posting;
+
+public class TelegramPostingService : IPostingService
 {
-    public class TelegramPostingService : IPostingService
+    private readonly ILogger _logger;
+    private readonly string _token;
+    private readonly string _name;
+
+    public TelegramPostingService(string token, string name, ILogger<TelegramPostingService> logger)
     {
-        private readonly ILogger _logger;
-        private readonly string _token;
-        private readonly string _name;
+        _logger = logger;
+        _token = token;
+        _name = name;
+    }
 
-        public TelegramPostingService(string token, string name, ILogger<TelegramPostingService> logger)
+    public async Task Send(string message, Uri link, IReadOnlyCollection<string> tags)
+    {
+        var sb = new StringBuilder();
+
+        sb.Append(message);
+        sb.Append(Environment.NewLine);
+        sb.Append(Environment.NewLine);
+        sb.Append(link);
+        sb.Append(Environment.NewLine);
+        sb.Append(Environment.NewLine);
+        sb.Append(string.Join(" ", tags));
+
+        try
         {
-            _logger = logger;
-            _token = token;
-            _name = name;
-        }
+            var bot = new TelegramBotClient(_token);
 
-        public async Task Send(string message, Uri link, IReadOnlyCollection<string> tags)
-        {
-            var sb = new StringBuilder();
-
-            sb.Append(message);
-            sb.Append(Environment.NewLine);
-            sb.Append(Environment.NewLine);
-            sb.Append(link);
-            sb.Append(Environment.NewLine);
-            sb.Append(Environment.NewLine);
-            sb.Append(string.Join(" ", tags));
-
-            try
-            {
-                var bot = new TelegramBotClient(_token);
-
-                await bot.SendTextMessageAsync(_name, sb.ToString());
+            await bot.SendTextMessageAsync(_name, sb.ToString());
                 
-                _logger.LogInformation($"Message was sent to Telegram channel `{_name}`: `{sb}`");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error during send message to Telegram: `{sb}`");
-            }
+            _logger.LogInformation($"Message was sent to Telegram channel `{_name}`: `{sb}`");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error during send message to Telegram: `{sb}`");
         }
     }
 }

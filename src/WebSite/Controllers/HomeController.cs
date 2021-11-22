@@ -7,174 +7,173 @@ using Core;
 using Core.Models;
 using WebSite.ViewModels;
 
-namespace WebSite.Controllers
+namespace WebSite.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly IWebAppPublicationService _service;
+    private readonly Settings _settings;
+
+    public HomeController(IWebAppPublicationService service, Settings settings) 
     {
-        private readonly IWebAppPublicationService _service;
-        private readonly Settings _settings;
+        _settings = settings;
+        _service = service;
+    }
 
-        public HomeController(IWebAppPublicationService service, Settings settings) 
+    public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+    {
+        ViewBag.Vacancies = await _service.LoadHotVacancies();
+
+        await base.OnActionExecutionAsync(context, next);
+    }
+
+    public async Task<IActionResult> Index()
+    {
+        var model = await _service.GetHomePageInformation();
+
+        SetPageMetaData(new PageMetaData
         {
-            _settings = settings;
-            _service = service;
-        }
-
-        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
-        {
-            ViewBag.Vacancies = await _service.LoadHotVacancies();
-
-            await base.OnActionExecutionAsync(context, next);
-        }
-
-        public async Task<IActionResult> Index()
-        {
-            var model = await _service.GetHomePageInformation();
-
-            SetPageMetaData(new PageMetaData
-            {
-                Title = "Welcome!",
-                Url = _settings.WebSiteUrl
-            });
+            Title = "Welcome!",
+            Url = _settings.WebSiteUrl
+        });
             
-            return View(model);
-        }
+        return View(model);
+    }
 
-        [Route("covid")]
-        public async Task<IActionResult> Covid()
+    [Route("covid")]
+    public async Task<IActionResult> Covid()
+    {
+        var model = await _service.FindPublications("covid", "coronavirus");
+
+        SetPageMetaData(new PageMetaData
         {
-            var model = await _service.FindPublications("covid", "coronavirus");
+            Title = "COVID-19  – news and updates",
+            Description = "Coronavirus disease 2019 (COVID-19) is an infectious disease caused by severe acute " +
+                          "respiratory syndrome coronavirus 2 (SARS-CoV-2). A lot of pandemic related news and " +
+                          "events are happening in IT. We have gathered here the news and publications that " +
+                          "directly relate to  coronavirus COVID-19. ",
+            Url = new Uri($"{_settings.WebSiteUrl}covid"),
+            Image = new Uri("https://127fc3e2e552.blob.core.windows.net/devdigest-images/white-red-and-blue-flower-petals-3993212.jpg"),
+            Keywords = "covid, coronavirus, covid-19"
+        });
 
-            SetPageMetaData(new PageMetaData
-            {
-                Title = "COVID-19  – news and updates",
-                Description = "Coronavirus disease 2019 (COVID-19) is an infectious disease caused by severe acute " +
-                              "respiratory syndrome coronavirus 2 (SARS-CoV-2). A lot of pandemic related news and " +
-                              "events are happening in IT. We have gathered here the news and publications that " +
-                              "directly relate to  coronavirus COVID-19. ",
-                Url = new Uri($"{_settings.WebSiteUrl}covid"),
-                Image = new Uri("https://127fc3e2e552.blob.core.windows.net/devdigest-images/white-red-and-blue-flower-petals-3993212.jpg"),
-                Keywords = "covid, coronavirus, covid-19"
-            });
+        return View("~/Views/Home/Covid.cshtml", model);
+    }
 
-            return View("~/Views/Home/Covid.cshtml", model);
-        }
-
-        [Route("page/{page}")]
-        public async Task<IActionResult> Page(int? categoryId = null, int page = 1, string language = Core.Language.English)
-        {
-            var publications = await _service.GetPublications(categoryId, page);
+    [Route("page/{page}")]
+    public async Task<IActionResult> Page(int? categoryId = null, int page = 1, string language = Core.Language.English)
+    {
+        var publications = await _service.GetPublications(categoryId, page);
             
-            SetPageMetaData(new PageMetaData
-            {
-                Title = $"Page {page}",
-                Url = new Uri($"{_settings.WebSiteUrl}page/{page}")
-            });
-
-            return View("~/Views/Home/Page.cshtml", new PublicationListViewModel
-            {
-                List = publications,
-                CategoryId = categoryId
-            });
-        }
-
-        [Route("vacancies/{page}")]
-        public async Task<IActionResult> Vacancies(int page = 1, int? categoryId = null)
+        SetPageMetaData(new PageMetaData
         {
-            SetPageMetaData(new PageMetaData
-            {
-                Title = "Job",
-                Url = new Uri($"{_settings.WebSiteUrl}vacancies/{page}")
-            });
+            Title = $"Page {page}",
+            Url = new Uri($"{_settings.WebSiteUrl}page/{page}")
+        });
 
-            var model = new VacancyListViewModel
-            {
-                List = await _service.GetVacancies(page),
-                CategoryId = categoryId
-            };
-
-            return View("~/Views/Home/Vacancies.cshtml", model);
-        }
-
-        [Route("vacancy/{id}")]
-        public async Task<IActionResult> Vacancy(int id)
+        return View("~/Views/Home/Page.cshtml", new PublicationListViewModel
         {
-            var model = await _service.GetVacancy(id);
+            List = publications,
+            CategoryId = categoryId
+        });
+    }
+
+    [Route("vacancies/{page}")]
+    public async Task<IActionResult> Vacancies(int page = 1, int? categoryId = null)
+    {
+        SetPageMetaData(new PageMetaData
+        {
+            Title = "Job",
+            Url = new Uri($"{_settings.WebSiteUrl}vacancies/{page}")
+        });
+
+        var model = new VacancyListViewModel
+        {
+            List = await _service.GetVacancies(page),
+            CategoryId = categoryId
+        };
+
+        return View("~/Views/Home/Vacancies.cshtml", model);
+    }
+
+    [Route("vacancy/{id}")]
+    public async Task<IActionResult> Vacancy(int id)
+    {
+        var model = await _service.GetVacancy(id);
             
-            if (model == null)
-            {
-                return NotFound();
-            }
-
-            SetPageMetaData(new PageMetaData
-            {
-                Title = model.Title,
-                Url = model.ShareUrl,
-                Image = model.Image,
-                Keywords = model.Description,
-                Description = model.Description
-            });
-            
-            return View("~/Views/Home/Vacancy.cshtml", model);
-        }
-
-        [Route("post/{id}")]
-        public async Task<IActionResult> Post(int id)
+        if (model == null)
         {
-            var publication = await _service.GetPublication(id);
-            
-            if (publication == null)
-            {
-                return NotFound();
-            }
-
-            SetPageMetaData(new PageMetaData
-            {
-                Title = publication.Title,
-                Description = publication.Description,
-                Keywords = publication.Keywords,
-                Url = publication.ShareUrl,
-                Image = Uri.TryCreate(publication.Image, UriKind.RelativeOrAbsolute, out var uri) ? uri : _settings.FacebookImage
-            });
-
-            return View("~/Views/Home/Post.cshtml", publication);
+            return NotFound();
         }
 
-
-        [Route("platform")]
-        public async Task<IActionResult> Platform()
+        SetPageMetaData(new PageMetaData
         {
-            var model = await _service.GetPlatformInformation();
+            Title = model.Title,
+            Url = model.ShareUrl,
+            Image = model.Image,
+            Keywords = model.Description,
+            Description = model.Description
+        });
+            
+        return View("~/Views/Home/Vacancy.cshtml", model);
+    }
 
-            SetPageMetaData(new PageMetaData
-            {
-                Title = "Platform",
-                Description = "This project is an information space for people who live in the modern " +
-                              "world of IT technologies. For developers, analysts, architects, and engineers.",
-                Url = new Uri($"{_settings.WebSiteUrl}platform"),
-            });
-
-            return View("~/Views/Home/Platform.cshtml", model);
+    [Route("post/{id}")]
+    public async Task<IActionResult> Post(int id)
+    {
+        var publication = await _service.GetPublication(id);
+            
+        if (publication == null)
+        {
+            return NotFound();
         }
+
+        SetPageMetaData(new PageMetaData
+        {
+            Title = publication.Title,
+            Description = publication.Description,
+            Keywords = publication.Keywords,
+            Url = publication.ShareUrl,
+            Image = Uri.TryCreate(publication.Image, UriKind.RelativeOrAbsolute, out var uri) ? uri : _settings.FacebookImage
+        });
+
+        return View("~/Views/Home/Post.cshtml", publication);
+    }
+
+
+    [Route("platform")]
+    public async Task<IActionResult> Platform()
+    {
+        var model = await _service.GetPlatformInformation();
+
+        SetPageMetaData(new PageMetaData
+        {
+            Title = "Platform",
+            Description = "This project is an information space for people who live in the modern " +
+                          "world of IT technologies. For developers, analysts, architects, and engineers.",
+            Url = new Uri($"{_settings.WebSiteUrl}platform"),
+        });
+
+        return View("~/Views/Home/Platform.cshtml", model);
+    }
         
-        private void SetPageMetaData(PageMetaData meta)
+    private void SetPageMetaData(PageMetaData meta)
+    {
+        if (string.IsNullOrWhiteSpace(meta.Description))
         {
-            if (string.IsNullOrWhiteSpace(meta.Description))
-            {
-                meta.Description = _settings.DefaultDescription;
-            }
-            
-            if (string.IsNullOrWhiteSpace(meta.Keywords))
-            {
-                meta.Keywords = _settings.DefaultKeywords;
-            }
-            
-            if (meta.Image == null)
-            {
-                meta.Image = _settings.FacebookImage;
-            }
-
-            ViewBag.PageMetaData = meta;
+            meta.Description = _settings.DefaultDescription;
         }
+            
+        if (string.IsNullOrWhiteSpace(meta.Keywords))
+        {
+            meta.Keywords = _settings.DefaultKeywords;
+        }
+            
+        if (meta.Image == null)
+        {
+            meta.Image = _settings.FacebookImage;
+        }
+
+        ViewBag.PageMetaData = meta;
     }
 }

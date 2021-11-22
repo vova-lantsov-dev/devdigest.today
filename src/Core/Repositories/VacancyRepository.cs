@@ -4,57 +4,56 @@ using System.Threading.Tasks;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 
-namespace Core.Repositories
-{
-    public interface IVacancyRepository
-    {   Task<IReadOnlyCollection<Vacancy>> GetVacancies(int page, int size);
-        Task<int> GetVacanciesCount();
-        Task<IReadOnlyCollection<Vacancy>> GetHotVacancies(int size);
-        Task<Vacancy> GetVacancy(int id);
-        Task IncreaseVacancyViewCount(int id);
-    }
+namespace Core.Repositories;
+
+public interface IVacancyRepository
+{   Task<IReadOnlyCollection<Vacancy>> GetVacancies(int page, int size);
+    Task<int> GetVacanciesCount();
+    Task<IReadOnlyCollection<Vacancy>> GetHotVacancies(int size);
+    Task<Vacancy> GetVacancy(int id);
+    Task IncreaseVacancyViewCount(int id);
+}
     
-    public class VacancyRepository : IVacancyRepository 
+public class VacancyRepository : IVacancyRepository 
+{
+    private readonly DatabaseContext _database;
+
+    public VacancyRepository(DatabaseContext database) => _database = database;
+
+    public async Task<IReadOnlyCollection<Vacancy>> GetVacancies(int page, int size) =>
+        await _database
+            .Vacancies
+            .Include(o => o.Category)
+            .Where(o => o.Active == 1 && o.LanguageId == Language.EnglishId)
+            .OrderByDescending(o => o.Id)
+            .Skip((page - 1) * size)
+            .Take(size).ToListAsync();
+
+    public async Task<int> GetVacanciesCount() =>
+        await _database.Vacancies.Where(o => o.Active == 1).CountAsync();
+
+    public async Task<IReadOnlyCollection<Vacancy>> GetHotVacancies(int size) =>
+        await _database
+            .Vacancies
+            .Include(o => o.Category)
+            .Where(o => o.Active == 1 && o.LanguageId == Language.EnglishId)
+            .OrderByDescending(o => o.Id)
+            .Take(size)
+            .ToListAsync();
+
+    public async Task<Vacancy> GetVacancy(int id) => 
+        await _database.Vacancies.SingleOrDefaultAsync(o => o.Id == id);
+
+    public async Task IncreaseVacancyViewCount(int id)
     {
-        private readonly DatabaseContext _database;
-
-        public VacancyRepository(DatabaseContext database) => _database = database;
-
-        public async Task<IReadOnlyCollection<Vacancy>> GetVacancies(int page, int size) =>
-            await _database
-                .Vacancies
-                .Include(o => o.Category)
-                .Where(o => o.Active == 1 && o.LanguageId == Language.EnglishId)
-                .OrderByDescending(o => o.Id)
-                .Skip((page - 1) * size)
-                .Take(size).ToListAsync();
-
-        public async Task<int> GetVacanciesCount() =>
-            await _database.Vacancies.Where(o => o.Active == 1).CountAsync();
-
-        public async Task<IReadOnlyCollection<Vacancy>> GetHotVacancies(int size) =>
-            await _database
-                .Vacancies
-                .Include(o => o.Category)
-                .Where(o => o.Active == 1 && o.LanguageId == Language.EnglishId)
-                .OrderByDescending(o => o.Id)
-                .Take(size)
-                .ToListAsync();
-
-        public async Task<Vacancy> GetVacancy(int id) => 
-            await _database.Vacancies.SingleOrDefaultAsync(o => o.Id == id);
-
-        public async Task IncreaseVacancyViewCount(int id)
+            
+        var vacancy = await _database.Vacancies.SingleOrDefaultAsync(o => o.Id == id);
+            
+        if (vacancy != null)
         {
-            
-            var vacancy = await _database.Vacancies.SingleOrDefaultAsync(o => o.Id == id);
-            
-            if (vacancy != null)
-            {
-                vacancy.Views++;
+            vacancy.Views++;
                 
-                await _database.SaveChangesAsync();
-            }
+            await _database.SaveChangesAsync();
         }
     }
 }

@@ -11,62 +11,61 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.WebEncoders;
 using WebSite.AppCode;
 
-namespace WebSite
+namespace WebSite;
+
+public class Registry
 {
-    public class Registry
+    private readonly Settings _settings;
+
+    public Registry(string contentRootPath, Settings settings)
     {
-        private readonly Settings _settings;
+        _settings = settings;
+    }
 
-        public Registry(string contentRootPath, Settings settings)
-        {
-            _settings = settings;
-        }
+    public IServiceCollection Register(IServiceCollection services)
+    {
+        services
+            .AddApplicationInsightsTelemetry()
 
-        public IServiceCollection Register(IServiceCollection services)
-        {
-            services
-                .AddApplicationInsightsTelemetry()
+            .AddMemoryCache()
 
-                .AddMemoryCache()
+            .AddEntityFrameworkMySql()
 
-                .AddEntityFrameworkMySql()
+            .AddDbContext<DatabaseContext>(options =>
+            {
+                options.UseMySql(_settings.ConnectionString, ServerVersion.Parse("5.7.32-mysql"));
+            })
 
-                .AddDbContext<DatabaseContext>(options =>
-                {
-                    options.UseMySql(_settings.ConnectionString, ServerVersion.FromString("5.7.32-mysql"));
-                })
+            .AddSingleton(_ => _settings)
 
-                .AddSingleton(_ => _settings)
+            .AddSingleton<PostingServiceFactory>()
 
-                .AddSingleton<PostingServiceFactory>()
+            .AddScoped<ILocalizationService, LocalizationService>()
+            .AddScoped<IPublicationService, PublicationService>()
+            .AddScoped<IUserService, UserService>()
+            .AddScoped<IVacancyService, VacancyService>()
+            .AddScoped<IPublicationRepository, PublicationRepository>()
+            .AddScoped<ISettingsRepository, SettingsRepository>()
+            .AddScoped<ISocialRepository, SocialRepository>()
+            .AddScoped<IPageRepository, PageRepository>()
+            .AddScoped<IUserRepository, UserRepository>()
+            .AddScoped<IVacancyRepository, VacancyRepository>()
+            .AddScoped<IWebAppPublicationService, WebAppPublicationService>()
 
-                .AddScoped<ILocalizationService, LocalizationService>()
-                .AddScoped<IPublicationService, PublicationService>()
-                .AddScoped<IUserService, UserService>()
-                .AddScoped<IVacancyService, VacancyService>()
-                .AddScoped<IPublicationRepository, PublicationRepository>()
-                .AddScoped<ISettingsRepository, SettingsRepository>()
-                .AddScoped<ISocialRepository, SocialRepository>()
-                .AddScoped<IPageRepository, PageRepository>()
-                .AddScoped<IUserRepository, UserRepository>()
-                .AddScoped<IVacancyRepository, VacancyRepository>()
-                .AddScoped<IWebAppPublicationService, WebAppPublicationService>()
+            .AddScoped<ILanguageAnalyzerService>(provider =>
+            {
+                var logger = provider.GetService<ILogger<LanguageAnalyzerService>>();
 
-                .AddScoped<ILanguageAnalyzerService>(provider =>
-                {
-                    var logger = provider.GetService<ILogger<LanguageAnalyzerService>>();
-
-                    return new LanguageAnalyzerService(_settings.CognitiveServicesTextAnalyticsKey, logger);
-                })
+                return new LanguageAnalyzerService(_settings.CognitiveServicesTextAnalyticsKey, logger);
+            })
                 
-                .AddApplicationInsightsTelemetry(_settings.ApplicationInsights.InstrumentationKey)
+            .AddApplicationInsightsTelemetry(_settings.ApplicationInsights.InstrumentationKey)
 
-                .Configure<WebEncoderOptions>(options =>
-                {
-                    options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
-                });
+            .Configure<WebEncoderOptions>(options =>
+            {
+                options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
+            });
 
-            return services;
-        }
+        return services;
     }
 }

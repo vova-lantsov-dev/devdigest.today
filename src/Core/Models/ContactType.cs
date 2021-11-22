@@ -1,14 +1,13 @@
-namespace Core.Models
+namespace Core.Models;
+
+public enum ContactType
 {
-    public enum ContactType
-    {
-        Facebook,
-        LinkedIn,
-        WebSite,
-        Email,
-        Phone,
-        Skype,
-        Default,
-        Telegram
-    }
+    Facebook,
+    LinkedIn,
+    WebSite,
+    Email,
+    Phone,
+    Skype,
+    Default,
+    Telegram
 }
