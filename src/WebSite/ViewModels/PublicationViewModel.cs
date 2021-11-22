@@ -1,6 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using DAL;
+using X.Text;
 
 namespace WebSite.ViewModels;
 
@@ -20,17 +19,17 @@ public record PublicationViewModel
     /// <summary>
     /// Url from which website redirect to original url 
     /// </summary>
-    public Uri RedirectUrl => new($"{_websiteUrl}pub/{Id}");
-    public string Keywords => X.Text.TextHelper.GetKeywords(Description, 10);
+    public Uri RedirectUrl => new($"{_websiteUrl}goto/{Id}");
+    public string Keywords => TextHelper.GetKeywords(Description, 10);
     public CategoryViewModel Category { get; set; }
     public int ViewsCount { get; set; }
         
     private readonly Uri _websiteUrl;
 
     public PublicationViewModel(
-        DAL.Publication publication, 
+        Publication publication, 
         Uri websiteUrl, 
-        IReadOnlyCollection<DAL.Category> categories = null)
+        IReadOnlyCollection<Category> categories = null)
     {
         _websiteUrl = websiteUrl;
 
@@ -63,5 +62,5 @@ public record PublicationViewModel
         
     public override string ToString() => $"{Title}\r\n{GetShortDescription()}\r\n{Url}";
 
-    public string GetShortDescription() => X.Text.TextHelper.Substring(Description, 256, "...");
+    public string GetShortDescription() => TextHelper.Substring(Description, 256, "...");
 }

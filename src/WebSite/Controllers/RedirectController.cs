@@ -1,24 +1,21 @@
-using System;
 using System.Net;
-using System.Threading.Tasks;
 using Core;
 using Core.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using WebSite.ViewModels;
 
 namespace WebSite.Controllers;
 
-public class PublicationController : Controller
+public class RedirectController : Controller
 {
     private readonly ILogger _logger;
     private readonly Settings _settings;
     private readonly IPublicationRepository _publicationRepository;
     
-    public PublicationController(
+    public RedirectController(
         IPublicationRepository publicationRepository, 
         Settings settings, 
-        ILogger<PublicationController> logger)
+        ILogger<RedirectController> logger)
     {
         _publicationRepository = publicationRepository;
         _logger = logger;
@@ -26,6 +23,7 @@ public class PublicationController : Controller
     }
 
     [Route("pub/{id}")]
+    [Route("goto/{id}")]
     public async Task<IActionResult> Index(int id)
     {
         var publication = await _publicationRepository.GetPublication(id);
@@ -35,14 +33,13 @@ public class PublicationController : Controller
             return NotFound();
         }
 
-        var model = new PageRedirectModel
+        var model = new RedirectModel
         {
             Title = publication.Title,
             Description = publication.Description,
             Url = new Uri(publication.Link),
             Image = _settings.FacebookImage,
-            Keywords = _settings.DefaultDescription,
-            Content = publication.Content
+            Keywords = _settings.DefaultDescription
         };
 
         Response.StatusCode = (int)HttpStatusCode.PermanentRedirect;
