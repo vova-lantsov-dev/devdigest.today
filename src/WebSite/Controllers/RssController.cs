@@ -4,11 +4,11 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Core;
-using Core.Managers;
-using Core.ViewModels;
+using Core.Services;
 using DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using WebSite.ViewModels;
 using X.Web.RSS;
 using X.Web.RSS.Enumerators;
 using X.Web.RSS.Structure;
@@ -18,14 +18,14 @@ namespace WebSite.Controllers
 {
     public class RssController : Controller
     {
-        private readonly IPublicationManager _publicationManager;
+        private readonly IPublicationService _publicationService;
         private readonly IMemoryCache _cache;
         private readonly Settings _settings;
 
-        public RssController(IMemoryCache cache, IPublicationManager publicationManager, Settings settings)
+        public RssController(IMemoryCache cache, IPublicationService publicationService, Settings settings)
         {
             _cache = cache;
-            _publicationManager = publicationManager;
+            _publicationService = publicationService;
             _settings = settings;
         }
 
@@ -39,7 +39,7 @@ namespace WebSite.Controllers
             if (string.IsNullOrEmpty(xml))
             {
                 int? categoryId = null;
-                var pagedResult = await _publicationManager.GetPublications(categoryId, 1, 50);
+                var pagedResult = await _publicationService.GetPublications(categoryId, 1, 50);
                 var lastUpdateDate = pagedResult.Select(o => o.DateTime).DefaultIfEmpty().Max();
 
                 var rss = new RssDocument
@@ -96,7 +96,7 @@ namespace WebSite.Controllers
                 Link = new RssUrl(p.ShareUrl),
                 PubDate = p.DateTime,
                 Title = p.Title,
-                Guid = new RssGuid { IsPermaLink = true, Value = p.ShareUrl },
+                Guid = new RssGuid { IsPermaLink = true, Value = p.ShareUrl.ToString() },
                 Source = new RssSource { Url = new RssUrl(p.ShareUrl) }
             };
         }

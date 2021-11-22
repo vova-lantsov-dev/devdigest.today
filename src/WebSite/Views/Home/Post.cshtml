@@ -1,16 +1,5 @@
 ﻿@using Core.Models
-@model Core.ViewModels.PublicationViewModel
-
-@section head {
-    <meta property="og:title" content="@Model.Title" />
-    <meta property="og:type" content="article" />
-    <meta property="og:url" content="@Model.ShareUrl" />
-    <meta property="og:image" content="@Model.Image" />
-    <meta property="og:description" content="@Model.Description" />
-
-    <meta name="keywords" content="@Model.Keywords" />
-    <meta name="description" content="@Model.Description" />
-}
+@model WebSite.ViewModels.PublicationViewModel
 
 <h1>@Model.Title</h1>
 
@@ -18,7 +7,7 @@
     @Model.DateTime.ToString("MMMM dd, yyyy")
 </div>
 <div class="views" title="Views count">
-    <i class="glyphicon glyphicon-stats"></i>&nbsp; @Model.ViewsCount
+    <i class="glyphicon glyphicon-stats"></i>&nbsp;@Model.ViewsCount
 </div>
 
 <div class="clear"></div>
@@ -39,7 +28,6 @@
 
 @if (!string.IsNullOrEmpty(Model.EmbededPlayerCode))
 {
-
     <div class="row">
         <div class="col-md-12 video">
             @await Html.PartialAsync("_EmbededPlayer", Model.EmbededPlayerCode)
@@ -60,14 +48,6 @@
     </article>
 </div>
 
-<!-- <div class="row">
-    <section class="col-md-12">
-        <h3>View Also</h3>
-        <br />
-        @await Html.PartialAsync("_SmartContent")
-    </section>
-</div> -->
-
 <div class="row share">
     <div class="col-md-6">
         @await Html.PartialAsync("_SocialButtons", new Link(Model.Title, Model.ShareUrl))
@@ -82,7 +62,5 @@
 
 @await Html.PartialAsync("_PostStructuredData", Model)
 
-<section class="col-md-12 comments">
-    <div class="fb-comments" data-href="@Model.ShareUrl" data-width="100%" data-numposts="10"></div>
-</section>
+@await Html.PartialAsync("_CommentModule", Model.ShareUrl)
 

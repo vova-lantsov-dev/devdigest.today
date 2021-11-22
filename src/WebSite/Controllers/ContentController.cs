@@ -1,70 +1,44 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Core;
-using Core.Managers;
-using Core.Managers.Crosspost;
-using Core.ViewModels;
-using Core.Web;
-using Microsoft.AspNetCore.Hosting;
+using Core.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
+using WebSite.ViewModels;
 
 namespace WebSite.Controllers
 {
     public class ContentController : Controller
     {
-        private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IPageRepository _pageRepository;
+        private readonly Settings _settings;
         
-        public ContentController(
-            IMemoryCache cache, 
-            IWebHostEnvironment hostingEnvironment)
+        public ContentController(IPageRepository pageRepository, Settings settings)
         {
-            _hostingEnvironment = hostingEnvironment;
+            _pageRepository = pageRepository;
+            _settings = settings;
         }
 
         [Route("content/{name}")]
         public async Task<IActionResult> Index(string name)
         {
-            var html = await GetFileContent(name);
-
-            if (string.IsNullOrWhiteSpace(html))
+            var page = await _pageRepository.GetPage(name);
+            
+            if (page == null)
                 return NotFound();
 
-            ViewData["Title"] = string.Join(" ", name.Split('-').Select(UppercaseFirstLetter));
-
-            return View((object) html);
-        }
-
-        private static string UppercaseFirstLetter(string text)
-        {
-            if (string.IsNullOrWhiteSpace(text))
-                return string.Empty;
-
-            if (text.Length == 1)
-                return text.ToUpper();
-
-            return text.First().ToString().ToUpper() + text.Substring(1);
-        }
-
-        private async Task<string> GetFileContent(string name)
-        {
-            name = name.Replace("-", "");
+            var model = new ContentPageViewModel
+            {
+                Title = page.Title,
+                Description = page.Description,
+                Url = new Uri($"{_settings.WebSiteUrl}content/{page.Name}"),
+                Image = _settings.FacebookImage,
+                Keywords = _settings.DefaultDescription,
+                Content = page.Content
+            };
             
-            var path = Directory
-                .GetFiles(Path.Combine(_hostingEnvironment.WebRootPath, "content"))
-                .SingleOrDefault(o => string.Equals(
-                    Path.GetFileNameWithoutExtension(o).Trim(),
-                    name.Trim(),
-                    StringComparison.InvariantCultureIgnoreCase));
+            ViewBag.PageMetaData = model;
 
-            if (string.IsNullOrWhiteSpace(path) || !System.IO.File.Exists(path))
-                return null;
-            
-            return await System.IO.File.ReadAllTextAsync(path);
+            return View(model);
         }
 
         [Route("content/telegram")]

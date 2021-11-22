@@ -1,50 +1,64 @@
-﻿@using X.PagedList;
-@using X.PagedList.Mvc.Core;
-@model IPagedList<Core.ViewModels.PublicationViewModel>
-@{
-    ViewData["Title"] = "Welcome!";
-}
+﻿@using X.PagedList.Mvc.Core;
+@model WebSite.ViewModels.HomePageViewModel
 
 @section head {
-
-    <meta property="og:title" content="@Core.Settings.Current.WebSiteTitle" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="@Core.Settings.Current.WebSiteUrl" />
-    <meta property="og:image" content="@Core.Settings.Current.FacebookImage" />
-    <meta property="og:description" content="@Core.Settings.Current.DefaultDescription" />
-
-    <meta name="keywords" content="@Core.Settings.Current.DefaultKeywords" />
-    <meta name="description" content="@Core.Settings.Current.DefaultDescription" />
+    <link rel="stylesheet" href="/css/carousel.css" />
 }
 
-@section top {
-    <!-- Main jumbotron for a primary marketing message or call to action -->
-    <div class="jumbotron">
-        <div class="container">
+@functions {
+  string GetActiveClass(int i)
+  {
+    return i == 0 ? "active" : "";
+  }
+}
 
-            <h1>Welcome to the daily developers digest!</h1>
-            <h3 style="color: #FFF">All news and events will be here!</h3>
-            <span style="color: #FFF">
-                Project supported by .NET Core Ukrainian User Group,  Microsoft Azure Ukraine User Group and Xamarin Ukraine User Group!
-            </span>
+<div id="carousel" class="carousel slide" data-ride="carousel">
+  <ol class="carousel-indicators">
+    @for (var i = 0; i < Model.TopPublications.Count; i++)
+    {
+        <li data-target="#carousel" data-slide-to="@i" class="@GetActiveClass(i)"></li>
+    }
+  </ol>
+  <div class="carousel-inner" role="listbox">
+    @for (var i = 0; i < Model.TopPublications.Count; i++)
+    {
+        var p = Model.TopPublications.ElementAt(i);
 
+      <div class="item @GetActiveClass(i) @p.Category.CssClass">          
+          <div class="container"> 
+            <div class="carousel-caption">
+              <h3>@p.Title</h3>                  
+              <p>
+                <span class="category">
+                  @p.GetShortDescription()
+                </span>
+              </p>
+              <p>
+                <a class="btn btn-default" target="blank" href="@p.Url">Original publication&nbsp;<i class="glyphicon glyphicon-log-in"></i></a>                    
+            </div>
+          </div>
         </div>
-    </div>
-}
+    }
+  </div>
+  <a class="left carousel-control" href="#carousel" role="button" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="right carousel-control" href="#carousel" role="button" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
 
-@for (var i = 0; i < Model.Count(); i++)
+@for (var i = 0; i < Model.Publications.Count(); i++)
 {
-    @await Html.PartialAsync("_Publication", Model[i])
+    @await Html.PartialAsync("_Publication", Model.Publications[i])
 
     if (i == 2)
-    {
         @await Html.PartialAsync("_InFeedAd")
-    }
 
-    if (i == 0)
-    {
+    if (i == 0)    
         @await Html.PartialAsync("_SmartContent")
-    }
 }
 
-@Html.PagedListPager(Model, page => $"/page/{page}")
+@Html.PagedListPager(Model.Publications, page => $"/page/{page}")

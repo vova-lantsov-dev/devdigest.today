@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable disable
+
 namespace DAL
 {
     public partial class Publication
     {
         public int Id { get; set; }
         public int? UserId { get; set; }
-        public int? CategoryId { get; set; }
+        public int CategoryId { get; set; }
         public string Type { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
@@ -19,7 +21,7 @@ namespace DAL
         public string EmbededPlayerCode { get; set; }
         public int? LanguageId { get; set; }
         public int Views { get; set; }
-        public bool Visible { get; set; }
+        public ulong Visible { get; set; }
 
         public virtual Category Category { get; set; }
         public virtual Language Language { get; set; }

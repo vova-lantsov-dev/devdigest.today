@@ -2,10 +2,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
+#nullable disable
+
 namespace DAL
 {
     public partial class DatabaseContext : DbContext
     {
+        private readonly string _connectionString;
+        
         public DatabaseContext()
         {
         }
@@ -15,28 +19,29 @@ namespace DAL
         {
         }
 
-        public virtual DbSet<Category> Category { get; set; }
-        public virtual DbSet<Channel> Channel { get; set; }
-        public virtual DbSet<Event> Event { get; set; }
-        public virtual DbSet<FacebookPage> FacebookPage { get; set; }
-        public virtual DbSet<Language> Language { get; set; }
-        public virtual DbSet<Publication> Publication { get; set; }
-        public virtual DbSet<TwitterAccount> TwitterAccount { get; set; }
-        public virtual DbSet<User> User { get; set; }
-        public virtual DbSet<Vacancy> Vacancy { get; set; }
-
-        private readonly string _connectionString;
-
         public DatabaseContext(string connectionString)
         {
             _connectionString = connectionString;
         }
 
+
+        public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<Channel> Channels { get; set; }
+        public virtual DbSet<Event> Events { get; set; }
+        public virtual DbSet<FacebookPage> FacebookPages { get; set; }
+        public virtual DbSet<Language> Languages { get; set; }
+        public virtual DbSet<Page> Pages { get; set; }
+        public virtual DbSet<Publication> Publications { get; set; }
+        public virtual DbSet<Slack> Slacks { get; set; }
+        public virtual DbSet<TwitterAccount> TwitterAccounts { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Vacancy> Vacancies { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql(_connectionString);
+                optionsBuilder.UseMySql(_connectionString, ServerVersion.FromString("5.7.33-mysql"));
             }
         }
 
@@ -44,59 +49,83 @@ namespace DAL
         {
             modelBuilder.Entity<Category>(entity =>
             {
-                entity.HasIndex(e => e.Name)
-                    .HasName("Category_Name_uindex")
+                entity.ToTable("Category");
+
+                entity.HasIndex(e => e.Name, "Category_Name_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.Description).HasColumnType("varchar(500)");
+                entity.Property(e => e.Description)
+                    .HasColumnType("varchar(500)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasColumnType("varchar(50)");
+                    .HasColumnType("varchar(50)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
+
+                entity.Property(e => e.Tags)
+                    .HasColumnType("varchar(500)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
             });
 
             modelBuilder.Entity<Channel>(entity =>
             {
-                entity.HasIndex(e => e.CategoryId)
-                    .HasName("Channel_Category_Id_fk");
+                entity.ToTable("Channel");
 
-                entity.HasIndex(e => e.Name)
-                    .HasName("Channel_Name_uindex")
+                entity.HasIndex(e => e.CategoryId, "Channel_Category_Id_fk");
+
+                entity.HasIndex(e => e.Name, "Channel_Name_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.CategoryId).HasColumnType("int(11)");
 
-                entity.Property(e => e.Description).HasColumnType("text");
+                entity.Property(e => e.Description)
+                    .HasColumnType("text")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
-                entity.Property(e => e.Logo).HasColumnType("varchar(256)");
+                entity.Property(e => e.Logo)
+                    .HasColumnType("varchar(256)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasColumnType("varchar(50)");
+                    .HasColumnType("varchar(50)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
-                entity.Property(e => e.Title).HasColumnType("varchar(100)");
+                entity.Property(e => e.Title)
+                    .HasColumnType("varchar(100)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.Token)
                     .IsRequired()
-                    .HasColumnType("varchar(50)");
+                    .HasColumnType("varchar(50)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
                 entity.HasOne(d => d.Category)
-                    .WithMany(p => p.Channel)
+                    .WithMany(p => p.Channels)
                     .HasForeignKey(d => d.CategoryId)
                     .HasConstraintName("Channel_Category_Id_fk");
             });
 
             modelBuilder.Entity<Event>(entity =>
             {
-                entity.HasIndex(e => e.CategoryId)
-                    .HasName("Event_Category_Id_fk");
+                entity.ToTable("Event");
 
-                entity.HasIndex(e => e.UserId)
-                    .HasName("Event_User_Id_fk");
+                entity.HasIndex(e => e.CategoryId, "Event_Category_Id_fk");
+
+                entity.HasIndex(e => e.UserId, "Event_User_Id_fk");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
@@ -106,44 +135,53 @@ namespace DAL
 
                 entity.Property(e => e.Description)
                     .IsRequired()
-                    .HasColumnType("varchar(1000)");
+                    .HasColumnType("varchar(1000)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.End).HasColumnType("datetime");
 
-                entity.Property(e => e.Image).HasColumnType("varchar(100)");
+                entity.Property(e => e.Image)
+                    .HasColumnType("varchar(100)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
-                entity.Property(e => e.Link).HasColumnType("varchar(100)");
+                entity.Property(e => e.Link)
+                    .HasColumnType("varchar(100)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.Start).HasColumnType("datetime");
 
                 entity.Property(e => e.Title)
                     .IsRequired()
-                    .HasColumnType("varchar(250)");
+                    .HasColumnType("varchar(250)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
 
                 entity.HasOne(d => d.Category)
-                    .WithMany(p => p.Event)
+                    .WithMany(p => p.Events)
                     .HasForeignKey(d => d.CategoryId)
                     .HasConstraintName("Event_Category_Id_fk");
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.Event)
+                    .WithMany(p => p.Events)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("Event_User_Id_fk");
             });
 
             modelBuilder.Entity<FacebookPage>(entity =>
             {
-                entity.HasIndex(e => e.CategoryId)
-                    .HasName("FacebookPage_Category_Id_fk");
+                entity.ToTable("FacebookPage");
 
-                entity.HasIndex(e => e.Id)
-                    .HasName("FacebookPages_Id_uindex")
+                entity.HasIndex(e => e.CategoryId, "FacebookPage_Category_Id_fk");
+
+                entity.HasIndex(e => e.Id, "FacebookPages_Id_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Token)
-                    .HasName("FacebookPages_Token_uindex")
+                entity.HasIndex(e => e.Token, "FacebookPages_Token_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
@@ -153,25 +191,36 @@ namespace DAL
                 entity.Property(e => e.Description)
                     .IsRequired()
                     .HasColumnType("varchar(500)")
-                    .HasDefaultValueSql("''");
+                    .HasDefaultValueSql("''")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
-                entity.Property(e => e.Logo).HasColumnType("varchar(256)");
+                entity.Property(e => e.Logo)
+                    .HasColumnType("varchar(256)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasColumnType("varchar(200)");
+                    .HasColumnType("varchar(200)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.Token)
                     .IsRequired()
-                    .HasColumnType("varchar(500)");
+                    .HasColumnType("varchar(500)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.Url)
                     .IsRequired()
                     .HasColumnType("varchar(256)")
-                    .HasDefaultValueSql("''");
+                    .HasDefaultValueSql("''")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
                 entity.HasOne(d => d.Category)
-                    .WithMany(p => p.FacebookPage)
+                    .WithMany(p => p.FacebookPages)
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FacebookPage_Category_Id_fk");
@@ -179,59 +228,119 @@ namespace DAL
 
             modelBuilder.Entity<Language>(entity =>
             {
-                entity.HasIndex(e => e.Id)
-                    .HasName("Language_Id_uindex")
+                entity.ToTable("Language");
+
+                entity.HasIndex(e => e.Id, "Language_Id_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.Code).HasColumnType("varchar(2)");
+                entity.Property(e => e.Code)
+                    .HasColumnType("varchar(2)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
-                entity.Property(e => e.Name).HasColumnType("varchar(25)");
+                entity.Property(e => e.Name)
+                    .HasColumnType("varchar(25)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
+            });
+
+            modelBuilder.Entity<Page>(entity =>
+            {
+                entity.ToTable("Page");
+
+                entity.HasIndex(e => e.Name, "Page_Name_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.Content)
+                    .IsRequired()
+                    .HasColumnType("text")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasColumnType("varchar(5000)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnType("varchar(50)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
+
+                entity.Property(e => e.Title)
+                    .HasColumnType("varchar(100)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
             });
 
             modelBuilder.Entity<Publication>(entity =>
             {
-                entity.HasIndex(e => e.CategoryId)
-                    .HasName("Publication_Category_Id_fk");
+                entity.ToTable("Publication");
 
-                entity.HasIndex(e => e.LanguageId)
-                    .HasName("Publication_Language_Id_fk");
+                entity.HasIndex(e => e.CategoryId, "Publication_Category_Id_fk");
 
-                entity.HasIndex(e => e.Link)
-                    .HasName("Publication_Link_uindex")
+                entity.HasIndex(e => e.LanguageId, "Publication_Language_Id_fk");
+
+                entity.HasIndex(e => e.Link, "Publication_Link_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.UserId)
-                    .HasName("Publication_User_Id_fk");
+                entity.HasIndex(e => e.UserId, "Publication_User_Id_fk");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.CategoryId).HasColumnType("int(11)");
 
-                entity.Property(e => e.Comment).HasColumnType("varchar(1000)");
+                entity.Property(e => e.Comment)
+                    .HasColumnType("varchar(1000)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
-                entity.Property(e => e.Content).HasColumnType("text");
+                entity.Property(e => e.Content)
+                    .HasColumnType("text")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.DateTime).HasColumnType("datetime");
 
                 entity.Property(e => e.Description)
                     .IsRequired()
-                    .HasColumnType("varchar(5000)");
+                    .HasColumnType("varchar(5000)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
-                entity.Property(e => e.EmbededPlayerCode).HasColumnType("varchar(1000)");
+                entity.Property(e => e.EmbededPlayerCode)
+                    .HasColumnType("varchar(1000)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
-                entity.Property(e => e.Image).HasColumnType("varchar(250)");
+                entity.Property(e => e.Image)
+                    .HasColumnType("varchar(250)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.LanguageId).HasColumnType("int(11)");
 
-                entity.Property(e => e.Link).HasColumnType("varchar(250)");
+                entity.Property(e => e.Link)
+                    .HasColumnType("varchar(250)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.Title)
                     .IsRequired()
-                    .HasColumnType("varchar(250)");
+                    .HasColumnType("varchar(250)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
-                entity.Property(e => e.Type).HasColumnType("varchar(25)");
+                entity.Property(e => e.Type)
+                    .HasColumnType("varchar(25)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
 
@@ -242,117 +351,157 @@ namespace DAL
                 entity.Property(e => e.Visible).HasColumnType("bit(1)");
 
                 entity.HasOne(d => d.Category)
-                    .WithMany(p => p.Publication)
+                    .WithMany(p => p.Publications)
                     .HasForeignKey(d => d.CategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Publication_Category_Id_fk");
 
                 entity.HasOne(d => d.Language)
-                    .WithMany(p => p.Publication)
+                    .WithMany(p => p.Publications)
                     .HasForeignKey(d => d.LanguageId)
                     .HasConstraintName("Publication_Language_Id_fk");
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.Publication)
+                    .WithMany(p => p.Publications)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("Publication_User_Id_fk");
             });
 
+            modelBuilder.Entity<Slack>(entity =>
+            {
+                entity.ToTable("Slack");
+
+                entity.HasIndex(e => e.Name, "Slack_Name_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.WebHookUrl, "Slack_WebHookUrl_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnType("varchar(100)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
+
+                entity.Property(e => e.WebHookUrl)
+                    .IsRequired()
+                    .HasColumnType("varchar(512)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
+            });
+
             modelBuilder.Entity<TwitterAccount>(entity =>
             {
-                entity.HasIndex(e => e.AccessToken)
-                    .HasName("TwitterAccount_AccessToken_uindex")
+                entity.ToTable("TwitterAccount");
+
+                entity.HasIndex(e => e.AccessTokenSecret, "TwitterAccount_AccessTokenSecret_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.AccessTokenSecret)
-                    .HasName("TwitterAccount_AccessTokenSecret_uindex")
+                entity.HasIndex(e => e.AccessToken, "TwitterAccount_AccessToken_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.ConsumerKey)
-                    .HasName("TwitterAccount_ConsumerKey_uindex")
+                entity.HasIndex(e => e.ConsumerKey, "TwitterAccount_ConsumerKey_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.ConsumerSecret)
-                    .HasName("TwitterAccount_ConsumerSecret_uindex")
+                entity.HasIndex(e => e.ConsumerSecret, "TwitterAccount_ConsumerSecret_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Name)
-                    .HasName("TwitterAccount_Name_uindex")
+                entity.HasIndex(e => e.Name, "TwitterAccount_Name_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Url)
-                    .HasName("TwitterAccount_Url_uindex")
+                entity.HasIndex(e => e.Url, "TwitterAccount_Url_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.AccessToken)
                     .IsRequired()
-                    .HasColumnType("varchar(500)");
+                    .HasColumnType("varchar(500)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.AccessTokenSecret)
                     .IsRequired()
-                    .HasColumnType("varchar(500)");
+                    .HasColumnType("varchar(500)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.ConsumerKey)
                     .IsRequired()
-                    .HasColumnType("varchar(500)");
+                    .HasColumnType("varchar(500)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.ConsumerSecret)
                     .IsRequired()
-                    .HasColumnType("varchar(500)");
+                    .HasColumnType("varchar(500)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.Description)
                     .IsRequired()
-                    .HasColumnType("varchar(500)");
+                    .HasColumnType("varchar(500)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.Logo)
                     .IsRequired()
-                    .HasColumnType("varchar(500)");
+                    .HasColumnType("varchar(500)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasColumnType("varchar(500)");
+                    .HasColumnType("varchar(500)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.Url)
                     .HasColumnType("varchar(500)")
-                    .HasDefaultValueSql("''");
+                    .HasDefaultValueSql("''")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
             });
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasIndex(e => e.Key)
-                    .HasName("User_Key_uindex")
+                entity.ToTable("User");
+
+                entity.HasIndex(e => e.Key, "User_Key_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.Key)
                     .IsRequired()
-                    .HasColumnType("varchar(36)");
+                    .HasColumnType("varchar(36)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasColumnType("varchar(50)");
+                    .HasColumnType("varchar(50)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
             });
 
             modelBuilder.Entity<Vacancy>(entity =>
             {
-                entity.HasIndex(e => e.CategoryId)
-                    .HasName("Vacancy_Category_Id_fk");
+                entity.ToTable("Vacancy");
 
-                entity.HasIndex(e => e.Id)
-                    .HasName(" Vacancy_Id_uindex")
+                entity.HasIndex(e => e.Id, " Vacancy_Id_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Image)
-                    .HasName(" Vacancy_Image_uindex")
+                entity.HasIndex(e => e.Image, " Vacancy_Image_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.LanguageId)
-                    .HasName("Vacancy_Language_Id_fk");
+                entity.HasIndex(e => e.CategoryId, "Vacancy_Category_Id_fk");
 
-                entity.HasIndex(e => e.UserId)
-                    .HasName("Vacancy_User_Id_fk");
+                entity.HasIndex(e => e.LanguageId, "Vacancy_Language_Id_fk");
+
+                entity.HasIndex(e => e.UserId, "Vacancy_User_Id_fk");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
@@ -360,33 +509,54 @@ namespace DAL
 
                 entity.Property(e => e.CategoryId).HasColumnType("int(11)");
 
-                entity.Property(e => e.Company).HasColumnType("varchar(100)");
+                entity.Property(e => e.Company)
+                    .HasColumnType("varchar(100)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.Contact)
                     .IsRequired()
-                    .HasColumnType("varchar(500)");
+                    .HasColumnType("varchar(500)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
-                entity.Property(e => e.Content).HasColumnType("text");
+                entity.Property(e => e.Content)
+                    .HasColumnType("text")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.Date).HasColumnType("datetime");
 
                 entity.Property(e => e.Description)
                     .IsRequired()
-                    .HasColumnType("varchar(5000)");
+                    .HasColumnType("varchar(5000)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
-                entity.Property(e => e.Image).HasColumnType("varchar(500)");
+                entity.Property(e => e.Image)
+                    .HasColumnType("varchar(500)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.LanguageId)
                     .HasColumnType("int(11)")
                     .HasDefaultValueSql("'1'");
 
-                entity.Property(e => e.Location).HasColumnType("varchar(200)");
+                entity.Property(e => e.Location)
+                    .HasColumnType("varchar(200)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_unicode_ci");
 
                 entity.Property(e => e.Title)
                     .IsRequired()
-                    .HasColumnType("varchar(300)");
+                    .HasColumnType("varchar(300)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
-                entity.Property(e => e.Url).HasColumnType("varchar(5000)");
+                entity.Property(e => e.Url)
+                    .HasColumnType("varchar(5000)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
 
@@ -395,18 +565,18 @@ namespace DAL
                     .HasDefaultValueSql("'1'");
 
                 entity.HasOne(d => d.Category)
-                    .WithMany(p => p.Vacancy)
+                    .WithMany(p => p.Vacancies)
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Vacancy_Category_Id_fk");
 
                 entity.HasOne(d => d.Language)
-                    .WithMany(p => p.Vacancy)
+                    .WithMany(p => p.Vacancies)
                     .HasForeignKey(d => d.LanguageId)
                     .HasConstraintName("Vacancy_Language_Id_fk");
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.Vacancy)
+                    .WithMany(p => p.Vacancies)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Vacancy_User_Id_fk");

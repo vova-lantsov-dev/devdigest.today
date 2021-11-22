@@ -1,20 +1,9 @@
-﻿@model string
+﻿@model WebSite.ViewModels.ContentPageViewModel
 
 @{
     Layout = "_GeneralLayout";
 }
 
-@section head {
-    <meta property="og:title" content="@ViewData["Title"]" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="@Core.Settings.Current.WebSiteUrl" />
-    <meta property="og:image" content="@Core.Settings.Current.FacebookImage" />
-    <meta property="og:description" content="@Core.Settings.Current.DefaultDescription" />
+<h1>@Model.Title</h1>
 
-    <meta name="keywords" content="@Core.Settings.Current.DefaultKeywords" />
-    <meta name="description" content="@Core.Settings.Current.DefaultDescription" />
-}
-
-<h1>@ViewData["Title"]</h1>
-
-@Html.Raw(Model)
+@Html.Raw(Model.Content)

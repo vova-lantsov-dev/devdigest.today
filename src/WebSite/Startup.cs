@@ -11,18 +11,29 @@ namespace WebSite
     {
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly Settings _settings;
+        
+        public IConfiguration Configuration { get; }
 
         public Startup(IWebHostEnvironment hostEnvironment, IConfiguration configuration)
         {
             Configuration = configuration;
             
             _hostEnvironment = hostEnvironment;
-            _settings = new Settings(configuration);
+            _settings = LoadSettings(hostEnvironment, configuration);
 
-            Settings.Initialize(_settings);
+            Settings.InitializeCurrentInstance(_settings);
         }
 
-        public IConfiguration Configuration { get; }
+        private static Settings LoadSettings(IWebHostEnvironment hostEnvironment, IConfiguration configuration)
+        {
+            var settings = new Settings();
+
+            configuration.Bind(settings);
+            settings.ConnectionString = configuration.GetConnectionString("DefaultConnection");
+            settings.WebRootPath = hostEnvironment.WebRootPath;
+            
+            return settings;
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -41,9 +52,8 @@ namespace WebSite
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseStatusCodePagesWithRedirects("/error/info?code={0}");
                 
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 

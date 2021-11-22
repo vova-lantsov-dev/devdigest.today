@@ -1,43 +1,21 @@
-﻿@using System.Collections.Immutable
-@using Core.ViewModels
-@model IList<Core.ViewModels.SocialNetworkViewModel>
-
+﻿@model WebSite.ViewModels.PlatformViewModel
 @{
     Layout = "_GeneralLayout";
-
-    var telegramChannels = Model.Where(o => o is TelegramViewModel).ToImmutableList();
-    var facebookChannels = Model.Where(o => o is FacebookViewModel).ToImmutableList();
-    var twitterChannels = Model.Where(o => o is TwitterViewModel).ToImmutableList();
-}
-
-@section head {
-    <meta property="og:title" content="@ViewData["Title"]" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="@Core.Settings.Current.WebSiteUrl" />
-    <meta property="og:image" content="@Core.Settings.Current.FacebookImage" />
-    <meta property="og:description" content="@Core.Settings.Current.DefaultDescription" />
-
-    <meta name="keywords" content="@Core.Settings.Current.DefaultKeywords" />
-    <meta name="description" content="@Core.Settings.Current.DefaultDescription" />
 }
 
 <div class="row">
     <section class="col-md-12">
-        <h1>//devdigest platform</h1>
-        This project is an information space for people who live in the modern world of IT technologies. For developers, analysts, architects and engineers.
-        
-        With //devdigest you alway has:<ul>
-            <li>daily news and announcements;</li>
+        <h1>Platform</h1>
+
+        This project is an information space for people who live in the modern world of IT technologies. For developers, 
+        analysts, architects, and engineers. With //devdigest you always have:
+        <ul>
+            <li>regular news and announcements;</li>
             <li>manually selected materials;</li>
-            <li>association of the best Ukrainian information resources devoted to the issues of software development and architecture.</li>
+            <li>a community of highly skilled peoples who can help you.</li>
         </ul>
         
-        Thematic areas within // devdigest we call channels - each channel   has its own strictly defined theme, but at the same time adheres to the general standards of the project.
-        <br />
-        In addition to the information on this site, we also have several telegrams of channels and platforms on Facebook, where you can find information that interests you, as well as like-minded people.
-        <br />
-        <br />
-        You can find list of other our resources below:
+        You can find us on Telegram, Facebook, and Twitter.
     </section>
 </div>
 
@@ -48,9 +26,9 @@
         Here you can find our Telegram channels. We strongly recommend subscribe to them!
         <br /><br />
         <div class="container-fluid">
-            @for (var i = 0; i < telegramChannels.Count; i++)
+            @for (var i = 0; i < Model.Telegram.Count; i++)
             {
-                var item = telegramChannels.ElementAt(i);
+                var item = Model.Telegram.ElementAt(i);
 
                 <div class="channel-preview row">
                     <div class="col-md-3">
@@ -60,7 +38,7 @@
                         <h3 class="text-left">@item.Title</h3>
                         @item.Description
                         <div class="text-right">
-                            <a class="btn btn-default" href="@item.Link">Open channel&nbsp;<i class="glyphicon glyphicon-send"></i></a>
+                            <a class="btn btn-default" href="@item.Url">Open channel&nbsp;<i class="glyphicon glyphicon-send"></i></a>
                         </div>
                     </div>
                 </div>
@@ -77,9 +55,9 @@
         Here you can find our Twitter!
         <br /><br />
         <div class="container-fluid">
-            @for (var i = 0; i < twitterChannels.Count; i++)
+            @for (var i = 0; i < Model.Twitter.Count; i++)
             {
-                var item = twitterChannels.ElementAt(i);
+                var item = Model.Twitter.ElementAt(i);
 
                 <div class="channel-preview row">
                     <div class="col-md-3">
@@ -89,7 +67,7 @@
                         <h3 class="text-left">@item.Title</h3>
                         @item.Description
                         <div class="text-right">
-                            <a class="btn btn-default" href="@item.Link">Open channel&nbsp;<i class="glyphicon glyphicon-send"></i></a>
+                            <a class="btn btn-default" href="@item.Url">Open channel&nbsp;<i class="glyphicon glyphicon-send"></i></a>
                         </div>
                     </div>
                 </div>
@@ -105,9 +83,9 @@
         Here you can find our Facebook pages and groups.
         <br /><br />
         <div class="container-fluid">
-        @for (var i = 0; i < facebookChannels.Count; i++)
+        @for (var i = 0; i < Model.Facebook.Count; i++)
         {
-            var item = facebookChannels.ElementAt(i);
+            var item = Model.Facebook.ElementAt(i);
 
             <div class="channel-preview row">
                 <div class="col-md-3">
@@ -117,7 +95,7 @@
                     <h3 class="text-left">@item.Title</h3>
                     @item.Description
                     <div class="text-right">
-                        <a class="btn btn-default" href="@item.Link">Visit page&nbsp;<i class="glyphicon glyphicon-thumbs-up"></i></a>
+                        <a class="btn btn-default" href="@item.Url">Visit page&nbsp;<i class="glyphicon glyphicon-thumbs-up"></i></a>
                     </div>
                 </div>
             </div>

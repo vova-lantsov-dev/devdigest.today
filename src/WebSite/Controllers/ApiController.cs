@@ -1,53 +1,35 @@
-﻿using Core;
-using Core.Managers;
-using Core.ViewModels;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections.Immutable;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Core.Logging;
-using Core.Managers.Crosspost;
+using Core;
 using Core.Services;
-using Core.Web;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using WebSite.AppCode;
+using WebSite.ViewModels;
 
 namespace WebSite.Controllers
 {
     public class ApiController : ControllerBase
     {
-        private readonly IPublicationManager _publicationManager;
-        private readonly IVacancyManager _vacancyManager;
-        private readonly IUserManager _userManager;
-        private readonly ILocalizationManager _localizationManager;
-        private readonly IReadOnlyCollection<ICrossPostManager> _crossPostManagers;
+        private readonly IUserService _userService;
         private readonly Settings _settings;
         private readonly ILogger _logger;
+        private readonly IWebAppPublicationService _webAppPublicationService;
 
         public ApiController(
-            IPublicationManager publicationManager, 
-            IVacancyManager vacancyManager, 
-            IUserManager userManager, 
-            ILocalizationManager localizationManager,
-            ILogger logger,
-            Settings settings, 
-            FacebookCrosspostManager facebookCrosspostManager, 
-            TelegramCrosspostManager telegramCrosspostManager,
-            TwitterCrosspostManager twitterCrosspostManager)
+            IWebAppPublicationService webAppPublicationService,
+            IUserService userService,
+            Settings settings,
+            ILogger<ApiController> logger)
         {
             _logger = logger;
             _settings = settings;
-            _userManager = userManager;
-            _vacancyManager = vacancyManager;
-            _localizationManager = localizationManager;
-            _publicationManager = publicationManager;
-
-            _crossPostManagers = new List<ICrossPostManager>
-            {
-                facebookCrosspostManager,
-                telegramCrosspostManager,
-                twitterCrosspostManager
-            };
+            _userService = userService;
+            _webAppPublicationService = webAppPublicationService;
         }
         
         [HttpGet]
@@ -58,11 +40,11 @@ namespace WebSite.Controllers
         [Route("api/categories")]
         public async Task<IActionResult> GetCategories()
         {
-            var categories = (await _publicationManager.GetCategories()).Select(o => new
+            var categories = (await _webAppPublicationService.GetCategories()).Select(o => new
             {
                 o.Id,
                 o.Name
-            }).ToList();
+            }).ToImmutableList();
 
             return Ok(categories);
         }
@@ -71,121 +53,36 @@ namespace WebSite.Controllers
         [Route("api/publications/new")]
         public async Task<IActionResult> AddPublication(NewPostRequest request)
         {
-            var user = await _userManager.GetBySecretKey(request.Key);
+            var user = await _userService.GetBySecretKey(request.Key);
 
             if (user == null)
             {
-                _logger.Write(LogLevel.Warning, $"Somebody tried to login with this key: `{request.Key}`. Text: `{request.Comment}`");
+                _logger.LogWarning($"Somebody tried to login with this key: `{request.Key}`. Text: `{request.Comment}`");
 
                 return StatusCode((int)HttpStatusCode.Forbidden, "Incorrect security key");
             }
 
-            var extractor = new X.Web.MetaExtractor.Extractor();
-            var languageAnalyzer = new LanguageAnalyzerService(_settings.CognitiveServicesTextAnalyticsKey, _logger);
-            
             try
             {
-                var metadata = await extractor.ExtractAsync(request.Link);
-
-                var existingPublication = await _publicationManager.Get(new Uri(metadata.Url));
-
-                if (existingPublication != null)
-                {
-                    return StatusCode((int)HttpStatusCode.Conflict, "Publication with this URL already exist");
-                }
+                var publication = await _webAppPublicationService.CreatePublication(request, user);
                 
-                var languageCode = languageAnalyzer.GetTextLanguage(metadata.Description);
-                var languageId = await _localizationManager.GetLanguageId(languageCode) ?? Language.EnglishId;
-                var image = metadata.Images.FirstOrDefault();
+                if (publication != null) 
+                    return Created(publication.ShareUrl, publication);
+
+                return BadRequest();
+            }
+            catch (DuplicateNameException ex)
+            {
+                _logger.LogError(ex, "Error while creating new publication");
                 
-                var publication = new DAL.Publication
-                {
-                    Title = metadata.Title,
-                    Description = metadata.Description,
-                    Link = metadata.Url,
-                    Image = string.IsNullOrWhiteSpace(image) || image.Length > 250 ? string.Empty : image,
-                    Type = "article",
-                    DateTime = DateTime.Now,
-                    UserId = user.Id,
-                    CategoryId = request.CategoryId,
-                    Comment = request.Comment,
-                    LanguageId = languageId
-                };
-
-                var player = EmbeddedPlayerFactory.CreatePlayer(request.Link);
-                
-                if (player != null)
-                {
-                    publication.EmbededPlayerCode = await player.GetEmbeddedPlayerUrl(request.Link);
-                }
-
-                publication = await _publicationManager.Save(publication);
-
-                if (publication != null)
-                {
-                    var model = new PublicationViewModel(publication, _settings.WebSiteUrl);
-
-                    //If we can embed main content into site page, so we can share this page.
-                    var url = string.IsNullOrEmpty(model.EmbededPlayerCode) ? model.Link : model.ShareUrl;
-
-                    foreach (var crossPostManager in _crossPostManagers)
-                    {
-                        await crossPostManager.Send(request.CategoryId, request.Comment, url);
-                    }
-
-                    return Created(new Uri(model.ShareUrl), model);
-                }
-                
-                throw new Exception("Can't save publication to database");
+                return StatusCode((int) HttpStatusCode.Conflict, ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.Write(LogLevel.Error, "Error while creating new publication", ex);
+                _logger.LogError(ex, "Error while creating new publication");
                 
                 return BadRequest(ex.Message);
             }
-        }
-
-        [HttpPost]
-        [Route("api/vacancy/new")]
-        public async Task<IActionResult> AddVacancy(NewVacancyRequest request)
-        {
-            var user = _userManager.GetBySecretKey(request.Key);
-
-            if (user == null)
-            {
-                return Forbid();
-            }
-
-            var vacancy = new DAL.Vacancy
-            {
-                Title = request.Title,
-                Description = request.Description,
-                Contact = request.Contact,
-                UserId = user.Id,
-                CategoryId = request.CategoryId,
-                Date = DateTime.Now,
-                Active = true,
-                Content = request.Content,
-                Image = null,
-                Url = null,
-            };
-
-            vacancy = await _vacancyManager.Save(vacancy);
-
-            if (vacancy != null)
-            {
-                var model = new VacancyViewModel(vacancy, _settings.WebSiteUrl);
-                
-                foreach (var crossPostManager in _crossPostManagers)
-                {
-                    await crossPostManager.Send(request.CategoryId, request.Comment, model.ShareUrl);
-                }
-
-                return Created(new Uri(model.ShareUrl), model);
-            }
-
-            return BadRequest();
         }
     }
 }

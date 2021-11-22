@@ -1,38 +1,23 @@
-﻿@using X.PagedList;
-@using X.PagedList.Mvc.Core;
-@model IPagedList<Core.ViewModels.VacancyViewModel>
+﻿@using X.PagedList.Mvc.Core;
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model WebSite.ViewModels.VacancyListViewModel 
 
-@{
-    var categoryId = ViewBag.CategoryId as int?;
-}
-
-@section head {
-    <meta property="og:title" content="@Core.Settings.Current.WebSiteTitle" />
-    <meta property="og:type" content="website" />
-
-    <meta property="og:image" content="@Core.Settings.Current.FacebookImage" />
-    <meta property="og:description" content="@Core.Settings.Current.DefaultDescription" />
-
-    <meta name="keywords" content="@Core.Settings.Current.DefaultKeywords" />
-    <meta name="description" content="@Core.Settings.Current.DefaultDescription" />
-}
-
-<h1>@ViewData["Title"]</h1>
+<h1>Job</h1>
 We're prepared best vacancies for specialists which deal with cross platform software development, cloud technologies,
 data science, mobile development. For talented engineers who want find work around the world!<br />
 
 <br />
 
-@foreach (var v in Model)
+@foreach (var v in Model.List)
 {
     @await Html.PartialAsync("_Vacancy", v)
 }
 
-@if (categoryId != null)
+@if (Model.CategoryId != null)
 {
-    @Html.PagedListPager(Model, page => $"/vacancies/{page}?categoryId={categoryId}")
+    @Html.PagedListPager(Model.List, page => $"/vacancies/{page}?categoryId={Model.CategoryId}")
 }
 else
 {
-    @Html.PagedListPager(Model, page => $"/vacancies/{page}")
+    @Html.PagedListPager(Model.List, page => $"/vacancies/{page}")
 }

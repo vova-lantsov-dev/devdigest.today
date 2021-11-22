@@ -11,7 +11,6 @@ namespace Core.Repositories
         Task<int> GetVacanciesCount();
         Task<IReadOnlyCollection<Vacancy>> GetHotVacancies(int size);
         Task<Vacancy> GetVacancy(int id);
-        Task<Vacancy> Save(Vacancy vacancy);
         Task IncreaseVacancyViewCount(int id);
     }
     
@@ -23,41 +22,32 @@ namespace Core.Repositories
 
         public async Task<IReadOnlyCollection<Vacancy>> GetVacancies(int page, int size) =>
             await _database
-                .Vacancy
+                .Vacancies
                 .Include(o => o.Category)
-                .Where(o => o.Active && o.LanguageId == Language.EnglishId)
+                .Where(o => o.Active == 1 && o.LanguageId == Language.EnglishId)
                 .OrderByDescending(o => o.Id)
                 .Skip((page - 1) * size)
                 .Take(size).ToListAsync();
 
         public async Task<int> GetVacanciesCount() =>
-            await _database.Vacancy.Where(o => o.Active).CountAsync();
+            await _database.Vacancies.Where(o => o.Active == 1).CountAsync();
 
         public async Task<IReadOnlyCollection<Vacancy>> GetHotVacancies(int size) =>
             await _database
-                .Vacancy
+                .Vacancies
                 .Include(o => o.Category)
-                .Where(o => o.Active && o.LanguageId == Language.EnglishId)
+                .Where(o => o.Active == 1 && o.LanguageId == Language.EnglishId)
                 .OrderByDescending(o => o.Id)
                 .Take(size)
                 .ToListAsync();
 
         public async Task<Vacancy> GetVacancy(int id) => 
-            await _database.Vacancy.SingleOrDefaultAsync(o => o.Id == id);
-
-        public async Task<Vacancy> Save(Vacancy vacancy)
-        {
-            _database.Add(vacancy);
-            
-            await _database.SaveChangesAsync();
-            
-            return await _database.Vacancy.LastOrDefaultAsync();
-        }
+            await _database.Vacancies.SingleOrDefaultAsync(o => o.Id == id);
 
         public async Task IncreaseVacancyViewCount(int id)
         {
             
-            var vacancy = await _database.Vacancy.SingleOrDefaultAsync(o => o.Id == id);
+            var vacancy = await _database.Vacancies.SingleOrDefaultAsync(o => o.Id == id);
             
             if (vacancy != null)
             {

@@ -1,9 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Logging;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,34 +17,34 @@ namespace Core.Repositories
         Task<IReadOnlyCollection<Channel>> GetTelegramChannels();
         Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccountsChannels(int categoryId);
         Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccounts();
+        Task<IReadOnlyCollection<DAL.Slack>> GetSlackApplications();
     }
 
     public class SocialRepository : ISocialRepository
     {
         private readonly DatabaseContext _database;
-        private ILogger _logger;
 
-        public SocialRepository(DatabaseContext database, ILogger logger)
-        {
-            _database = database;
-            _logger = logger;
-        }
+        public SocialRepository(DatabaseContext database) => _database = database;
 
         public async Task<IReadOnlyCollection<FacebookPage>> GetFacebookPages(int categoryId) =>
-            await _database.FacebookPage.Where(o => o.CategoryId == categoryId).ToListAsync();
+            await _database.FacebookPages.Where(o => o.CategoryId == categoryId).ToListAsync();
 
         public async Task<IReadOnlyCollection<Channel>> GetTelegramChannels(int categoryId) =>
-            await _database.Channel.Where(o => o.CategoryId == categoryId).ToListAsync();
+            await _database.Channels.Where(o => o.CategoryId == categoryId).ToListAsync();
 
         public async Task<IReadOnlyCollection<Channel>> GetTelegramChannels() =>
-            await _database.Channel.ToListAsync();
+            await _database.Channels.ToListAsync();
 
         public async Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccountsChannels(int categoryId)
-            => await _database.TwitterAccount.ToListAsync();
+            => await _database.TwitterAccounts.ToListAsync();
 
-        public async Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccounts() => await _database.TwitterAccount.ToListAsync();
+        public async Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccounts() =>
+            await _database.TwitterAccounts.ToListAsync();
+
+        public async Task<IReadOnlyCollection<DAL.Slack>> GetSlackApplications() => 
+            await _database.Slacks.ToListAsync();
 
         public async Task<IReadOnlyCollection<FacebookPage>> GetFacebookPages() =>
-            await _database.FacebookPage.ToListAsync();
+            await _database.FacebookPages.ToListAsync();
     }
 }

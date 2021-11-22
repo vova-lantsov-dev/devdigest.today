@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable disable
+
 namespace DAL
 {
     public partial class Vacancy
@@ -10,7 +12,7 @@ namespace DAL
         public string Description { get; set; }
         public string Content { get; set; }
         public string Contact { get; set; }
-        public bool Active { get; set; }
+        public ulong Active { get; set; }
         public DateTime Date { get; set; }
         public string Image { get; set; }
         public string Url { get; set; }

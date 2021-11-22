@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Threading.Tasks;
 using Core;
-using Core.Managers;
-using Core.ViewModels;
+using Core.Services;
 using DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using WebSite.ViewModels;
 using X.PagedList;
 using X.Web.Sitemap;
 
@@ -13,20 +16,20 @@ namespace WebSite.Controllers
 {
     public class SitemapController : Controller
     {
-        private readonly IPublicationManager _publicationManager;
-        private readonly IVacancyManager _vacancyManager;
+        private readonly IPublicationService _publicationService;
+        private readonly IVacancyService _vacancyService;
         private readonly IMemoryCache _cache;
         private readonly Settings _settings;
         
         public SitemapController(
             IMemoryCache cache, 
-            IVacancyManager vacancyManager, 
-            IPublicationManager publicationManager, 
+            IVacancyService vacancyService, 
+            IPublicationService publicationService, 
             Settings settings)
         {
             _cache = cache;
-            _vacancyManager = vacancyManager;
-            _publicationManager = publicationManager;
+            _vacancyService = vacancyService;
+            _publicationService = publicationService;
             _settings = settings;
         }
 
@@ -37,7 +40,6 @@ namespace WebSite.Controllers
             var page = 1;
             var key = "sitemap";
 
-
             var xml = _cache.Get(key)?.ToString();
 
             if (string.IsNullOrEmpty(xml))
@@ -46,20 +48,25 @@ namespace WebSite.Controllers
                 IPagedList<Vacancy> vacancies;
 
                 var sitemap = new Sitemap();
-                sitemap.Add(CreateUrl(_settings.WebSiteUrl));
-                sitemap.Add(CreateUrl(_settings.WebSiteUrl + "partners/"));
+                
+                var events = GetCustomPages();
+                
+                foreach (var url in events)
+                { 
+                    sitemap.Add(CreateUrl(url));
+                }
 
                 page = 1;
 
                 do
                 {
-                    publications = await _publicationManager.GetPublications(null, page);
+                    publications = await _publicationService.GetPublications(null, page);
                     page++;
 
                     foreach (var p in publications)
                     {
                         var publication = new PublicationViewModel(p, _settings.WebSiteUrl);
-                        sitemap.Add(CreateUrl(publication.ShareUrl));
+                        sitemap.Add(CreateUrl(publication.ShareUrl.ToString()));
                     }
                 }
                 while (publications.HasNextPage);
@@ -68,13 +75,13 @@ namespace WebSite.Controllers
 
                 do
                 {
-                    vacancies = await _vacancyManager.GetVacancies(page);
+                    vacancies = await _vacancyService.GetVacancies(page);
                     page++;
 
                     foreach (var v in vacancies)
                     {
                         var vacancy = new VacancyViewModel(v, _settings.WebSiteUrl);
-                        sitemap.Add(CreateUrl(vacancy.ShareUrl));
+                        sitemap.Add(CreateUrl(vacancy.ShareUrl.ToString()));
                     }
                 }
                 while (vacancies.HasNextPage);
@@ -85,6 +92,26 @@ namespace WebSite.Controllers
 
             
             return Content(xml, "application/xml");
+        }
+
+        private IReadOnlyCollection<string> GetCustomPages()
+        {
+            var urls = new[]
+            {
+                "partners",
+                "covid",
+                "platform",
+                "content/cloud-developers-days-2020",
+                "content/net-summit-belarus-2020",
+                "content/ignite-2019",
+                "content/build-2019",
+                "content/developex-tech-club",
+                "content/microsoft-tech-summit-warsaw",
+                "content/build-2018",
+                "content/cloud-developers-days",
+            };
+
+            return urls.Select(o => $"{_settings.WebSiteUrl}{o}").ToImmutableList();
         }
 
         private static Url CreateUrl(string url) => new Url
