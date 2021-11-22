@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace WebSite.ViewModels;
 
-public class PublicationViewModel
+public record PublicationViewModel
 {
     public int Id { get; set; }
     public string Type { get; set; }
@@ -13,9 +13,14 @@ public class PublicationViewModel
     public string Description { get; set; }
     public string Image { get; set; }
     public DateTime DateTime { get; set; }
-    public string EmbededPlayerCode { get; set; }
+    public string EmbeddedPlayerCode { get; set; }
     public Uri Url { get; set; }
-    public Uri ShareUrl => new Uri($"{_websiteUrl}post/{Id}");
+    public Uri ShareUrl => new($"{_websiteUrl}post/{Id}");
+    
+    /// <summary>
+    /// Url from which website redirect to original url 
+    /// </summary>
+    public Uri RedirectUrl => new($"{_websiteUrl}pub/{Id}");
     public string Keywords => X.Text.TextHelper.GetKeywords(Description, 10);
     public CategoryViewModel Category { get; set; }
     public int ViewsCount { get; set; }
@@ -37,9 +42,8 @@ public class PublicationViewModel
         DateTime = publication.DateTime;
         Type = publication.Type;
         Content = publication.Content;
-        EmbededPlayerCode = publication.EmbededPlayerCode;
+        EmbeddedPlayerCode = publication.EmbededPlayerCode;
         ViewsCount = publication.Views;
-            
 
         if (categories != null && categories.Any())
         {

@@ -12,7 +12,7 @@
 
 <div class="clear"></div>
 
-@if (string.IsNullOrEmpty(Model.EmbededPlayerCode))
+@if (string.IsNullOrEmpty(Model.EmbeddedPlayerCode))
 {
     <div class="image-block inner">
         @if (string.IsNullOrEmpty(Model.Image))
@@ -26,11 +26,11 @@
     </div>
 }
 
-@if (!string.IsNullOrEmpty(Model.EmbededPlayerCode))
+@if (!string.IsNullOrEmpty(Model.EmbeddedPlayerCode))
 {
     <div class="row">
         <div class="col-md-12 video">
-            @await Html.PartialAsync("_EmbededPlayer", Model.EmbededPlayerCode)
+            @await Html.PartialAsync("_EmbededPlayer", Model.EmbeddedPlayerCode)
         </div>
     </div>
 }
