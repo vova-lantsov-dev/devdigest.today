@@ -41,7 +41,7 @@ namespace DAL
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql(_connectionString, ServerVersion.FromString("5.7.33-mysql"));
+                optionsBuilder.UseMySql(_connectionString, ServerVersion.Parse("5.7.33-mysql"));
             }
         }
 

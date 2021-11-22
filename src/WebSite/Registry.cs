@@ -33,7 +33,7 @@ namespace WebSite
 
                 .AddDbContext<DatabaseContext>(options =>
                 {
-                    options.UseMySql(_settings.ConnectionString, ServerVersion.FromString("5.7.32-mysql"));
+                    options.UseMySql(_settings.ConnectionString, ServerVersion.Parse("5.7.32-mysql"));
                 })
 
                 .AddSingleton(_ => _settings)
