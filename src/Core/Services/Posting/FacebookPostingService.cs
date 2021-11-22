@@ -4,36 +4,35 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using X.Web.Facebook;
 
-namespace Core.Services.Posting
+namespace Core.Services.Posting;
+
+public class FacebookPostingService : IPostingService
 {
-    public class FacebookPostingService : IPostingService
+    private readonly ILogger _logger;
+    private readonly string _token;
+    private readonly string _name;
+
+    public FacebookPostingService(string token, string name, ILogger<FacebookPostingService> logger)
     {
-        private readonly ILogger _logger;
-        private readonly string _token;
-        private readonly string _name;
+        _logger = logger;
+        _token = token;
+        _name = name;
+    }
 
-        public FacebookPostingService(string token, string name, ILogger<FacebookPostingService> logger)
+    public async Task Send(string message, Uri link, IReadOnlyCollection<string> tags)
+    {
+
+        try
         {
-            _logger = logger;
-            _token = token;
-            _name = name;
+            var facebook = new FacebookClient(_token);
+
+            await facebook.PostOnWall(message, link.ToString());
+
+            _logger.LogInformation($"Message was sent to Facebook page `{_name}`: `{message}` `{link}`");
         }
-
-        public async Task Send(string message, Uri link, IReadOnlyCollection<string> tags)
+        catch (Exception ex)
         {
-
-            try
-            {
-                var facebook = new FacebookClient(_token);
-
-                await facebook.PostOnWall(message, link.ToString());
-
-                _logger.LogInformation($"Message was sent to Facebook page `{_name}`: `{message}` `{link}`");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error during send message to Facebook: `{message}` `{link}`");
-            }
+            _logger.LogError(ex, $"Error during send message to Facebook: `{message}` `{link}`");
         }
     }
 }

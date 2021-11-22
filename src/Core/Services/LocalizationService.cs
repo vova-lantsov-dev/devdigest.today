@@ -2,35 +2,34 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace Core.Services
+namespace Core.Services;
+
+public interface ILocalizationService
 {
-    public interface ILocalizationService
+    Task<int?> GetLanguageId(string code);
+}
+
+public class LocalizationService : ILocalizationService
+{
+    private readonly ISettingsRepository _settingsRepository;
+    private readonly ILogger _logger;
+
+    public LocalizationService(ISettingsRepository settingsRepository, ILogger<LocalizationService> logger)
     {
-        Task<int?> GetLanguageId(string code);
+        _settingsRepository = settingsRepository;
+        _logger = logger;
     }
 
-    public class LocalizationService : ILocalizationService
+    public async Task<int?> GetLanguageId(string code)
     {
-        private readonly ISettingsRepository _settingsRepository;
-        private readonly ILogger _logger;
-
-        public LocalizationService(ISettingsRepository settingsRepository, ILogger<LocalizationService> logger)
+        if (string.IsNullOrWhiteSpace(code))
         {
-            _settingsRepository = settingsRepository;
-            _logger = logger;
+            return null;
         }
 
-        public async Task<int?> GetLanguageId(string code)
-        {
-            if (string.IsNullOrWhiteSpace(code))
-            {
-                return null;
-            }
+        code = code.Trim().ToLower();
 
-            code = code.Trim().ToLower();
-
-            var language = await _settingsRepository.GetLanguage(code);
-            return language?.Id;
-        }
+        var language = await _settingsRepository.GetLanguage(code);
+        return language?.Id;
     }
 }

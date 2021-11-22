@@ -1,13 +1,12 @@
 using Xunit;
 
-namespace Tests
+namespace Tests;
+
+public class LogicTest
 {
-    public class LogicTest
+    [Fact]
+    public void EmptyTest()
     {
-        [Fact]
-        public void EmptyTest()
-        {
-            Assert.True(true);
-        }
+        Assert.True(true);
     }
 }

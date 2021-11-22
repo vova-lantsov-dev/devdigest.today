@@ -14,37 +14,37 @@ using X.Web.RSS.Enumerators;
 using X.Web.RSS.Structure;
 using X.Web.RSS.Structure.Validators;
 
-namespace WebSite.Controllers
+namespace WebSite.Controllers;
+
+public class RssController : Controller
 {
-    public class RssController : Controller
+    private readonly IPublicationService _publicationService;
+    private readonly IMemoryCache _cache;
+    private readonly Settings _settings;
+
+    public RssController(IMemoryCache cache, IPublicationService publicationService, Settings settings)
     {
-        private readonly IPublicationService _publicationService;
-        private readonly IMemoryCache _cache;
-        private readonly Settings _settings;
+        _cache = cache;
+        _publicationService = publicationService;
+        _settings = settings;
+    }
 
-        public RssController(IMemoryCache cache, IPublicationService publicationService, Settings settings)
+    [HttpGet]
+    [Route("rss")]
+    public async Task<IActionResult> GetRssFeed()
+    {
+        var key = "rss";
+        var xml = _cache.Get(key)?.ToString();
+
+        if (string.IsNullOrEmpty(xml))
         {
-            _cache = cache;
-            _publicationService = publicationService;
-            _settings = settings;
-        }
+            int? categoryId = null;
+            var pagedResult = await _publicationService.GetPublications(categoryId, 1, 50);
+            var lastUpdateDate = pagedResult.Select(o => o.DateTime).DefaultIfEmpty().Max();
 
-        [HttpGet]
-        [Route("rss")]
-        public async Task<IActionResult> GetRssFeed()
-        {
-            var key = "rss";
-            var xml = _cache.Get(key)?.ToString();
-
-            if (string.IsNullOrEmpty(xml))
+            var rss = new RssDocument
             {
-                int? categoryId = null;
-                var pagedResult = await _publicationService.GetPublications(categoryId, 1, 50);
-                var lastUpdateDate = pagedResult.Select(o => o.DateTime).DefaultIfEmpty().Max();
-
-                var rss = new RssDocument
-                {
-                    Channel =
+                Channel =
                     new RssChannel
                     {
                         Copyright = _settings.WebSiteTitle,
@@ -71,35 +71,34 @@ namespace WebSite.Controllers
                         WebMaster = new RssPerson("Andrew G.", _settings.SupportEmail),
                         Items = new List<RssItem> { }
                     }
-                };
+            };
 
-                foreach (var p in pagedResult)
-                {
-                    rss.Channel.Items.Add(CreateRssItem(p));
-                }
-
-                xml = rss.ToXml();
-
-                _cache.Set(key, xml, TimeSpan.FromMinutes(10));
+            foreach (var p in pagedResult)
+            {
+                rss.Channel.Items.Add(CreateRssItem(p));
             }
 
-            return Content(xml, RssDocument.MimeType);
+            xml = rss.ToXml();
+
+            _cache.Set(key, xml, TimeSpan.FromMinutes(10));
         }
 
-        private RssItem CreateRssItem(Publication publication)
-        {
-            var p = new PublicationViewModel(publication, _settings.WebSiteUrl);
-
-            return new RssItem
-            {
-                Description = p.Description,
-                Link = new RssUrl(p.ShareUrl),
-                PubDate = p.DateTime,
-                Title = p.Title,
-                Guid = new RssGuid { IsPermaLink = true, Value = p.ShareUrl.ToString() },
-                Source = new RssSource { Url = new RssUrl(p.ShareUrl) }
-            };
-        }
-
+        return Content(xml, RssDocument.MimeType);
     }
+
+    private RssItem CreateRssItem(Publication publication)
+    {
+        var p = new PublicationViewModel(publication, _settings.WebSiteUrl);
+
+        return new RssItem
+        {
+            Description = p.Description,
+            Link = new RssUrl(p.ShareUrl),
+            PubDate = p.DateTime,
+            Title = p.Title,
+            Guid = new RssGuid { IsPermaLink = true, Value = p.ShareUrl.ToString() },
+            Source = new RssSource { Url = new RssUrl(p.ShareUrl) }
+        };
+    }
+
 }
