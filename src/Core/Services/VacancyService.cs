@@ -9,99 +9,98 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using X.PagedList;
 
-namespace Core.Services
+namespace Core.Services;
+
+public interface IVacancyService
 {
-    public interface IVacancyService
+    Task<IPagedList<Vacancy>> GetVacancies(int page = 1, int pageSize = 10);
+    Task<IReadOnlyCollection<Vacancy>> GetHotVacancies();
+    Task<Vacancy> Get(int id);
+    Task IncreaseViewCount(int id);
+    string GetVacancyImage();
+}
+
+public class VacancyService : IVacancyService
+{
+    private readonly ILogger _logger;
+    private readonly IMemoryCache _cache;
+    private readonly IVacancyRepository _repository;
+    private readonly Settings _settings;
+
+    public VacancyService(
+        IMemoryCache cache, 
+        IVacancyRepository repository, 
+        Settings settings,
+        ILogger<VacancyService> logger)
     {
-        Task<IPagedList<Vacancy>> GetVacancies(int page = 1, int pageSize = 10);
-        Task<IReadOnlyCollection<Vacancy>> GetHotVacancies();
-        Task<Vacancy> Get(int id);
-        Task IncreaseViewCount(int id);
-        string GetVacancyImage();
+        _cache = cache;
+        _logger = logger;
+        _repository = repository;
+        _settings = settings;
     }
 
-    public class VacancyService : IVacancyService
+    public async Task<IPagedList<Vacancy>> GetVacancies(int page = 1, int pageSize = 10)
     {
-        private readonly ILogger _logger;
-        private readonly IMemoryCache _cache;
-        private readonly IVacancyRepository _repository;
-        private readonly Settings _settings;
+        var key = $"vacancy{page}_{pageSize}";
 
-        public VacancyService(
-            IMemoryCache cache, 
-            IVacancyRepository repository, 
-            Settings settings,
-            ILogger<VacancyService> logger)
+        var result = _cache.Get(key) as IPagedList<Vacancy>;
+
+        if (result == null)
         {
-            _cache = cache;
-            _logger = logger;
-            _repository = repository;
-            _settings = settings;
-        }
-
-        public async Task<IPagedList<Vacancy>> GetVacancies(int page = 1, int pageSize = 10)
-        {
-            var key = $"vacancy{page}_{pageSize}";
-
-            var result = _cache.Get(key) as IPagedList<Vacancy>;
-
-            if (result == null)
-            {
-                var items =  await  _repository.GetVacancies(page, pageSize);
-                var totalItemsCount = await _repository.GetVacanciesCount();
+            var items =  await  _repository.GetVacancies(page, pageSize);
+            var totalItemsCount = await _repository.GetVacanciesCount();
                 
-                result = new StaticPagedList<Vacancy>(items, page, pageSize, totalItemsCount);
-                _cache.Set(key, result, GetMemoryCacheEntryOptions());
-            }
-
-            return result;
+            result = new StaticPagedList<Vacancy>(items, page, pageSize, totalItemsCount);
+            _cache.Set(key, result, GetMemoryCacheEntryOptions());
         }
 
-        public async Task<IReadOnlyCollection<Vacancy>> GetHotVacancies()
-        {
-            var key = $"hot_vacancies";
-            const int size = 5;
-
-            var result = _cache.Get(key) as IReadOnlyCollection<Vacancy>;
-
-            if (result == null)
-            {
-                result = await _repository.GetHotVacancies(size);
-
-                _cache.Set(key, result, GetMemoryCacheEntryOptions());
-            }
-
-            return result;
-        }
-
-        public async Task<Vacancy> Get(int id)
-        {
-            var key = $"vacancy_{id}";
-
-            var result = _cache.Get(key) as Vacancy;
-
-            if (result == null)
-            {
-                result = await _repository.GetVacancy(id);
-                _cache.Set(key, result, GetMemoryCacheEntryOptions());
-            }
-
-            return result;
-        }
-
-        public async Task IncreaseViewCount(int id) => await _repository.IncreaseVacancyViewCount(id);
-
-        public string GetVacancyImage()
-        {
-            var path = Path.Combine(_settings.WebRootPath, "images/vacancy");
-            var file = Directory.GetFiles(path).OrderBy(o => Guid.NewGuid()).Select(Path.GetFileName).FirstOrDefault();
-            
-            return $"{_settings.WebSiteUrl}images/vacancy/{file}";
-        }
-
-        private static MemoryCacheEntryOptions GetMemoryCacheEntryOptions() => new MemoryCacheEntryOptions
-        {
-            AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1)
-        };
+        return result;
     }
+
+    public async Task<IReadOnlyCollection<Vacancy>> GetHotVacancies()
+    {
+        var key = $"hot_vacancies";
+        const int size = 5;
+
+        var result = _cache.Get(key) as IReadOnlyCollection<Vacancy>;
+
+        if (result == null)
+        {
+            result = await _repository.GetHotVacancies(size);
+
+            _cache.Set(key, result, GetMemoryCacheEntryOptions());
+        }
+
+        return result;
+    }
+
+    public async Task<Vacancy> Get(int id)
+    {
+        var key = $"vacancy_{id}";
+
+        var result = _cache.Get(key) as Vacancy;
+
+        if (result == null)
+        {
+            result = await _repository.GetVacancy(id);
+            _cache.Set(key, result, GetMemoryCacheEntryOptions());
+        }
+
+        return result;
+    }
+
+    public async Task IncreaseViewCount(int id) => await _repository.IncreaseVacancyViewCount(id);
+
+    public string GetVacancyImage()
+    {
+        var path = Path.Combine(_settings.WebRootPath, "images/vacancy");
+        var file = Directory.GetFiles(path).OrderBy(o => Guid.NewGuid()).Select(Path.GetFileName).FirstOrDefault();
+            
+        return $"{_settings.WebSiteUrl}images/vacancy/{file}";
+    }
+
+    private static MemoryCacheEntryOptions GetMemoryCacheEntryOptions() => new MemoryCacheEntryOptions
+    {
+        AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1)
+    };
 }

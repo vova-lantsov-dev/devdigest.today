@@ -6,63 +6,62 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using RestSharp;
 
-namespace Core.Services
+namespace Core.Services;
+
+public interface ILanguageAnalyzerService
 {
-    public interface ILanguageAnalyzerService
+    string GetTextLanguage(string text);
+}
+
+public class LanguageAnalyzerService : ILanguageAnalyzerService
+{
+    private readonly IRestClient _client;
+    private readonly ILogger _logger;
+
+    public LanguageAnalyzerService(string key, ILogger<LanguageAnalyzerService> logger)
     {
-        string GetTextLanguage(string text);
+        _logger = logger;
+
+        _client = new RestClient("https://westeurope.api.cognitive.microsoft.com/text/analytics/v2.0");
+
+        _client.AddDefaultHeader("Ocp-Apim-Subscription-Key", key);
+        _client.AddDefaultHeader("Content-Type", "application/json");
+        _client.AddDefaultHeader("Accept", "application/json");
     }
 
-    public class LanguageAnalyzerService : ILanguageAnalyzerService
+    public string GetTextLanguage(string text)
     {
-        private readonly IRestClient _client;
-        private readonly ILogger _logger;
+        var request = new RestRequest("languages", Method.POST) {RequestFormat = DataFormat.Json};
 
-        public LanguageAnalyzerService(string key, ILogger<LanguageAnalyzerService> logger)
+        var body = new Query
         {
-            _logger = logger;
+            Documents = new[] {new RequestDocument(Guid.NewGuid().ToString(), text)}
+        };
 
-            _client = new RestClient("https://westeurope.api.cognitive.microsoft.com/text/analytics/v2.0");
+        var json = JsonConvert.SerializeObject(body, new JsonSerializerSettings
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver()
+        });
 
-            _client.AddDefaultHeader("Ocp-Apim-Subscription-Key", key);
-            _client.AddDefaultHeader("Content-Type", "application/json");
-            _client.AddDefaultHeader("Accept", "application/json");
+        request.AddParameter("application/json", json, ParameterType.RequestBody);
+
+        try
+        {
+            var response = _client.Execute(request);
+            var apiResponse = JsonConvert.DeserializeObject<Response>(response.Content);
+
+            var language = apiResponse.Documents?
+                .Select(o => o.DetectedLanguages.FirstOrDefault())
+                .Select(o => o?.Iso6391Name?.Trim()?.ToLower())
+                .FirstOrDefault();
+
+            return language ?? string.Empty;
         }
-
-        public string GetTextLanguage(string text)
+        catch(Exception ex)
         {
-            var request = new RestRequest("languages", Method.POST) {RequestFormat = DataFormat.Json};
-
-            var body = new Query
-            {
-                Documents = new[] {new RequestDocument(Guid.NewGuid().ToString(), text)}
-            };
-
-            var json = JsonConvert.SerializeObject(body, new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
-            });
-
-            request.AddParameter("application/json", json, ParameterType.RequestBody);
-
-            try
-            {
-                var response = _client.Execute(request);
-                var apiResponse = JsonConvert.DeserializeObject<Response>(response.Content);
-
-                var language = apiResponse.Documents?
-                    .Select(o => o.DetectedLanguages.FirstOrDefault())
-                    .Select(o => o?.Iso6391Name?.Trim()?.ToLower())
-                    .FirstOrDefault();
-
-                return language ?? string.Empty;
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, $"Error in `{nameof(GetTextLanguage)}` method");
+            _logger.LogError(ex, $"Error in `{nameof(GetTextLanguage)}` method");
                 
-                return string.Empty;
-            }
+            return string.Empty;
         }
     }
 }
