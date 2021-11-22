@@ -17,7 +17,9 @@ public class Program
             .CreateDefaultBuilder(args)
             .ConfigureLogging(builder =>
             {
-                builder.AddConsole();
+                builder
+                    .AddConsole()
+                    .AddAzureWebAppDiagnostics();
             })
             .ConfigureAppConfiguration((hostingContext, config) =>
             {
