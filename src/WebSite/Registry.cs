@@ -29,8 +29,6 @@ public class Registry
 
             .AddMemoryCache()
 
-            .AddEntityFrameworkMySql()
-
             .AddDbContext<DatabaseContext>(options =>
             {
                 options.UseMySql(_settings.ConnectionString, ServerVersion.Parse("5.7.32-mysql"));
