@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 WORKDIR /app
 
 COPY . ./
-WORKDIR /app/src/Website
+WORKDIR /app/src/WebSite
 
 RUN dotnet restore
 RUN dotnet publish -c Release -o /out
@@ -13,4 +13,4 @@ WORKDIR /app
 COPY --from=build-env /out .
 
 EXPOSE 80
-ENTRYPOINT ["dotnet", "/app/Website.dll"]
+ENTRYPOINT ["dotnet", "/app/WebSite.dll"]
