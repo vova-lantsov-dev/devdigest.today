@@ -1,10 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using DAL;
+using X.Text;
 
 namespace WebSite.ViewModels;
 
-public class PublicationViewModel
+public record PublicationViewModel
 {
     public int Id { get; set; }
     public string Type { get; set; }
@@ -13,19 +12,24 @@ public class PublicationViewModel
     public string Description { get; set; }
     public string Image { get; set; }
     public DateTime DateTime { get; set; }
-    public string EmbededPlayerCode { get; set; }
+    public string EmbeddedPlayerCode { get; set; }
     public Uri Url { get; set; }
-    public Uri ShareUrl => new Uri($"{_websiteUrl}post/{Id}");
-    public string Keywords => X.Text.TextHelper.GetKeywords(Description, 10);
+    public Uri ShareUrl => new($"{_websiteUrl}post/{Id}");
+    
+    /// <summary>
+    /// Url from which website redirect to original url 
+    /// </summary>
+    public Uri RedirectUrl => new($"{_websiteUrl}goto/{Id}");
+    public string Keywords => TextHelper.GetKeywords(Description, 10);
     public CategoryViewModel Category { get; set; }
     public int ViewsCount { get; set; }
         
     private readonly Uri _websiteUrl;
 
     public PublicationViewModel(
-        DAL.Publication publication, 
+        Publication publication, 
         Uri websiteUrl, 
-        IReadOnlyCollection<DAL.Category> categories = null)
+        IReadOnlyCollection<Category> categories = null)
     {
         _websiteUrl = websiteUrl;
 
@@ -37,9 +41,8 @@ public class PublicationViewModel
         DateTime = publication.DateTime;
         Type = publication.Type;
         Content = publication.Content;
-        EmbededPlayerCode = publication.EmbededPlayerCode;
+        EmbeddedPlayerCode = publication.EmbededPlayerCode;
         ViewsCount = publication.Views;
-            
 
         if (categories != null && categories.Any())
         {
@@ -59,5 +62,5 @@ public class PublicationViewModel
         
     public override string ToString() => $"{Title}\r\n{GetShortDescription()}\r\n{Url}";
 
-    public string GetShortDescription() => X.Text.TextHelper.Substring(Description, 256, "...");
+    public string GetShortDescription() => TextHelper.Substring(Description, 256, "...");
 }

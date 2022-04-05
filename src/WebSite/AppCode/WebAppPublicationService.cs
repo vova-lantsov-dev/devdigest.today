@@ -95,7 +95,7 @@ public class WebAppPublicationService : IWebAppPublicationService
             var model = new PublicationViewModel(publication, _settings.WebSiteUrl);
 
             //If we can embed main content into site page, so we can share this page.
-            var url = string.IsNullOrEmpty(model.EmbededPlayerCode) ? model.Url : model.ShareUrl;
+            var url = string.IsNullOrEmpty(model.EmbeddedPlayerCode) ? model.RedirectUrl : model.ShareUrl;
                 
             var services = await GetServices(publication);
                 
