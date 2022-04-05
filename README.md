@@ -20,7 +20,10 @@ docker build ./ --file ./Dockerfile --tag ghcr.io/dncuug/devdigest.today/devdige
 
 docker push ghcr.io/dncuug/devdigest.today/devdigest.today:latest
 
-docker run --rm -it -p 8000:80 ghcr.io/dncuug/devdigest.today/devdigest.today:latest
+docker run --rm -it -e CognitiveServicesTextAnalyticsKey=xxx -e WebSiteUrl=http://localhost:8000/ -e ConnectionStrings__DefaultConnection="xxx" -p 8000:80 ghcr.io/dncuug/devdigest.today/devdigest.today:latest 
+```
 
-docker login -u ernadox
+### How to login into GitHub container registry
+```
+docker login ghcr.io
 ```
