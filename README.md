@@ -11,3 +11,19 @@ Welcome to Developers Digest <a href="https://devdigest.today">website</a>!
 
 Project supported by 
 <a href="https://www.facebook.com/dncuug/">Ukrainian .NET Developer Community</a>,  <a href="https://www.facebook.com/groups/azure.ua/">Microsoft Azure Ukraine User Group</a>, and <a href="https://www.facebook.com/groups/xamarin.ua">Xamarin Ukraine User Group</a>.
+
+
+## How to build docker image
+
+```
+docker build ./ --file ./Dockerfile --tag ghcr.io/dncuug/devdigest.today/devdigest.today:latest
+
+docker push ghcr.io/dncuug/devdigest.today/devdigest.today:latest
+
+docker run --rm -it -e CognitiveServicesTextAnalyticsKey=xxx -e WebSiteUrl=http://localhost:8000/ -e ConnectionStrings__DefaultConnection="xxx" -p 8000:80 ghcr.io/dncuug/devdigest.today/devdigest.today:latest 
+```
+
+### How to login into GitHub container registry
+```
+docker login ghcr.io
+```
