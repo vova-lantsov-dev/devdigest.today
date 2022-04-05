@@ -13,13 +13,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "src\Core\Core.cspro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "tests\Tests\Tests.csproj", "{8EAECAAB-68C9-4292-A76E-1C7BE930FABB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{8BEB07DD-C6F2-449C-B194-EB44FF66292F}"
-ProjectSection(SolutionItems) = preProject
-	docker\.dockerfile = docker\.dockerfile
-	docker\build.sh = docker\build.sh
-EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSite", "src\WebSite\WebSite.csproj", "{C20DD156-89B6-48C5-9321-DC78E647FF0E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stuff", "stuff", "{399D9B82-ED02-49ED-A54E-4A1C14A852A6}"
+	ProjectSection(SolutionItems) = preProject
+		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
+		db.sql = db.sql
+		Dockerfile = Dockerfile
+		LICENSE = LICENSE
+		README.MD = README.MD
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
