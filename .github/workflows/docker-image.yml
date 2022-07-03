@@ -36,6 +36,8 @@ jobs:
       - name: Build and push Docker image
         run: |
           version=${{needs.generate-image-version.outputs.version}}
-          image="ghcr.io/dncuug/devdigest.today:$version"
-          docker build ./ --file ./Dockerfile --tag $image
-          docker push $image
+          image1="ghcr.io/dncuug/devdigest.today:$version"
+          image2="ghcr.io/dncuug/devdigest.today:latest"
+          docker build ./ --file ./Dockerfile --tag $image1 --tag $image2
+          docker push $image1
+          docker push $image2
