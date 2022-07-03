@@ -97,7 +97,7 @@ public class WebAppPublicationService : IWebAppPublicationService
             //If we can embed main content into site page, so we can share this page.
             var url = string.IsNullOrEmpty(model.EmbeddedPlayerCode) ? model.RedirectUrl : model.ShareUrl;
                 
-            var services = await GetServices(publication);
+            var services = await GetPostingServicec(publication);
                 
             foreach (var service in services)
             {
@@ -110,7 +110,7 @@ public class WebAppPublicationService : IWebAppPublicationService
         throw new Exception("Can't save publication to database");
     }
 
-    public async Task<IReadOnlyCollection<IPostingService>> GetServices(Publication publication)
+    public async Task<IReadOnlyCollection<IPostingService>> GetPostingServicec(Publication publication)
     {
         var categoryId = publication.CategoryId;
             
