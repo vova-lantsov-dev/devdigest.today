@@ -53,13 +53,13 @@ public class TelegramPostingService : IPostingService
 
     private static string FormatMessage(string message)
     {
-        if (message.Contains("."))
-        {
-            var title = message.Split(".").FirstOrDefault();
-            var msg = new Regex(Regex.Escape("o")).Replace(message, title, 1);
-    
-            return $"⚡ <b>{title}</b>. {Environment.NewLine}{Environment.NewLine}{msg}";
-        }
+        // if (message.Contains("."))
+        // {
+        //     var title = message.Split(".").FirstOrDefault();
+        //     var msg = new Regex(Regex.Escape("o")).Replace(message, title, 1);
+        //
+        //     return $"⚡ <b>{title}</b>. {Environment.NewLine}{Environment.NewLine}{msg}";
+        // }
         
         return $"⚡ <b>{message}</b>";
     }
