@@ -9,7 +9,7 @@ namespace Tests;
 
 public class TelegramIntegrationTest
 {
-    [Fact]
+    [Fact(Skip = "On demand")]
     public async Task CheckFormatting()
     {
         var token =  "";
