@@ -18,7 +18,13 @@
     background-size: cover;
     color: #FFF;
     padding-top: 20px;
+    padding-left: 15px;
     padding-bottom: 20px;
+}
+
+.help-ukraine h2, .help-ukraine a {
+    margin-top: 5px;
+    color: #FFF;
 }
 
 h1,
@@ -27,7 +33,7 @@ h3,
 h4,
 h5,
 .navbar .navbar-brand,
-.navbar .navbar-nav>li>a,
+.navbar .navbar-nav > li > a,
 footer,
 footer a {
     font-family: 'Ubuntu', sans-serif;
@@ -89,7 +95,7 @@ footer a {
 }
 
 .navbar .dropdown-menu li,
-.navbar .navbar-nav>li>a {
+.navbar .navbar-nav > li > a {
     text-transform: uppercase;
 }
 
@@ -97,10 +103,10 @@ footer a {
     background-color: #FFF;
 }
 
-.dropdown-menu>li>a:focus,
-.dropdown-menu>li>a:hover,
-.nav>li>a:focus,
-.nav>li>a:hover {
+.dropdown-menu > li > a:focus,
+.dropdown-menu > li > a:hover,
+.nav > li > a:focus,
+.nav > li > a:hover {
     background: none;
     color: #662079;
 }
@@ -159,7 +165,8 @@ footer a {
     font-family: 'Ubuntu', sans-serif;
 }
 
-.jumbotron .container {}
+.jumbotron .container {
+}
 
 .jumbotron p {
     font-weight: normal;
@@ -211,8 +218,7 @@ footer a {
 }
 
 .clear {
-    clear: both;
-    ;
+    clear: both;;
 }
 
 .publication-preview .image-block img {
@@ -326,34 +332,34 @@ footer ul {
     border: none;
 }
 
-.pagination>.active>a,
-.pagination>.active>a:focus,
-.pagination>.active>a:hover,
-.pagination>.active>span,
-.pagination>.active>span:focus,
-.pagination>.active>span:hover {
+.pagination > .active > a,
+.pagination > .active > a:focus,
+.pagination > .active > a:hover,
+.pagination > .active > span,
+.pagination > .active > span:focus,
+.pagination > .active > span:hover {
     background-color: #662079;
 }
 
-.pagination>li>a,
-.pagination>li>span {
+.pagination > li > a,
+.pagination > li > span {
     color: #662079;
     border: none;
     font-size: 12pt;
     font-weight: normal;
 }
 
-.pagination>li>a:hover,
-.pagination>li>span:hover,
-.pagination>li>a:focus,
-.pagination>li>span:focus {
+.pagination > li > a:hover,
+.pagination > li > span:hover,
+.pagination > li > a:focus,
+.pagination > li > span:focus {
     color: #662079;
 }
 
-.pagination>li:first-child>a,
-.pagination>li:first-child>span,
-.pagination>li:last-child>a,
-.pagination>li:last-child>span {
+.pagination > li:first-child > a,
+.pagination > li:first-child > span,
+.pagination > li:last-child > a,
+.pagination > li:last-child > span {
     border-radius: 0;
 }
 
@@ -437,38 +443,48 @@ footer ul {
     #navbar {
         text-align: center;
     }
+
     .navbar-nav {
         border-bottom: 1px solid #AAA;
     }
+
     .publication-preview h3 {
         font-size: 2em;
     }
+
     .share .btn-default,
     .share .btn-success {
         width: 100%;
         margin-top: 10px;
     }
+
     .social-buttons {
         text-align: center;
     }
+
     .social-link {
         display: none !important;
     }
-    .nav>li.mobile-hidden {
+
+    .nav > li.mobile-hidden {
         display: none;
     }
+
     footer,
     footer .text-right {
         text-align: center;
         font-size: 9pt;
     }
+
     footer img {
         display: none;
     }
+
     .social-icons li {
         font-size: 50pt;
         padding-right: 15pt;
     }
+
     .jumbotron h1 {
         font-size: 18pt;
     }
@@ -574,12 +590,12 @@ footer ul {
     text-decoration: none;
 }
 
-.navbar > .container .navbar-brand, 
+.navbar > .container .navbar-brand,
 .navbar > .container-fluid .navbar-brand {
     margin-left: 0 !important;
 }
 
 .vacancies h3 a,
-.publication-preview h3 a{
+.publication-preview h3 a {
     color: #000;
 }
