@@ -13,6 +13,14 @@
     background-color: #000;
 }
 
+.help-ukraine {
+    background: url(/images/help-ukraine.jpeg);
+    background-size: cover;
+    color: #FFF;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
 h1,
 h2,
 h3,

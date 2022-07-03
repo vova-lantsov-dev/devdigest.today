@@ -9,17 +9,34 @@
 }
 
 @section top{
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">     
-                <a href="/covid" class="green-info">
-                    <img alt="coronavirus" src="https://pixabay.com/images/download/corona-5024649_640.png" height="50px">
-                    Read latest COVID-19 coverage
-                 </a>
-             </div>
-         </div>
-     </div>
+    @* <div class="container"> *@
+    @*     <div class="row"> *@
+    @*         <div class="col-md-12">      *@
+    @*             <a href="/covid" class="green-info"> *@
+    @*                 <img alt="coronavirus" src="https://pixabay.com/images/download/corona-5024649_640.png" height="50px"> *@
+    @*                 Read latest COVID-19 coverage *@
+    @*             </a> *@
+    @*         </div> *@
+    @*     </div> *@
+    @* </div> *@
     
+    <div class="container help-ukraine">
+        <div class="row">
+            <div class="col-md-10">
+                <h2>Stand with Ukraine. Save peace in the world!</h2>
+                The National Bank of Ukraine has opened a special fundraising account for donations from international organizations, donors, and people who take care of our common peaceful future.
+                <br>
+            </div>
+            <div class="col-md-2">
+                <br>
+                <br>
+                <a class="btn btn-primary btn-lg" href="https://helpua.nazk.gov.ua/" role="button">
+                    Help »
+                </a>
+            </div>
+        </div>
+    </div>
+
     @await RenderSectionAsync("top",  required: false)
 }
 
