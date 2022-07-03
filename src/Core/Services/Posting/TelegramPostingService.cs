@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -53,13 +52,14 @@ public class TelegramPostingService : IPostingService
 
     private static string FormatMessage(string message)
     {
-        // if (message.Contains("."))
-        // {
-        //     var title = message.Split(".").FirstOrDefault();
-        //     var msg = new Regex(Regex.Escape("o")).Replace(message, title, 1);
-        //
-        //     return $"⚡ <b>{title}</b>. {Environment.NewLine}{Environment.NewLine}{msg}";
-        // }
+        if (message.Contains("|"))
+        {
+            var separatorIndex = message.IndexOf("|", StringComparison.Ordinal);
+            var title = message.Substring(0, separatorIndex);
+            var body = message.Substring(separatorIndex + 1, message.Length - separatorIndex - 1);
+
+            return $"⚡ <b>{title}</b>. {Environment.NewLine}{Environment.NewLine}{body}";
+        }
         
         return $"⚡ <b>{message}</b>";
     }
