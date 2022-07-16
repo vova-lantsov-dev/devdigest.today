@@ -22,13 +22,13 @@ public class TelegramPostingService : IPostingService
         _name = name;
     }
 
-    public async Task Send(string message, Uri link, IReadOnlyCollection<string> tags)
+    public async Task Send(string title, string body, Uri link, IReadOnlyCollection<string> tags)
     {
         var channelLink = $"https://t.me/{_name.Replace("@", "")}";
         
         var sb = new StringBuilder();
 
-        sb.Append($"{FormatMessage(message)}");
+        sb.Append($"{FormatMessage(title, body)}");
         sb.Append(Environment.NewLine);
         sb.Append(Environment.NewLine);
         sb.Append($"🔗 {link}");
@@ -40,7 +40,7 @@ public class TelegramPostingService : IPostingService
         {
             var bot = new TelegramBotClient(_token);
 
-            var result = await bot.SendTextMessageAsync(_name, sb.ToString(), ParseMode.Html);
+            await bot.SendTextMessageAsync(_name, sb.ToString(), ParseMode.Html);
 
             _logger.LogInformation($"Message was sent to Telegram channel `{_name}`: `{sb}`");
         }
@@ -50,18 +50,14 @@ public class TelegramPostingService : IPostingService
         }
     }
 
-    private static string FormatMessage(string message)
+    private static string FormatMessage(string title,  string body)
     {
-        if (message.Contains("|"))
+        if (!string.IsNullOrWhiteSpace(body))
         {
-            var separatorIndex = message.IndexOf("|", StringComparison.Ordinal);
-            var title = message.Substring(0, separatorIndex);
-            var body = message.Substring(separatorIndex + 1, message.Length - separatorIndex - 1);
-
             return $"⚡ <b>{title}</b>. {Environment.NewLine}{Environment.NewLine}{body}";
         }
         
-        return $"⚡ <b>{message}</b>";
+        return $"⚡ <b>{title}</b>";
     }
 
     private static string FormatTags(IReadOnlyCollection<string> tags)

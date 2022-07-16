@@ -1,12 +1,10 @@
-using System;
-
 namespace WebSite.ViewModels;
 
-public class NewPostRequest
+public record NewPostRequest
 {
-    public Uri Link { get; set; }
-    public Guid Key { get; set; }
-    public int CategoryId { get; set; }
-    public string Comment { get; set; }
-    public string Tags { get; set; }
+    public Uri Link { get; init; } = null;
+    public Guid Key { get; init; } = Guid.Empty;
+    public int CategoryId { get; init; } = -1;
+    public string Comment { get; init; } = "";
+    public string Tags { get; init; } = "";
 }

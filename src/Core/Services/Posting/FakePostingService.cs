@@ -12,8 +12,10 @@ public class FakePostingService : IPostingService
     public FakePostingService(ILogger<FakePostingService> logger) =>
         _logger = logger;
 
-    public Task Send(string message, Uri link, IReadOnlyCollection<string> tags)
+    public Task Send(string title, string body, Uri link, IReadOnlyCollection<string> tags)
     {
+        var message = MessageParser.Glue(title, body);
+        
         _logger.LogInformation($"{message} {link}");
             
         Console.WriteLine($"{message} {link}");

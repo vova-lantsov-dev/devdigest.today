@@ -38,10 +38,10 @@ public class TwitterPostingService : IPostingService
         _client = new TwitterClient(consumerKey, consumerSecret, accessToken, accessSecret);
     }
 
-    public async Task Send(string message, Uri link, [NotNull] IReadOnlyCollection<string> tags)
+    public async Task Send(string title, string body, Uri link, [NotNull] IReadOnlyCollection<string> tags)
     {
         var tagLine = string.Join(" ", _defaultTags.ToList().Union(tags));
-
+        var message = MessageParser.Glue(title, body);
         var maxMessageLength = MaxTweetLength - tagLine.Length - 4;
 
         var sb = new StringBuilder();

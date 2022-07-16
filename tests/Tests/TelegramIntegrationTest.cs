@@ -9,10 +9,9 @@ namespace Tests;
 
 public class TelegramIntegrationTest
 {
-    [Fact]
+    [Fact(Skip = "On demand")]
     public async Task CheckFormatting()
     {
-
         var token = "";
         var name = "";
         var logger = new NullLogger<TelegramPostingService>();
@@ -22,7 +21,11 @@ public class TelegramIntegrationTest
         string message2 = @"Ecma International одобрила шестую версию спецификации языка C# официально известную как ECMA-334";
         Uri link = new Uri("https://devdigest.today/goto/1980");
         IReadOnlyCollection<string> tags = new[] { "#microsoft", "#ecma", "#ecma334"};
-        
-        await postingService.Send(message2, link, tags);
+
+        await postingService.Send(
+            "Ecma International одобрила шестую версию спецификации языка C#",
+            message2,
+            link,
+            tags);
     }
 }

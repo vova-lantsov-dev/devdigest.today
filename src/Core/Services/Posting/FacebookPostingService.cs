@@ -19,8 +19,9 @@ public class FacebookPostingService : IPostingService
         _name = name;
     }
 
-    public async Task Send(string message, Uri link, IReadOnlyCollection<string> tags)
+    public async Task Send(string title, string body, Uri link, IReadOnlyCollection<string> tags)
     {
+        var message = MessageParser.Glue(title, body);
 
         try
         {

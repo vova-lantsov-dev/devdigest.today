@@ -11,7 +11,7 @@ namespace Core.Services.Posting;
 public class SlackPostingService: IPostingService
 {
     private readonly ILogger<SlackPostingService> _logger;
-    private ISlackClient _client;
+    private readonly ISlackClient _client;
 
     public SlackPostingService(string webHookUrl, ILogger<SlackPostingService> logger)
     {
@@ -19,8 +19,10 @@ public class SlackPostingService: IPostingService
         _client = new SlackClient(webHookUrl);
     }
         
-    public async Task Send(string message, Uri link, IReadOnlyCollection<string> tags)
+    public async Task Send(string title, string body, Uri link, IReadOnlyCollection<string> tags)
     {
+        var message = MessageParser.Glue(title, body);
+        
         try
         {
             var slackMessage = new SlackMessage

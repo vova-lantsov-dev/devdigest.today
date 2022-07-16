@@ -81,6 +81,8 @@ public class WebAppPublicationService : IWebAppPublicationService
         var languageId = await _localizationService.GetLanguageId(languageCode) ?? Core.Language.EnglishId;
         var player = EmbeddedPlayerFactory.CreatePlayer(request.Link);
         var playerCode = player != null ? await player.GetEmbeddedPlayerUrl(request.Link) : null;
+        var (title, body) = MessageParser.Split(request.Comment);
+        var message = MessageParser.Glue(title, body);
 
         var publication = await _publicationService.CreatePublication(
             metadata,
@@ -88,7 +90,7 @@ public class WebAppPublicationService : IWebAppPublicationService
             languageId,
             playerCode,
             request.CategoryId,
-            request.Comment);
+            message);
 
         if (publication != null)
         {
@@ -97,11 +99,11 @@ public class WebAppPublicationService : IWebAppPublicationService
             //If we can embed main content into site page, so we can share this page.
             var url = string.IsNullOrEmpty(model.EmbeddedPlayerCode) ? model.RedirectUrl : model.ShareUrl;
                 
-            var services = await GetPostingServicec(publication);
+            var services = await GetPostingService(publication);
                 
             foreach (var service in services)
             {
-                await service.Send(request.Comment, url, GetTags(request));
+                await service.Send(title, body , url, GetTags(request));
             }
 
             return model;
@@ -110,7 +112,9 @@ public class WebAppPublicationService : IWebAppPublicationService
         throw new Exception("Can't save publication to database");
     }
 
-    public async Task<IReadOnlyCollection<IPostingService>> GetPostingServicec(Publication publication)
+   
+
+    public async Task<IReadOnlyCollection<IPostingService>> GetPostingService(Publication publication)
     {
         var categoryId = publication.CategoryId;
             
