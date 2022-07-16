@@ -11,7 +11,6 @@ using Core.Services;
 using Core.Services.Posting;
 using Core.Web;
 using DAL;
-using Microsoft.Extensions.Logging;
 using WebSite.ViewModels;
 using X.PagedList;
 

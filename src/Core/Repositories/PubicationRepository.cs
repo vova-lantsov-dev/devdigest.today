@@ -68,9 +68,9 @@ public class PublicationRepository : IPublicationRepository
             
         await _database.SaveChangesAsync();
 
-        publication = await _database.Publications.OrderBy(o => o.DateTime).LastOrDefaultAsync();
+        publication = await _database.Publications.OrderBy(o => o.Id).LastOrDefaultAsync();
             
-        _logger.LogInformation($"Publication `{publication.Title}`  was saved. Id: {publication.Id}");
+        _logger.LogInformation($"Publication `{publication?.Title}`  was saved. Id: {publication?.Id}");
 
         return publication;
     }
