@@ -50,13 +50,13 @@ public class TelegramPostingService : IPostingService
         }
     }
 
-    private static string FormatMessage(string title,  string body)
+    private static string FormatMessage(string title, string body)
     {
         if (!string.IsNullOrWhiteSpace(body))
         {
             return $"⚡ <b>{title}</b>. {Environment.NewLine}{Environment.NewLine}{body}";
         }
-        
+
         return $"⚡ <b>{title}</b>";
     }
 

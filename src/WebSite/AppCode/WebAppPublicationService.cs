@@ -103,7 +103,7 @@ public class WebAppPublicationService : IWebAppPublicationService
                 
             foreach (var service in services)
             {
-                await service.Send(title, body , url, GetTags(request));
+                await service.Send(title, body, url, GetTags(request));
             }
 
             return model;
