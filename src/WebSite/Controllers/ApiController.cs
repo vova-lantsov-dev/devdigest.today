@@ -65,9 +65,11 @@ public class ApiController : ControllerBase
         try
         {
             var publication = await _webAppPublicationService.CreatePublication(request, user);
-                
-            if (publication != null) 
+
+            if (publication != null)
+            {
                 return Created(publication.ShareUrl, publication);
+            }
 
             return BadRequest();
         }
