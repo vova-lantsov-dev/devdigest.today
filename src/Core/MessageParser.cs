@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Core;
 
@@ -27,9 +29,15 @@ public static class MessageParser
 
         if (!string.IsNullOrWhiteSpace(title))
         {
-            return $"{title.Trim()} {body}".Trim();
+            var point = EndsWith(title.Trim(), new [] {".", "?", "!", "..."}) ? string.Empty : ".";
+            var result = $"{title.Trim()}{point} {body}".Trim();
+            
+            return result;
         }
 
         return body ?? string.Empty;
     }
+
+    private static bool EndsWith(string text, IEnumerable<string> symbols) => 
+        symbols.Any(text.EndsWith);
 }
