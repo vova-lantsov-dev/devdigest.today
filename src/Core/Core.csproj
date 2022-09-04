@@ -8,10 +8,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="RestSharp" Version="106.13.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
-    <PackageReference Include="Telegram.Bot" Version="17.0.0" />
+    <PackageReference Include="Telegram.Bot" Version="18.0.0" />
     <PackageReference Include="Slack.Webhooks" Version="1.1.5" />
     <PackageReference Include="TweetinviAPI" Version="5.0.4" />
-    <PackageReference Include="X.PagedList" Version="8.1.0" />
+    <PackageReference Include="X.PagedList" Version="8.4.3" />
     <PackageReference Include="X.Text" Version="2.0.0" />
     <PackageReference Include="x.web.facebook" Version="2.0.4-beta" />
     <PackageReference Include="X.Web.MetaExtractor" Version="1.5.7688.23013" />
