@@ -15,7 +15,7 @@ public interface ILanguageAnalyzerService
 
 public class LanguageAnalyzerService : ILanguageAnalyzerService
 {
-    private readonly IRestClient _client;
+    private readonly RestClient _client;
     private readonly ILogger _logger;
 
     public LanguageAnalyzerService(string key, ILogger<LanguageAnalyzerService> logger)
@@ -31,7 +31,7 @@ public class LanguageAnalyzerService : ILanguageAnalyzerService
 
     public string GetTextLanguage(string text)
     {
-        var request = new RestRequest("languages", Method.POST) {RequestFormat = DataFormat.Json};
+        var request = new RestRequest("languages", Method.Post) { RequestFormat = DataFormat.Json };
 
         var body = new Query
         {
