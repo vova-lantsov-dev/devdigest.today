@@ -59,11 +59,4 @@ public class TelegramPostingService : IPostingService
 
         return $"⚡ <b>{title}</b>";
     }
-
-    private static string FormatTags(IReadOnlyCollection<string> tags)
-    {
-        var list = tags.Select(o => $"#{o.Replace("#", "")}").ToList();
-        
-        return string.Join(" ", list);
-    }
 }

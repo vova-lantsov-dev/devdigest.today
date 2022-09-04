@@ -111,8 +111,6 @@ public class WebAppPublicationService : IWebAppPublicationService
         throw new Exception("Can't save publication to database");
     }
 
-   
-
     public async Task<IReadOnlyCollection<IPostingService>> GetPostingService(Publication publication)
     {
         var categoryId = publication.CategoryId;

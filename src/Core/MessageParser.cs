@@ -27,10 +27,7 @@ public static class MessageParser
 
         if (!string.IsNullOrWhiteSpace(title))
         {
-            var point = title.Trim().EndsWith(".") ? string.Empty : ".";
-            var result = $"{title.Trim()}{point} {body}".Trim();
-            
-            return result;
+            return $"{title.Trim()} {body}".Trim();
         }
 
         return body ?? string.Empty;
