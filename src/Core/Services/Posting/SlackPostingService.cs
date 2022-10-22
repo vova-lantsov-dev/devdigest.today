@@ -19,7 +19,7 @@ public class SlackPostingService: IPostingService
         _client = new SlackClient(webHookUrl);
     }
         
-    public async Task Send(string title, string body, Uri link, IReadOnlyCollection<string> tags)
+    public async Task Send(string title, string body, Uri link)
     {
         var message = MessageParser.Glue(title, body);
         

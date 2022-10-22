@@ -40,18 +40,14 @@ public class ApiController : ControllerBase
     [Route("api/categories")]
     public async Task<IActionResult> GetCategories()
     {
-        var categories = (await _webAppPublicationService.GetCategories()).Select(o => new
-        {
-            o.Id,
-            o.Name
-        }).ToImmutableList();
+        var categories = await _webAppPublicationService.GetCategories();
 
         return Ok(categories);
     }
 
     [HttpPost]
-    [Route("api/publications/new")]
-    public async Task<IActionResult> AddPublication(NewPostRequest request)
+    [Route("api/publications")]
+    public async Task<IActionResult> AddPublication(CreatePostRequest request)
     {
         var user = await _userService.GetBySecretKey(request.Key);
 
@@ -59,23 +55,18 @@ public class ApiController : ControllerBase
         {
             _logger.LogWarning($"Somebody tried to login with this key: `{request.Key}`. Text: `{request.Comment}`");
 
-            return StatusCode((int)HttpStatusCode.Forbidden, "Incorrect security key");
+            return Forbid();
         }
 
         try
         {
-            var publication = await _webAppPublicationService.CreatePublication(request, user);
+            var publication = await _webAppPublicationService.CreatePublication(request, user.Id);
 
-            if (publication != null)
-            {
-                return Created(publication.ShareUrl, publication);
-            }
-
-            return BadRequest();
+            return Created(publication.ShareUrl, publication);
         }
         catch (DuplicateNameException ex)
         {
-            _logger.LogError(ex, "Error while creating new publication");
+            _logger.LogError(ex, "Publication with this url already exist");
                 
             return StatusCode((int) HttpStatusCode.Conflict, ex.Message);
         }

@@ -3,9 +3,9 @@ using X.PagedList;
 
 namespace WebSite.ViewModels;
 
-public class PublicationListViewModel
+public class PostListViewModel
 {
-    public IPagedList<PublicationViewModel> List { get; set; }
+    public IPagedList<PostViewModel> List { get; set; }
         
     public int? CategoryId { get; set; }
 

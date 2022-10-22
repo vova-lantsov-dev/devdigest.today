@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -21,9 +20,10 @@ public class TelegramPostingService : IPostingService
         _name = name;
     }
 
-    public async Task Send(string title, string body, Uri link, IReadOnlyCollection<string> tags)
+    public async Task Send(string title, string body, Uri link)
     {
         var channelLink = $"https://t.me/{_name.Replace("@", "")}";
+        var chatLink = "https://t.me/dotnet_chat";
         
         var sb = new StringBuilder();
 
@@ -33,7 +33,7 @@ public class TelegramPostingService : IPostingService
         sb.Append($"🔗 {link}");
         sb.Append(Environment.NewLine);
         sb.Append(Environment.NewLine);
-        sb.Append($"👉🏻 <a href=\"{channelLink}\">Подписаться на канал</a>" );
+        sb.Append($"👉🏻 <a href=\"{channelLink}\">Наш канал</a> | 💬 <a href=\"{chatLink}\">Наш чат</a>" );
 
         try
         {

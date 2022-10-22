@@ -10,14 +10,14 @@ public class RedirectController : Controller
 {
     private readonly ILogger _logger;
     private readonly Settings _settings;
-    private readonly IPublicationRepository _publicationRepository;
+    private readonly IPostRepository _postRepository;
     
     public RedirectController(
-        IPublicationRepository publicationRepository, 
+        IPostRepository postRepository, 
         Settings settings, 
         ILogger<RedirectController> logger)
     {
-        _publicationRepository = publicationRepository;
+        _postRepository = postRepository;
         _logger = logger;
         _settings = settings;
     }
@@ -26,7 +26,7 @@ public class RedirectController : Controller
     [Route("goto/{id}")]
     public async Task<IActionResult> Index(int id)
     {
-        var publication = await _publicationRepository.GetPublication(id);
+        var publication = await _postRepository.Get(id);
 
         if (publication == null)
         {

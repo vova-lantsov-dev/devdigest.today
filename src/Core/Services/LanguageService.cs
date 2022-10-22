@@ -4,17 +4,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Core.Services;
 
-public interface ILocalizationService
+public interface ILanguageService
 {
     Task<int?> GetLanguageId(string code);
 }
 
-public class LocalizationService : ILocalizationService
+public class LanguageService : ILanguageService
 {
     private readonly ISettingsRepository _settingsRepository;
     private readonly ILogger _logger;
 
-    public LocalizationService(ISettingsRepository settingsRepository, ILogger<LocalizationService> logger)
+    public LanguageService(ISettingsRepository settingsRepository, ILogger<LanguageService> logger)
     {
         _settingsRepository = settingsRepository;
         _logger = logger;

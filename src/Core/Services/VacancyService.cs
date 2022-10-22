@@ -13,8 +13,8 @@ namespace Core.Services;
 
 public interface IVacancyService
 {
-    Task<IPagedList<Vacancy>> GetVacancies(int page = 1, int pageSize = 10);
-    Task<IReadOnlyCollection<Vacancy>> GetHotVacancies();
+    Task<IPagedList<Vacancy>> GetList(int page, int pageSize);
+    Task<IReadOnlyCollection<Vacancy>> GetHot();
     Task<Vacancy> Get(int id);
     Task IncreaseViewCount(int id);
     string GetVacancyImage();
@@ -39,7 +39,7 @@ public class VacancyService : IVacancyService
         _settings = settings;
     }
 
-    public async Task<IPagedList<Vacancy>> GetVacancies(int page = 1, int pageSize = 10)
+    public async Task<IPagedList<Vacancy>> GetList(int page = 1, int pageSize = 10)
     {
         var key = $"vacancy{page}_{pageSize}";
 
@@ -57,7 +57,7 @@ public class VacancyService : IVacancyService
         return result;
     }
 
-    public async Task<IReadOnlyCollection<Vacancy>> GetHotVacancies()
+    public async Task<IReadOnlyCollection<Vacancy>> GetHot()
     {
         var key = $"hot_vacancies";
         const int size = 5;

@@ -8,7 +8,6 @@ using Core.Services;
 using DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using WebSite.ViewModels;
 using X.Web.RSS;
 using X.Web.RSS.Enumerators;
 using X.Web.RSS.Structure;
@@ -18,14 +17,16 @@ namespace WebSite.Controllers;
 
 public class RssController : Controller
 {
-    private readonly IPublicationService _publicationService;
+    private readonly IPostService _postService;
+    private readonly PostUrlBuilder _postUrlBuilder;
     private readonly IMemoryCache _cache;
     private readonly Settings _settings;
 
-    public RssController(IMemoryCache cache, IPublicationService publicationService, Settings settings)
+    public RssController(IMemoryCache cache, IPostService postService, PostUrlBuilder postUrlBuilder, Settings settings)
     {
         _cache = cache;
-        _publicationService = publicationService;
+        _postService = postService;
+        _postUrlBuilder = postUrlBuilder;
         _settings = settings;
     }
 
@@ -39,7 +40,7 @@ public class RssController : Controller
         if (string.IsNullOrEmpty(xml))
         {
             int? categoryId = null;
-            var pagedResult = await _publicationService.GetPublications(categoryId, 1, 50);
+            var pagedResult = await _postService.GetPublications(categoryId, 1, 50);
             var lastUpdateDate = pagedResult.Select(o => o.DateTime).DefaultIfEmpty().Max();
 
             var rss = new RssDocument
@@ -86,18 +87,18 @@ public class RssController : Controller
         return Content(xml, RssDocument.MimeType);
     }
 
-    private RssItem CreateRssItem(Publication publication)
+    private RssItem CreateRssItem(Post post)
     {
-        var p = new PublicationViewModel(publication, _settings.WebSiteUrl);
-
+        Uri shareUrl = _postUrlBuilder.Build(post.Id);
+        
         return new RssItem
         {
-            Description = p.Description,
-            Link = new RssUrl(p.ShareUrl),
-            PubDate = p.DateTime,
-            Title = p.Title,
-            Guid = new RssGuid { IsPermaLink = true, Value = p.ShareUrl.ToString() },
-            Source = new RssSource { Url = new RssUrl(p.ShareUrl) }
+            Description = post.Description,
+            Link = new RssUrl(shareUrl),
+            PubDate = post.DateTime,
+            Title = post.Title,
+            Guid = new RssGuid { IsPermaLink = true, Value = shareUrl.ToString() },
+            Source = new RssSource { Url = new RssUrl(shareUrl) }
         };
     }
 

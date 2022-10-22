@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-#nullable disable
-
 namespace DAL
 {
     public partial class User
@@ -10,7 +8,6 @@ namespace DAL
         public User()
         {
             Events = new HashSet<Event>();
-            Publications = new HashSet<Publication>();
             Vacancies = new HashSet<Vacancy>();
         }
 
@@ -19,7 +16,6 @@ namespace DAL
         public string Name { get; set; }
 
         public virtual ICollection<Event> Events { get; set; }
-        public virtual ICollection<Publication> Publications { get; set; }
         public virtual ICollection<Vacancy> Vacancies { get; set; }
     }
 }

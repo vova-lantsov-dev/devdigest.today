@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
@@ -12,7 +11,7 @@ public class FakePostingService : IPostingService
     public FakePostingService(ILogger<FakePostingService> logger) =>
         _logger = logger;
 
-    public Task Send(string title, string body, Uri link, IReadOnlyCollection<string> tags)
+    public Task Send(string title, string body, Uri link)
     {
         var message = MessageParser.Glue(title, body);
         

@@ -5,6 +5,6 @@ namespace WebSite.ViewModels;
 
 public class HomePageViewModel
 {
-    public StaticPagedList<PublicationViewModel> Publications { get; set; }
-    public IReadOnlyCollection<PublicationViewModel> TopPublications { get; set; }
+    public StaticPagedList<PostViewModel> Publications { get; set; }
+    public IReadOnlyCollection<PostViewModel> TopPublications { get; set; }
 }

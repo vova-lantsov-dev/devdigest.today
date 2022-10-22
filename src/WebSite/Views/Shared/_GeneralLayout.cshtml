@@ -1,5 +1,4 @@
-﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
-@using Core.Models
+﻿@using Core.Models
 @using Core
 @{
     var featuredTelegramChannels = new List<Link>
@@ -215,8 +214,6 @@
     <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"></script>
     <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
     <script src="/js/site.js"></script>
-
-    @Html.Raw(JavaScriptSnippet.FullScript)
 
     @await RenderSectionAsync("scripts", required: false)
 

@@ -71,7 +71,7 @@ public class HomeController : Controller
             Url = new Uri($"{_settings.WebSiteUrl}page/{page}")
         });
 
-        return View("~/Views/Home/Page.cshtml", new PublicationListViewModel
+        return View("~/Views/Home/Page.cshtml", new PostListViewModel
         {
             List = publications,
             CategoryId = categoryId

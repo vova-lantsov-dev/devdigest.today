@@ -19,7 +19,7 @@ public class VacancyViewModel
 		Content = vacancy.Content;
 		Contact = vacancy.Contact;
 		Active = vacancy.Active == 1;
-		Date = vacancy.Date;
+		Date = vacancy.Date.ToDateTime(TimeOnly.MinValue);
 		Url = string.IsNullOrWhiteSpace(vacancy.Url) ? null : new Uri(vacancy.Url);
 		Category = new CategoryViewModel();
 		Company = vacancy.Company;

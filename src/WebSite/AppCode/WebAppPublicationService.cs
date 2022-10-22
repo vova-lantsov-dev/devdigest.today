@@ -1,16 +1,11 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using Core;
 using Core.Models;
 using Core.Repositories;
 using Core.Services;
 using Core.Services.Posting;
 using Core.Web;
-using DAL;
 using WebSite.ViewModels;
 using X.PagedList;
 
@@ -18,11 +13,11 @@ namespace WebSite.AppCode;
 
 public interface IWebAppPublicationService
 {
-    Task<PublicationViewModel> CreatePublication(NewPostRequest request, User user);
-    Task<IReadOnlyCollection<Category>> GetCategories();
-    Task<StaticPagedList<PublicationViewModel>> GetPublications(int? categoryId = null, int page = 1);
-    Task<IReadOnlyCollection<PublicationViewModel>> FindPublications(params  string[] keywords);
-    Task<PublicationViewModel> GetPublication(int id);
+    Task<PostViewModel> CreatePublication(CreatePostRequest request, int userId);
+    Task<IReadOnlyCollection<Core.Models.Category>> GetCategories();
+    Task<StaticPagedList<PostViewModel>> GetPublications(int? categoryId = null, int page = 1);
+    Task<IReadOnlyCollection<PostViewModel>> FindPublications(params  string[] keywords);
+    Task<PostViewModel> GetPublication(int id);
     Task<IReadOnlyCollection<VacancyViewModel>> LoadHotVacancies();
     Task<IPagedList<VacancyViewModel>> GetVacancies(int page = 1);
     Task<VacancyViewModel> GetVacancy(int id);
@@ -32,89 +27,112 @@ public interface IWebAppPublicationService
 
 public class WebAppPublicationService : IWebAppPublicationService
 {
-    private readonly ILocalizationService _localizationService;
-    private readonly IPublicationService _publicationService;
+    private readonly ILanguageService _languageService;
+    private readonly IPostService _postService;
     private readonly ISocialRepository _socialRepository;
     private readonly ILanguageAnalyzerService _languageAnalyzer;
     private readonly PostingServiceFactory _factory;
     private readonly IVacancyService _vacancyService;
     private readonly Settings _settings;
+    private readonly PostUrlBuilder _postUrlBuilder;
     private readonly ILogger _logger;
         
     private IReadOnlyCollection<Category> _categories;
 
     public WebAppPublicationService(
-        ILocalizationService localizationService,
-        IPublicationService publicationService,
+        ILanguageService languageService,
+        IPostService postService,
         ISocialRepository socialRepository,
         PostingServiceFactory factory,
         Settings settings,
         ILanguageAnalyzerService languageAnalyzer, 
         IVacancyService vacancyService,
+        PostUrlBuilder postUrlBuilder,
         ILogger<WebAppPublicationService> logger)
     {
         _logger = logger;
+        _postUrlBuilder = postUrlBuilder;
         _languageAnalyzer = languageAnalyzer;
         _vacancyService = vacancyService;
         _factory = factory;
         _settings = settings;
         _socialRepository = socialRepository;
-        _localizationService = localizationService;
-        _publicationService = publicationService;
+        _languageService = languageService;
+        _postService = postService;
     }
 
-    public async Task<PublicationViewModel> CreatePublication(NewPostRequest request, User user)
+    public async Task<PostViewModel> CreatePublication(CreatePostRequest request, int userId)
     {
         var extractor = new X.Web.MetaExtractor.Extractor();
 
         var metadata = await extractor.ExtractAsync(request.Link);
 
-        var existingPublication = await _publicationService.Get(new Uri(metadata.Url));
+        var exist = await _postService.IsPostExist(metadata.Url);
 
-        if (existingPublication != null)
+        if (exist)
         {
             throw new DuplicateNameException("Publication with this URL already exist");
         }
 
         var languageCode = _languageAnalyzer.GetTextLanguage(metadata.Description);
-        var languageId = await _localizationService.GetLanguageId(languageCode) ?? Core.Language.EnglishId;
+        var languageId = await _languageService.GetLanguageId(languageCode) ?? Language.EnglishId;
         var player = EmbeddedPlayerFactory.CreatePlayer(request.Link);
         var playerCode = player != null ? await player.GetEmbeddedPlayerUrl(request.Link) : null;
-        var (title, body) = MessageParser.Split(request.Comment);
-        var message = MessageParser.Glue(title, body);
+        var categories = await GetCategories();
 
-        var publication = await _publicationService.CreatePublication(
+        var post = await _postService.Create(
             metadata,
-            user.Id,
+            userId,
             languageId,
             playerCode,
             request.CategoryId,
-            message);
+            request.Title,
+            request.Comment,
+            request.TitleUa,
+            request.CommentUa);
 
-        if (publication != null)
+        var categoryName = categories
+            .Where(o => o.Id == request.CategoryId)
+            .Select(o => o.Name).SingleOrDefault();
+
+        var model = new PostViewModel
         {
-            var model = new PublicationViewModel(publication, _settings.WebSiteUrl);
-
-            //If we can embed main content into site page, so we can share this page.
-            var url = string.IsNullOrEmpty(model.EmbeddedPlayerCode) ? model.RedirectUrl : model.ShareUrl;
-                
-            var services = await GetPostingService(publication);
-                
-            foreach (var service in services)
+            Id = post.Id,
+            Category = new CategoryViewModel
             {
-                await service.Send(title, body, url, GetTags(request));
-            }
+                Id = request.CategoryId,
+                Name = categoryName,
+            },
+            Description = post.Description,
+            Image = post.Image,
+            Title = post.Title,
+            Url = post.Url,
+            DateTime = post.DateTime,
+            ShareUrl = _postUrlBuilder.Build(post.Id),
+            ViewsCount = post.Views,
+            EmbeddedPlayerCode = post.EmbeddedPlayerCode
+        };
 
-            return model;
+        var redirectUrl = _postUrlBuilder.BuildRedirectUrl(post.Id);
+
+        //If we can embed main content into site page, so we can share this page.
+        var url = string.IsNullOrEmpty(model.EmbeddedPlayerCode) ? redirectUrl : model.ShareUrl;
+
+        var services = await GetPostingService(request.CategoryId);
+        var serviceUa = _factory.CreateTelegramService("@devdigest_ua");
+        
+        foreach (var service in services)
+        {
+            await service.Send(request.Title, request.Comment, url);
         }
 
-        throw new Exception("Can't save publication to database");
+        await serviceUa.Send(request.TitleUa, request.CommentUa, url);
+
+        return model;
     }
 
-    public async Task<IReadOnlyCollection<IPostingService>> GetPostingService(Publication publication)
+    private async Task<IReadOnlyCollection<IPostingService>> GetPostingService(int categoryId)
     {
-        var categoryId = publication.CategoryId;
-            
         var telegramChannels = await _socialRepository.GetTelegramChannels(categoryId);
         var facebookPages = await _socialRepository.GetFacebookPages(categoryId);
         var twitterAccounts = await _socialRepository.GetTwitterAccounts();
@@ -124,9 +142,7 @@ public class WebAppPublicationService : IWebAppPublicationService
             
         foreach (var telegramChannel in telegramChannels)
         {
-            services.Add(_factory.CreateTelegramService(
-                telegramChannel.Token,
-                telegramChannel.Name));
+            services.Add(_factory.CreateTelegramService(telegramChannel.Name));
         }
 
         foreach (var facebookPage in facebookPages)
@@ -144,7 +160,7 @@ public class WebAppPublicationService : IWebAppPublicationService
                 twitterAccount.AccessToken,
                 twitterAccount.AccessTokenSecret,
                 twitterAccount.Name,
-                await _publicationService.GetCategoryTags(categoryId)));
+                await _postService.GetCategoryTags(categoryId)));
         }
             
         foreach (var slack in slackApplications)
@@ -155,23 +171,15 @@ public class WebAppPublicationService : IWebAppPublicationService
         return services.ToImmutableList();
     }
 
-    private static IReadOnlyCollection<string> GetTags(NewPostRequest request)
-    {
-        if (request == null || string.IsNullOrWhiteSpace(request.Tags))
-        {
-            return ImmutableList<string>.Empty;
-        }
-
-        return request.Tags
-            .Split(' ')
-            .Where(o => !string.IsNullOrWhiteSpace(o))
-            .Select(o => o.Trim())
-            .ToImmutableList();
-    }
-
     public async Task<IReadOnlyCollection<Category>> GetCategories()
     {
-        return _categories ??= await _publicationService.GetCategories();
+        return _categories ??= (await _postService.GetCategories())
+            .Select(o => new Category
+            {
+                Id = o.Id,
+                Name = o.Name
+            })
+            .ToImmutableList();
     }
 
     private async Task<IReadOnlyCollection<SocialAccount>> GetTelegramChannels() =>
@@ -206,49 +214,44 @@ public class WebAppPublicationService : IWebAppPublicationService
             Url = o.Url
         })
         .ToImmutableList();
-        
-    public async Task<IReadOnlyCollection<PublicationViewModel>> GetTopPublications()
+
+    private async Task<IReadOnlyCollection<PostViewModel>> GetTopPublications()
     {
-        var publications = await _publicationService.GetTopPublications();
+        var publications = await _postService.GetTop();
         var categories = await GetCategories();
             
         return publications
-            .Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories))
+            .Select(o => CreatePostViewModel(o, categories))
             .ToImmutableList();
     }
 
-    public async Task<IReadOnlyCollection<PublicationViewModel>> FindPublications(params string[] keywords)
+    public async Task<IReadOnlyCollection<PostViewModel>> FindPublications(params string[] keywords)
     {
-        var publications = await _publicationService.FindPublications(keywords);
+        var publications = await _postService.Find(keywords);
         var categories = await GetCategories();
 
         return publications
-            .Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories))
+            .Select(o => CreatePostViewModel(o, categories))
             .ToImmutableList();
     }
 
-    public async Task<PublicationViewModel> GetPublication(int id)
+    public async Task<PostViewModel> GetPublication(int id)
     {
-        var publication = await _publicationService.Get(id);
+        var publication = await _postService.Get(id);
         var categories = await GetCategories();
             
         if (publication != null)
         {
-            await _publicationService.IncreaseViewCount(id);
-            return new PublicationViewModel(publication, _settings.WebSiteUrl, categories);
+            await _postService.IncreaseViewCount(id);
+            return CreatePostViewModel(publication, categories);
         }
 
         return null;
     }
 
-    public Task IncreaseViewCount(int publicationId)
-    {
-        return _publicationService.IncreaseViewCount(publicationId);
-    }
-
     public async Task<IReadOnlyCollection<VacancyViewModel>> LoadHotVacancies()
     {
-        var vacancies = (await _vacancyService.GetHotVacancies())
+        var vacancies = (await _vacancyService.GetHot())
             .Select(o => new VacancyViewModel(o, _settings.WebSiteUrl))
             .ToImmutableList();
 
@@ -257,7 +260,7 @@ public class WebAppPublicationService : IWebAppPublicationService
 
     public async Task<IPagedList<VacancyViewModel>> GetVacancies(int page)
     {
-        var vacancies = await _vacancyService.GetVacancies(page);
+        var vacancies = await _vacancyService.GetList(page, Settings.DefaultPageSize);
         var subset = vacancies.Select(o => new VacancyViewModel(o, _settings.WebSiteUrl));
             
         return new StaticPagedList<VacancyViewModel>(subset, vacancies);
@@ -292,15 +295,42 @@ public class WebAppPublicationService : IWebAppPublicationService
         };
     }
 
-    public async Task<StaticPagedList<PublicationViewModel>> GetPublications(int? categoryId = null, int page = 1)
+    public async Task<StaticPagedList<PostViewModel>> GetPublications(int? categoryId = null, int page = 1)
     {
         var categories = await GetCategories();
-        var pagedResult = await _publicationService.GetPublications(categoryId, page);
+        var pagedResult = await _postService.GetPublications(categoryId, page);
 
         var publications = pagedResult
-            .Select(o => new PublicationViewModel(o, _settings.WebSiteUrl, categories))
+            .Select(o => CreatePostViewModel(o, categories))
             .ToImmutableList();
             
-        return new StaticPagedList<PublicationViewModel>(publications, pagedResult);            
+        return new StaticPagedList<PostViewModel>(publications, pagedResult);            
+    }
+    
+    private PostViewModel CreatePostViewModel(DAL.Post p, IReadOnlyCollection<Category> categories)
+    {
+        Uri.TryCreate(p.Link, UriKind.RelativeOrAbsolute, out var url);
+
+        var categoryName = categories.Where(o => o.Id == p.CategoryId)
+            .Select(o => o.Name)
+            .SingleOrDefault();
+        
+        return new PostViewModel
+        {
+            Id = p.Id,
+            Category = new CategoryViewModel
+            {
+                Id = p.CategoryId,
+                Name = categoryName
+            },
+            Description = p.Description,
+            Image = p.Image,
+            Title = p.Title,
+            Url = url ?? _settings.WebSiteUrl,
+            DateTime = p.DateTime,
+            ViewsCount = p.Views,
+            EmbeddedPlayerCode = p.EmbededPlayerCode,
+            ShareUrl = _postUrlBuilder.Build(p.Id)
+        };
     }
 }

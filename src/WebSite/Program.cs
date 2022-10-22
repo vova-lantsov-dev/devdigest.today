@@ -26,7 +26,6 @@ Settings.InitializeCurrentInstance(settings);
 
 // Add services to the container.
 builder.Services
-    .AddApplicationInsightsTelemetry()
 
     .AddMemoryCache()
 
@@ -38,12 +37,13 @@ builder.Services
     .AddSingleton(_ => settings)
 
     .AddSingleton<PostingServiceFactory>()
+    .AddSingleton<PostUrlBuilder>()
 
-    .AddScoped<ILocalizationService, LocalizationService>()
-    .AddScoped<IPublicationService, PublicationService>()
+    .AddScoped<ILanguageService, LanguageService>()
+    .AddScoped<IPostService, PostService>()
     .AddScoped<IUserService, UserService>()
     .AddScoped<IVacancyService, VacancyService>()
-    .AddScoped<IPublicationRepository, PublicationRepository>()
+    .AddScoped<IPostRepository, PostRepository>()
     .AddScoped<ISettingsRepository, SettingsRepository>()
     .AddScoped<ISocialRepository, SocialRepository>()
     .AddScoped<IPageRepository, PageRepository>()
@@ -57,13 +57,12 @@ builder.Services
 
         return new LanguageAnalyzerService(settings.CognitiveServicesTextAnalyticsKey, logger);
     })
-                
-    .AddApplicationInsightsTelemetry(settings.ApplicationInsights.InstrumentationKey)
-
+    
     .Configure<WebEncoderOptions>(options =>
     {
         options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
     })
+    
     .AddControllersWithViews();
 
 

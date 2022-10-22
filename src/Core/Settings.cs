@@ -30,11 +30,11 @@ public class Settings
 
     public string Version { get; set; }
         
-    public ApplicationInsightsSetting ApplicationInsights { get; set; }
-        
     public string WebRootPath { get; set; }
         
     public string FacebookPageUrl { get; set; }
+
+    public const int DefaultPageSize = 10;
 
     #region Current
 
@@ -45,11 +45,8 @@ public class Settings
     public static void InitializeCurrentInstance(Settings settings) => Current = settings;
 
     public static Settings Current { get; private set; }
+    
+    public string TelegramToken { get; set; }
 
     #endregion
-}
-
-public class ApplicationInsightsSetting
-{
-    public string InstrumentationKey { get; set; }
 }

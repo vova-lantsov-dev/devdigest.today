@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using X.Web.Facebook;
@@ -19,7 +18,7 @@ public class FacebookPostingService : IPostingService
         _name = name;
     }
 
-    public async Task Send(string title, string body, Uri link, IReadOnlyCollection<string> tags)
+    public async Task Send(string title, string body, Uri link)
     {
         var message = MessageParser.Glue(title, body);
 

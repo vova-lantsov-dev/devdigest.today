@@ -9,37 +9,37 @@ using Microsoft.Extensions.Logging;
 
 namespace Core.Repositories;
 
-public interface IPublicationRepository
+public interface IPostRepository
 {
-    Task<IReadOnlyCollection<Publication>> GetPublications(int? categoryId, int languageId, int page, int pageSize);
-    Task<int> GetPublicationsCount(int? categoryId, int languageId);
+    Task<IReadOnlyCollection<Post>> GetList(int? categoryId, int languageId, int page, int pageSize);
+    Task<int> GetCount(int? categoryId, int languageId);
     Task<IReadOnlyCollection<Category>> GetCategories();
-    Task<Publication> GetPublication(int id);
-    Task<Publication> Save(Publication publication);
-    Task IncreasePublicationViewCount(int id);
-    Task<Publication> GetPublication(Uri uri);
+    Task<Post> Get(int id);
+    Task<Post> Create(Post post);
+    Task IncreaseViewCount(int postId);
+    Task<Post> Get(Uri uri);
     Task<IReadOnlyCollection<string>> GetCategoryTags(int categoryId);
-    Task<IReadOnlyCollection<Publication>> GetTopPublications(int languageId);
-    Task<IReadOnlyCollection<Publication>> FindPublications(params string[] keywords);
+    Task<IReadOnlyCollection<Post>> GetTop(int languageId);
+    Task<IReadOnlyCollection<Post>> Find(params string[] keywords);
 }
 
-public class PublicationRepository : IPublicationRepository
+public class PostRepository : IPostRepository
 {
     private readonly DatabaseContext _database;
     private readonly ILogger _logger;
 
-    public PublicationRepository(DatabaseContext database, ILogger<PublicationRepository> logger)
+    public PostRepository(DatabaseContext database, ILogger<PostRepository> logger)
     {
         _database = database;
         _logger = logger;
     }
 
-    public async Task<IReadOnlyCollection<Publication>> GetPublications(int? categoryId, int languageId, int page, int pageSize)
+    public async Task<IReadOnlyCollection<Post>> GetList(int? categoryId, int languageId, int page, int pageSize)
     {
         var skip = (page - 1) * pageSize;
 
         return await _database
-            .Publications
+            .Posts
             .Where(o => o.CategoryId == categoryId || categoryId == null)
             .Where(o => o.LanguageId == languageId)
             .OrderByDescending(o => o.DateTime)
@@ -48,8 +48,8 @@ public class PublicationRepository : IPublicationRepository
             .ToListAsync();
     }
 
-    public Task<int> GetPublicationsCount(int? categoryId, int languageId) =>
-        _database.Publications
+    public Task<int> GetCount(int? categoryId, int languageId) =>
+        _database.Posts
             .Where(o => o.CategoryId == categoryId || categoryId == null)
             .Where(o => o.LanguageId == languageId)
             .CountAsync();
@@ -57,37 +57,37 @@ public class PublicationRepository : IPublicationRepository
     public async Task<IReadOnlyCollection<Category>> GetCategories() =>
         await _database.Categories.ToListAsync();
 
-    public Task<Publication> GetPublication(int id)
+    public Task<Post> Get(int id)
     {
-        return _database.Publications.SingleOrDefaultAsync(o => o.Id == id);
+        return _database.Posts.SingleOrDefaultAsync(o => o.Id == id);
     }
 
-    public async Task<Publication> Save(Publication publication)
+    public async Task<Post> Create(Post post)
     {
-        _database.Add(publication);
+        _database.Add(post);
             
         await _database.SaveChangesAsync();
 
-        publication = await _database.Publications.OrderBy(o => o.Id).LastOrDefaultAsync();
+        post = await _database.Posts.OrderBy(o => o.Id).LastOrDefaultAsync();
             
-        _logger.LogInformation($"Publication `{publication?.Title}`  was saved. Id: {publication?.Id}");
+        _logger.LogInformation($"Post `{post?.Title}`  was saved. Id: {post?.Id}");
 
-        return publication;
+        return post;
     }
 
-    public async Task IncreasePublicationViewCount(int id)
+    public async Task IncreaseViewCount(int postId)
     {
-        var publication = _database.Publications.SingleOrDefault(o => o.Id == id);
+        var post = _database.Posts.SingleOrDefault(o => o.Id == postId);
 
-        if (publication != null)
+        if (post != null)
         {
-            publication.Views++;
+            post.Views++;
             await _database.SaveChangesAsync();
         }
     }
 
-    public Task<Publication> GetPublication(Uri uri) =>
-        _database.Publications.SingleOrDefaultAsync(o => o.Link.ToLower() == uri.ToString().ToLower());
+    public Task<Post> Get(Uri uri) =>
+        _database.Posts.SingleOrDefaultAsync(o => o.Link.ToLower() == uri.ToString().ToLower());
 
     public async Task<IReadOnlyCollection<string>> GetCategoryTags(int categoryId)
     {
@@ -102,30 +102,29 @@ public class PublicationRepository : IPublicationRepository
         return value.Split(' ').ToImmutableList();
     }
 
-    public async Task<IReadOnlyCollection<Publication>> GetTopPublications(int languageId)
+    public async Task<IReadOnlyCollection<Post>> GetTop(int languageId)
     {
-        var publications = await _database.Publications
+        var posts = await _database.Posts
             .Where(p => p.LanguageId == languageId)
             .Where(p => p.DateTime > DateTime.Now.AddDays(-30))
             .ToListAsync();
 
-        return publications
+        return posts
             .GroupBy(p => p.CategoryId)
             .Select(g => g.OrderByDescending(o => o.DateTime).FirstOrDefault())
             .ToImmutableList();
     }
 
-    public async Task<IReadOnlyCollection<Publication>> FindPublications(params string[] keywords)
+    public async Task<IReadOnlyCollection<Post>> Find(params string[] keywords)
     {
-        var result = new List<Publication>();
+        var result = new List<Post>();
             
         foreach (var keyword in keywords)
         {
-            var items = await _database.Publications
+            var items = await _database.Posts
                 .Where(p =>
                     EF.Functions.Like(p.Title, $"%{keyword}%") ||
                     EF.Functions.Like(p.Description, $"%{keyword}%") ||
-                    EF.Functions.Like(p.Content, $"%{keyword}%") ||
                     EF.Functions.Like(p.Comment, $"%{keyword}%"))
                 .ToListAsync();
                 

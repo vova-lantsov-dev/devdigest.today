@@ -16,7 +16,7 @@ public class PageRepository : IPageRepository
     private readonly DatabaseContext _database;
     private readonly ILogger _logger;
 
-    public PageRepository(DatabaseContext database, ILogger<PublicationRepository> logger)
+    public PageRepository(DatabaseContext database, ILogger<PostRepository> logger)
     {
         _database = database;
         _logger = logger;

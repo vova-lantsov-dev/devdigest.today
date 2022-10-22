@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using Core;
 using Core.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -42,15 +40,15 @@ public class ContentController : Controller
     }
 
     [Route("content/telegram")]
-    public async Task<IActionResult> Telegram()=> RedirectPermanent("/content/platform");
+    public Task<IActionResult> Telegram()=> Task.FromResult<IActionResult>(RedirectPermanent("/content/platform"));
 
     [Route("partners")]
-    public async Task<IActionResult> PartnersRedirect() => RedirectPermanent("/content/partners");  
+    public Task<IActionResult> PartnersRedirect() => Task.FromResult<IActionResult>(RedirectPermanent("/content/partners"));  
         
     [Route("search")]
-    public async Task<IActionResult> SearchRedirect() => RedirectPermanent("/content/search");
+    public Task<IActionResult> SearchRedirect() => Task.FromResult<IActionResult>(RedirectPermanent("/content/search"));
         
     [Route("content/platform")]
     [Route("content/telegram")]
-    public async Task<IActionResult> Platform()=> RedirectPermanent("/platform");
+    public Task<IActionResult> Platform()=> Task.FromResult<IActionResult>(RedirectPermanent("/platform"));
 }

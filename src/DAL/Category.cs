@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-#nullable disable
-
 namespace DAL
 {
     public partial class Category
@@ -12,7 +10,6 @@ namespace DAL
             Channels = new HashSet<Channel>();
             Events = new HashSet<Event>();
             FacebookPages = new HashSet<FacebookPage>();
-            Publications = new HashSet<Publication>();
             Vacancies = new HashSet<Vacancy>();
         }
 
@@ -24,7 +21,6 @@ namespace DAL
         public virtual ICollection<Channel> Channels { get; set; }
         public virtual ICollection<Event> Events { get; set; }
         public virtual ICollection<FacebookPage> FacebookPages { get; set; }
-        public virtual ICollection<Publication> Publications { get; set; }
         public virtual ICollection<Vacancy> Vacancies { get; set; }
     }
 }

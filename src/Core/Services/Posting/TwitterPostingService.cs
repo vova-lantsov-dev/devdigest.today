@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -38,9 +37,9 @@ public class TwitterPostingService : IPostingService
         _client = new TwitterClient(consumerKey, consumerSecret, accessToken, accessSecret);
     }
 
-    public async Task Send(string title, string body, Uri link, [NotNull] IReadOnlyCollection<string> tags)
+    public async Task Send(string title, string body, Uri link)
     {
-        var tagLine = string.Join(" ", _defaultTags.ToList().Union(tags));
+        var tagLine = string.Join(" ", _defaultTags);
         var message = MessageParser.Glue(title, body);
         var maxMessageLength = MaxTweetLength - tagLine.Length - 4;
 
@@ -51,6 +50,7 @@ public class TwitterPostingService : IPostingService
         sb.AppendLine(link.ToString());
 
         var text = sb.ToString();
+        
         try
         {
             Semaphore.WaitOne();
@@ -61,7 +61,7 @@ public class TwitterPostingService : IPostingService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error in {nameof(TwitterPostingService)}.{nameof(Send)}");
+            _logger.LogError(ex, $"Error in {nameof(TwitterPostingService)}.");
         }
         finally
         {

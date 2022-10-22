@@ -1,4 +1,4 @@
-﻿@model WebSite.ViewModels.PublicationViewModel
+﻿@model WebSite.ViewModels.PostViewModel
 @{
     Layout = "_GeneralLayout";
 }
@@ -22,12 +22,20 @@
                 <input type="password" class="form-control" id="security-key" placeholder="Security Key">
             </div>
             <div class="form-group">
-                <label for="tags">Tags</label>
-                <input type="text" class="form-control" id="tags" placeholder="#devdigest #azure">
+                <label for="post-comment">Title RU</label>
+                <textarea class="form-control" id="post-title" placeholder="Comment"></textarea>
             </div>
             <div class="form-group">
-                <label for="post-comment">Comment (Twitter, Telegram)</label>
+                <label for="post-comment">Comment RU</label>
                 <textarea class="form-control" id="post-comment" placeholder="Comment"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="post-comment">Title UA</label>
+                <textarea class="form-control" id="post-title-ua" placeholder="Comment"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="post-comment">Comment UA</label>
+                <textarea class="form-control" id="post-comment-ua" placeholder="Comment"></textarea>
             </div>
             <div class="form-group">
                 <label for="category-id">Category</label>

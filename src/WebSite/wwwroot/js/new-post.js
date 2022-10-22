@@ -23,8 +23,10 @@ function addNewPost() {
     const link = $("#link").val();
     const key = $("#security-key").val();
     const categoryId = $("#category-id").val();
+    const title = $("#post-title").val();
     const comment = $("#post-comment").val();
-    const tags = $("#tags").val();
+    const titleUa = $("#post-title-ua").val();
+    const commentUa = $("#post-comment-ua").val();
 
     const progress = $(".progress");
 
@@ -32,20 +34,25 @@ function addNewPost() {
         link: link,
         key: key,
         categoryId: categoryId,
+        title: title,
         comment: comment,
-        tags: tags
+        titleUa: titleUa,
+        commentUa: commentUa,
     };
 
     progress.show();
 
-    $.post('/api/publications/new', data)
+    $.post('/api/publications', data)
         .done(function (response) {
             progress.hide();
             window.location.replace(response.shareUrl);
-        }).fail(function (err) {
-            if (!!err && err.status === 403)
+        })
+        .fail(function (err) {
+            if (!!err && err.status === 403) {
                 alert('Access denied');
-            else
+            }
+            else {
                 console.error(err);
+            }
         });
 }

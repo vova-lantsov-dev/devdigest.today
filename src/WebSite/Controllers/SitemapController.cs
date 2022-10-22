@@ -16,21 +16,24 @@ namespace WebSite.Controllers;
 
 public class SitemapController : Controller
 {
-    private readonly IPublicationService _publicationService;
+    private readonly IPostService _postService;
     private readonly IVacancyService _vacancyService;
     private readonly IMemoryCache _cache;
     private readonly Settings _settings;
+    private readonly PostUrlBuilder _postUrlBuilder;
         
     public SitemapController(
         IMemoryCache cache, 
         IVacancyService vacancyService, 
-        IPublicationService publicationService, 
+        IPostService postService,
+        PostUrlBuilder postUrlBuilder,
         Settings settings)
     {
         _cache = cache;
         _vacancyService = vacancyService;
-        _publicationService = publicationService;
+        _postService = postService;
         _settings = settings;
+        _postUrlBuilder = postUrlBuilder;
     }
 
     [HttpGet]
@@ -44,7 +47,7 @@ public class SitemapController : Controller
 
         if (string.IsNullOrEmpty(xml))
         {
-            IPagedList<Publication> publications;
+            IPagedList<Post> posts;
             IPagedList<Vacancy> vacancies;
 
             var sitemap = new Sitemap();
@@ -60,22 +63,23 @@ public class SitemapController : Controller
 
             do
             {
-                publications = await _publicationService.GetPublications(null, page);
+                posts = await _postService.GetPublications(null, page);
                 page++;
 
-                foreach (var p in publications)
+                foreach (var p in posts)
                 {
-                    var publication = new PublicationViewModel(p, _settings.WebSiteUrl);
-                    sitemap.Add(CreateUrl(publication.ShareUrl.ToString()));
+                    var shareUrl = _postUrlBuilder.Build(p.Id);
+                    
+                    sitemap.Add(CreateUrl(shareUrl.ToString()));
                 }
             }
-            while (publications.HasNextPage);
+            while (posts.HasNextPage);
 
             page = 1;
 
             do
             {
-                vacancies = await _vacancyService.GetVacancies(page);
+                vacancies = await _vacancyService.GetList(page, Settings.DefaultPageSize);
                 page++;
 
                 foreach (var v in vacancies)
