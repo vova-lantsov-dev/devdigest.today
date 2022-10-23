@@ -24,16 +24,12 @@ public abstract class SocialNetworkPostingService : ISocialNetworkPostingService
 {
     private readonly ILogger _logger;
 
-    protected SocialNetworkPostingService(ILogger logger)
-    {
-        _logger = logger;
-    }
+    protected SocialNetworkPostingService(ILogger logger) => _logger = logger;
 
     public async Task Post(string title, string body, Uri link)
     {
         try
         {
-             
             await PostImplementation(title, body, link);
         }
         catch (Exception ex)

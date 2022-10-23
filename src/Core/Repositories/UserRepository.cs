@@ -2,22 +2,21 @@ using System;
 using System.Threading.Tasks;
 using DAL;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Core.Repositories;
 
 public interface IUserRepository
 {
-    Task<User> GetUserBySecretKey(Guid key);
+    Task<User> Get(Guid key);
 }
 
-public class UserRepository : IUserRepository
+public class UserRepository : RepositoryBase, IUserRepository
 {
-    private readonly DatabaseContext _database;
+    public UserRepository(DatabaseContext databaseContext) 
+        : base(databaseContext)
+    {
+    }
 
-    public UserRepository(DatabaseContext database, ILogger<UserRepository> logger) =>
-        _database = database;
-
-    public async Task<User> GetUserBySecretKey(Guid key) =>
-        await _database.Users.FirstOrDefaultAsync(o => o.Key == key.ToString());
+    public Task<User> Get(Guid key) =>
+        DatabaseContext.Users.FirstOrDefaultAsync(o => o.Key == key.ToString());
 }

@@ -18,27 +18,23 @@ public interface IPostRepository
     Task<Post> Create(Post post);
     Task IncreaseViewCount(int postId);
     Task<Post> Get(Uri uri);
-    Task<IReadOnlyCollection<string>> GetCategoryTags(int categoryId);
+    Task<string> GetCategoryTags(int categoryId);
     Task<IReadOnlyCollection<Post>> GetTop(int languageId);
     Task<IReadOnlyCollection<Post>> Find(params string[] keywords);
 }
 
-public class PostRepository : IPostRepository
+public class PostRepository : RepositoryBase, IPostRepository
 {
-    private readonly DatabaseContext _database;
     private readonly ILogger _logger;
 
-    public PostRepository(DatabaseContext database, ILogger<PostRepository> logger)
-    {
-        _database = database;
-        _logger = logger;
-    }
+    public PostRepository(DatabaseContext databaseContext, ILogger<PostRepository> logger)
+        : base(databaseContext) => _logger = logger;
 
     public async Task<IReadOnlyCollection<Post>> GetList(int? categoryId, int languageId, int page, int pageSize)
     {
         var skip = (page - 1) * pageSize;
 
-        return await _database
+        return await DatabaseContext
             .Posts
             .Where(o => o.CategoryId == categoryId || categoryId == null)
             .Where(o => o.LanguageId == languageId)
@@ -49,26 +45,24 @@ public class PostRepository : IPostRepository
     }
 
     public Task<int> GetCount(int? categoryId, int languageId) =>
-        _database.Posts
+        DatabaseContext.Posts
             .Where(o => o.CategoryId == categoryId || categoryId == null)
             .Where(o => o.LanguageId == languageId)
             .CountAsync();
 
     public async Task<IReadOnlyCollection<Category>> GetCategories() =>
-        await _database.Categories.ToListAsync();
+        await DatabaseContext.Categories.ToListAsync();
 
-    public Task<Post> Get(int id)
-    {
-        return _database.Posts.SingleOrDefaultAsync(o => o.Id == id);
-    }
+    public Task<Post> Get(int id) => 
+        DatabaseContext.Posts.SingleOrDefaultAsync(o => o.Id == id);
 
     public async Task<Post> Create(Post post)
     {
-        _database.Add(post);
+        DatabaseContext.Add(post);
             
-        await _database.SaveChangesAsync();
+        await DatabaseContext.SaveChangesAsync();
 
-        post = await _database.Posts.OrderBy(o => o.Id).LastOrDefaultAsync();
+        post = await DatabaseContext.Posts.OrderBy(o => o.Id).LastOrDefaultAsync();
             
         _logger.LogInformation($"Post `{post?.Title}`  was saved. Id: {post?.Id}");
 
@@ -77,57 +71,51 @@ public class PostRepository : IPostRepository
 
     public async Task IncreaseViewCount(int postId)
     {
-        var post = _database.Posts.SingleOrDefault(o => o.Id == postId);
+        var post = DatabaseContext.Posts.SingleOrDefault(o => o.Id == postId);
 
         if (post != null)
         {
             post.Views++;
-            await _database.SaveChangesAsync();
+            
+            await DatabaseContext.SaveChangesAsync();
         }
     }
 
     public Task<Post> Get(Uri uri) =>
-        _database.Posts.SingleOrDefaultAsync(o => o.Link.ToLower() == uri.ToString().ToLower());
+        DatabaseContext.Posts.SingleOrDefaultAsync(o => o.Link.ToLower() == uri.ToString().ToLower());
 
-    public async Task<IReadOnlyCollection<string>> GetCategoryTags(int categoryId)
-    {
-        var value = await _database.Categories
+    public async Task<string> GetCategoryTags(int categoryId) =>
+        await DatabaseContext.Categories
             .Where(o => o.Id == categoryId)
             .Select(o => o.Tags)
             .SingleOrDefaultAsync();
 
-        if (string.IsNullOrWhiteSpace(value))
-            return ImmutableArray<string>.Empty;
-
-        return value.Split(' ').ToImmutableList();
-    }
-
     public async Task<IReadOnlyCollection<Post>> GetTop(int languageId)
     {
-        var posts = await _database.Posts
+        var posts = await DatabaseContext.Posts
             .Where(p => p.LanguageId == languageId)
             .Where(p => p.DateTime > DateTime.Now.AddDays(-30))
             .ToListAsync();
 
         return posts
             .GroupBy(p => p.CategoryId)
-            .Select(g => g.OrderByDescending(o => o.DateTime).FirstOrDefault())
+            .Select(g => g.MaxBy(o => o.DateTime))
             .ToImmutableList();
     }
 
     public async Task<IReadOnlyCollection<Post>> Find(params string[] keywords)
     {
         var result = new List<Post>();
-            
+
         foreach (var keyword in keywords)
         {
-            var items = await _database.Posts
+            var items = await DatabaseContext.Posts
                 .Where(p =>
                     EF.Functions.Like(p.Title, $"%{keyword}%") ||
                     EF.Functions.Like(p.Description, $"%{keyword}%") ||
                     EF.Functions.Like(p.Comment, $"%{keyword}%"))
                 .ToListAsync();
-                
+
             if (items.Any())
             {
                 result.AddRange(items);
@@ -138,6 +126,5 @@ public class PostRepository : IPostRepository
             .Distinct()
             .OrderByDescending(o => o.DateTime)
             .ToImmutableList();
-
     }
 }

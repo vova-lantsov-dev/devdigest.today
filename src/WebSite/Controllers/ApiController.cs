@@ -43,9 +43,9 @@ public class ApiController : ControllerBase
     [Route("api/publications")]
     public async Task<IActionResult> AddPublication(CreatePostRequest request)
     {
-        var user = await _userService.GetBySecretKey(request.Key);
+        var userId = await _userService.GetUserId(request.Key);
 
-        if (user == null)
+        if (userId == null)
         {
             _logger.LogWarning($"Somebody tried to login with this key: `{request.Key}`. Text: `{request.Comment}`");
 
@@ -54,7 +54,7 @@ public class ApiController : ControllerBase
 
         try
         {
-            var (post, url) = await _postService.Create(request, user.Id);
+            var (post, url) = await _postService.Create(request, userId.Value);
             
             return Created(url, post);
         }

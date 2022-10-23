@@ -255,9 +255,16 @@ public class PostService : IPostService
         return services.ToImmutableList();
     }
 
-    public Task<IReadOnlyCollection<string>> GetCategoryTags(int categoryId)
+    public async Task<IReadOnlyCollection<string>> GetCategoryTags(int categoryId)
     {
-        return _repository.GetCategoryTags(categoryId);
+        var value = await _repository.GetCategoryTags(categoryId);
+
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return ImmutableArray<string>.Empty;
+        }
+
+        return value.Split(' ').ToImmutableList();
     }
 
     public async Task<IReadOnlyCollection<Post>> Find(params string[] keywords)
@@ -270,6 +277,7 @@ public class PostService : IPostService
     public async Task<bool> IsPostExist(string url)
     {
         var post = await _repository.Get(new Uri(url));
+        
         return post != null;
     }
 

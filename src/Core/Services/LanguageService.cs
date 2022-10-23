@@ -30,6 +30,7 @@ public class LanguageService : ILanguageService
         code = code.Trim().ToLower();
 
         var language = await _settingsRepository.GetLanguage(code);
+        
         return language?.Id;
     }
 }

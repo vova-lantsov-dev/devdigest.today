@@ -47,8 +47,8 @@ public class VacancyService : IVacancyService
 
         if (result == null)
         {
-            var items =  await  _repository.GetVacancies(page, pageSize);
-            var totalItemsCount = await _repository.GetVacanciesCount();
+            var items =  await  _repository.GetList(page, pageSize);
+            var totalItemsCount = await _repository.GetCount();
                 
             result = new StaticPagedList<Vacancy>(items, page, pageSize, totalItemsCount);
             _cache.Set(key, result, GetMemoryCacheEntryOptions());
@@ -66,7 +66,7 @@ public class VacancyService : IVacancyService
 
         if (result == null)
         {
-            result = await _repository.GetHotVacancies(size);
+            result = await _repository.GetHot(size);
 
             _cache.Set(key, result, GetMemoryCacheEntryOptions());
         }
@@ -82,14 +82,14 @@ public class VacancyService : IVacancyService
 
         if (result == null)
         {
-            result = await _repository.GetVacancy(id);
+            result = await _repository.Get(id);
             _cache.Set(key, result, GetMemoryCacheEntryOptions());
         }
 
         return result;
     }
 
-    public async Task IncreaseViewCount(int id) => await _repository.IncreaseVacancyViewCount(id);
+    public async Task IncreaseViewCount(int id) => await _repository.IncreaseViewCount(id);
 
     public string GetVacancyImage()
     {

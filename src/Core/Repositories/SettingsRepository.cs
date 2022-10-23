@@ -10,17 +10,16 @@ public interface ISettingsRepository
     Task<DAL.Language> GetLanguage(string code);
 }
 
-public class SettingsRepository : ISettingsRepository
+public class SettingsRepository : RepositoryBase, ISettingsRepository
 {
-    private readonly DatabaseContext _database;
     private ILogger _logger;
 
-    public SettingsRepository(DatabaseContext database, ILogger<SettingsRepository> logger)
+    public SettingsRepository(DatabaseContext databaseContext, ILogger<SettingsRepository> logger) 
+        : base(databaseContext)
     {
-        _database = database;
         _logger = logger;
     }
         
     public async Task<DAL.Language> GetLanguage(string code) =>
-        await _database.Languages.FirstOrDefaultAsync(o => o.Code == code);
+        await DatabaseContext.Languages.FirstOrDefaultAsync(o => o.Code == code);
 }

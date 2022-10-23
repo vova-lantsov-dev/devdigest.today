@@ -1,26 +1,44 @@
 using System;
 using System.Threading.Tasks;
 using Core.Repositories;
-using DAL;
 using Microsoft.Extensions.Logging;
 
 namespace Core.Services;
 
 public interface IUserService
 {
-    Task<User> GetBySecretKey(Guid key);
+    /// <summary>
+    /// Return user ID if user key exist
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    Task<int?> GetUserId(Guid key);
 }
 
 public class UserService : IUserService
 {
     private readonly IUserRepository _repository;
     private readonly ILogger _logger;
-        
+
     public UserService(IUserRepository repository, ILogger<UserService> logger)
     {
-        _repository = repository;
         _logger = logger;
+        _repository = repository;
     }
 
-    public async Task<User> GetBySecretKey(Guid key) => await _repository.GetUserBySecretKey(key);
+    public async Task<int?> GetUserId(Guid key)
+    {
+        try
+        {
+            var user = await _repository.Get(key);
+
+            return user?.Id;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            
+            return null;
+        }
+    }
 }

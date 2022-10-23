@@ -38,11 +38,6 @@ public class TwitterPostingService : SocialNetworkPostingService
         _client = new TwitterClient(consumerKey, consumerSecret, accessToken, accessSecret);
     }
 
-    public async Task Send(string title, string body, Uri link)
-    {
-        
-    }
-
     protected override async Task PostImplementation(string title, string body, Uri link)
     {
         var tagLine = string.Join(" ", _defaultTags);

@@ -20,7 +20,6 @@ public class SlackPostingService: SocialNetworkPostingService
         _client = new SlackClient(webHookUrl);
     }
 
-
     protected override async Task PostImplementation(string title, string body, Uri link)
     {
         var message = MergeMessage(title, body);
@@ -32,7 +31,7 @@ public class SlackPostingService: SocialNetworkPostingService
             Text = message,
             Blocks = new List<Block>
             {
-                new Header()
+                new Header
                 {
                     Text = new TextObject($"Новости")
                 },

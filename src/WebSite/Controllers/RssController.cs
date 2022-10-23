@@ -97,5 +97,4 @@ public class RssController : Controller
             Source = new RssSource { Url = new RssUrl(shareUrl) }
         };
     }
-
 }

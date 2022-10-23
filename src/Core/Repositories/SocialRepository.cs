@@ -16,27 +16,28 @@ public interface ISocialRepository
     Task<IReadOnlyCollection<DAL.Slack>> GetSlackApplications();
 }
 
-public class SocialRepository : ISocialRepository
+public class SocialRepository : RepositoryBase, ISocialRepository
 {
-    private readonly DatabaseContext _database;
-
-    public SocialRepository(DatabaseContext database) => _database = database;
+    public SocialRepository(DatabaseContext databaseContext) 
+        : base(databaseContext)
+    {
+    }
 
     public async Task<IReadOnlyCollection<FacebookPage>> GetFacebookPages(int categoryId) =>
-        await _database.FacebookPages.Where(o => o.CategoryId == categoryId).ToListAsync();
+        await DatabaseContext.FacebookPages.Where(o => o.CategoryId == categoryId).ToListAsync();
 
     public async Task<IReadOnlyCollection<Channel>> GetTelegramChannels(int categoryId) =>
-        await _database.Channels.Where(o => o.CategoryId == categoryId).ToListAsync();
+        await DatabaseContext.Channels.Where(o => o.CategoryId == categoryId).ToListAsync();
 
     public async Task<IReadOnlyCollection<Channel>> GetTelegramChannels() =>
-        await _database.Channels.ToListAsync();
+        await DatabaseContext.Channels.ToListAsync();
 
     public async Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccounts() =>
-        await _database.TwitterAccounts.ToListAsync();
+        await DatabaseContext.TwitterAccounts.ToListAsync();
 
     public async Task<IReadOnlyCollection<DAL.Slack>> GetSlackApplications() => 
-        await _database.Slacks.ToListAsync();
+        await DatabaseContext.Slacks.ToListAsync();
 
     public async Task<IReadOnlyCollection<FacebookPage>> GetFacebookPages() =>
-        await _database.FacebookPages.ToListAsync();
+        await DatabaseContext.FacebookPages.ToListAsync();
 }
