@@ -4,16 +4,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Core.Services.Posting;
 
-public class FakePostingService : IPostingService
+public class FakePostingService : SocialNetworkPostingService
 {
     private readonly ILogger _logger;
 
-    public FakePostingService(ILogger<FakePostingService> logger) =>
+    public FakePostingService(ILogger<FakePostingService> logger) : base(logger) =>
         _logger = logger;
 
-    public Task Send(string title, string body, Uri link)
+    protected override Task PostImplementation(string title, string body, Uri link)
     {
-        var message = MessageParser.Glue(title, body);
+        var message = MergeMessage(title, body);
         
         _logger.LogInformation($"{message} {link}");
             

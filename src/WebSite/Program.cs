@@ -49,7 +49,7 @@ builder.Services
     .AddScoped<IPageRepository, PageRepository>()
     .AddScoped<IUserRepository, UserRepository>()
     .AddScoped<IVacancyRepository, VacancyRepository>()
-    .AddScoped<IWebAppPublicationService, WebAppPublicationService>()
+    .AddScoped<IContentService, ContentService>()
 
     .AddScoped<ILanguageAnalyzerService>(provider =>
     {

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Immutable;
 using Core;
+using Core.Models;
 using Core.Services;
-using DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using WebSite.ViewModels;
@@ -48,7 +44,7 @@ public class SitemapController : Controller
         if (string.IsNullOrEmpty(xml))
         {
             IPagedList<Post> posts;
-            IPagedList<Vacancy> vacancies;
+            IPagedList<DAL.Vacancy> vacancies;
 
             var sitemap = new Sitemap();
                 
@@ -63,7 +59,7 @@ public class SitemapController : Controller
 
             do
             {
-                posts = await _postService.GetPublications(null, page);
+                posts = await _postService.GetList(null, page);
                 page++;
 
                 foreach (var p in posts)

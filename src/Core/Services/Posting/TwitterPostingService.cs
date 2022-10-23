@@ -10,7 +10,7 @@ using Tweetinvi.Parameters;
 
 namespace Core.Services.Posting;
 
-public class TwitterPostingService : IPostingService
+public class TwitterPostingService : SocialNetworkPostingService
 {
     private static readonly Semaphore Semaphore = new(1, 1);
 
@@ -28,7 +28,8 @@ public class TwitterPostingService : IPostingService
         string accessSecret,
         string name,
         IReadOnlyCollection<string> defaultTags,
-        ILogger<TwitterPostingService> logger)
+        ILogger<TwitterPostingService> logger) 
+        : base(logger)
     {
         _logger = logger;
         _defaultTags = defaultTags;
@@ -39,8 +40,13 @@ public class TwitterPostingService : IPostingService
 
     public async Task Send(string title, string body, Uri link)
     {
+        
+    }
+
+    protected override async Task PostImplementation(string title, string body, Uri link)
+    {
         var tagLine = string.Join(" ", _defaultTags);
-        var message = MessageParser.Glue(title, body);
+        var message = MergeMessage(title, body);
         var maxMessageLength = MaxTweetLength - tagLine.Length - 4;
 
         var sb = new StringBuilder();
@@ -50,18 +56,14 @@ public class TwitterPostingService : IPostingService
         sb.AppendLine(link.ToString());
 
         var text = sb.ToString();
-        
+
         try
         {
             Semaphore.WaitOne();
 
             await _client.Tweets.PublishTweetAsync(new PublishTweetParameters(text));
-                
+
             _logger.LogInformation($"Message was sent to Twitter channel `{_name}`: `{text}`");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error in {nameof(TwitterPostingService)}.");
         }
         finally
         {

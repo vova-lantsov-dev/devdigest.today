@@ -1,9 +1,9 @@
 namespace Core.Models;
 
-public class SocialAccount
+public record SocialAccount
 {
-    public string Title { get; set; }
-    public string Description { get; set; }
-    public string Logo { get; set; }
-    public string Url { get; set; }
+    public string Title { get; init; }
+    public string Description { get; init; }
+    public string Logo { get; init; }
+    public string Url { get; init; }
 }

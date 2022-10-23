@@ -11,10 +11,10 @@ namespace WebSite.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly IWebAppPublicationService _service;
+    private readonly IContentService _service;
     private readonly Settings _settings;
 
-    public HomeController(IWebAppPublicationService service, Settings settings) 
+    public HomeController(IContentService service, Settings settings) 
     {
         _settings = settings;
         _service = service;
@@ -22,7 +22,7 @@ public class HomeController : Controller
 
     public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        ViewBag.Vacancies = await _service.LoadHotVacancies();
+        ViewBag.Vacancies = await _service.GetHotVacancies();
 
         await base.OnActionExecutionAsync(context, next);
     }
@@ -43,7 +43,7 @@ public class HomeController : Controller
     [Route("covid")]
     public async Task<IActionResult> Covid()
     {
-        var model = await _service.FindPublications("covid", "coronavirus");
+        var model = await _service.FindPosts("covid", "coronavirus");
 
         SetPageMetaData(new PageMetaData
         {
@@ -63,7 +63,7 @@ public class HomeController : Controller
     [Route("page/{page}")]
     public async Task<IActionResult> Page(int? categoryId = null, int page = 1, string language = Core.Language.English)
     {
-        var publications = await _service.GetPublications(categoryId, page);
+        var publications = await _service.GetPosts(categoryId, page);
             
         SetPageMetaData(new PageMetaData
         {
@@ -121,7 +121,7 @@ public class HomeController : Controller
     [Route("post/{id}")]
     public async Task<IActionResult> Post(int id)
     {
-        var publication = await _service.GetPublication(id);
+        var publication = await _service.GetPost(id);
             
         if (publication == null)
         {

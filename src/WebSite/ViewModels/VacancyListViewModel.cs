@@ -2,8 +2,8 @@ using X.PagedList;
 
 namespace WebSite.ViewModels;
 
-public class VacancyListViewModel
+public record VacancyListViewModel
 {
-    public IPagedList<VacancyViewModel> List { get; set; }
-    public int? CategoryId { get; set; }
+    public IPagedList<VacancyViewModel> List { get; init; }
+    public int? CategoryId { get; init; }
 }

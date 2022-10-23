@@ -2,7 +2,7 @@ using System;
 
 namespace Core.Models;
 
-public class Link
+public record Link
 {
     public Link(string title, Uri url)
     {
@@ -15,6 +15,6 @@ public class Link
     {
     }
 
-    public string Title { get; set; }
-    public Uri Url { get; set; }
+    public string Title { get; init; }
+    public Uri Url { get; init; }
 }

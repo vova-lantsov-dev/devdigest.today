@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using Core;
+using Core.Models;
 using Core.Services;
-using DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using X.Web.RSS;
@@ -40,7 +36,7 @@ public class RssController : Controller
         if (string.IsNullOrEmpty(xml))
         {
             int? categoryId = null;
-            var pagedResult = await _postService.GetPublications(categoryId, 1, 50);
+            var pagedResult = await _postService.GetList(categoryId, 1, 50);
             var lastUpdateDate = pagedResult.Select(o => o.DateTime).DefaultIfEmpty().Max();
 
             var rss = new RssDocument

@@ -1,8 +1,8 @@
 namespace WebSite.ViewModels;
 
-public class CategoryViewModel
+public record CategoryViewModel
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
+    public int Id { get; init; }
+    public string Name { get; init; }
     public string CssClass => $"category-{Id}";
 }

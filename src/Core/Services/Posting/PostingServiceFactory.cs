@@ -14,7 +14,7 @@ public class PostingServiceFactory
         _settings = settings;
     }
 
-    public IPostingService CreateTwitterService(
+    public ISocialNetworkPostingService CreateTwitterService(
         string consumerKey,
         string consumerSecret,
         string accessToken,
@@ -30,15 +30,15 @@ public class PostingServiceFactory
             defaultTags,
             _loggerFactory.CreateLogger<TwitterPostingService>());
 
-    public IPostingService CreateTelegramService(string name) =>
+    public ISocialNetworkPostingService CreateTelegramService(string name) =>
         new TelegramPostingService(_settings.TelegramToken, name, _loggerFactory.CreateLogger<TelegramPostingService>());
 
-    public IPostingService CreateFacebookService(string token, string name) =>
+    public ISocialNetworkPostingService CreateFacebookService(string token, string name) =>
         new FacebookPostingService(token, name, _loggerFactory.CreateLogger<FacebookPostingService>());
         
-    public IPostingService CreateSlackService(string webHookUr) =>
+    public ISocialNetworkPostingService CreateSlackService(string webHookUr) =>
         new SlackPostingService(webHookUr, _loggerFactory.CreateLogger<SlackPostingService>());
 
-    public IPostingService CreateFakeService() =>
+    public ISocialNetworkPostingService CreateFakeService() =>
         new FakePostingService(_loggerFactory.CreateLogger<FakePostingService>());
 }

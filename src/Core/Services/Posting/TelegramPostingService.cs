@@ -7,24 +7,25 @@ using Telegram.Bot.Types.Enums;
 
 namespace Core.Services.Posting;
 
-public class TelegramPostingService : IPostingService
+public class TelegramPostingService : SocialNetworkPostingService
 {
     private readonly ILogger _logger;
     private readonly string _token;
     private readonly string _name;
 
-    public TelegramPostingService(string token, string name, ILogger<TelegramPostingService> logger)
+    public TelegramPostingService(string token, string name, ILogger<TelegramPostingService> logger) 
+        : base(logger)
     {
         _logger = logger;
         _token = token;
         _name = name;
     }
 
-    public async Task Send(string title, string body, Uri link)
+    protected override async Task PostImplementation(string title, string body, Uri link)
     {
         var channelLink = $"https://t.me/{_name.Replace("@", "")}";
         var chatLink = "https://t.me/dotnet_chat";
-        
+
         var sb = new StringBuilder();
 
         sb.Append($"{FormatMessage(title, body)}");
@@ -33,20 +34,14 @@ public class TelegramPostingService : IPostingService
         sb.Append($"🔗 {link}");
         sb.Append(Environment.NewLine);
         sb.Append(Environment.NewLine);
-        sb.Append($"👉🏻 <a href=\"{channelLink}\">Наш канал</a> | 💬 <a href=\"{chatLink}\">Наш чат</a>" );
+        sb.Append($"👉🏻 <a href=\"{channelLink}\">Наш канал</a> | 💬 <a href=\"{chatLink}\">Наш чат</a>");
 
-        try
-        {
-            var bot = new TelegramBotClient(_token);
 
-            await bot.SendTextMessageAsync(_name, sb.ToString(), ParseMode.Html);
+        var bot = new TelegramBotClient(_token);
 
-            _logger.LogInformation($"Message was sent to Telegram channel `{_name}`: `{sb}`");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error during send message to Telegram: `{sb}`");
-        }
+        await bot.SendTextMessageAsync(_name, sb.ToString(), ParseMode.Html);
+
+        _logger.LogInformation($"Message was sent to Telegram channel `{_name}`: `{sb}`");
     }
 
     private static string FormatMessage(string title, string body)

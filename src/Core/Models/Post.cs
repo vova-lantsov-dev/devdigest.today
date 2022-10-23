@@ -4,12 +4,17 @@ namespace Core.Models;
 
 public record Post
 {
-    public int Id { get; set; }
-    public string Title { get; set; }
-    public string Description { get; set; }
-    public string Image { get; set; }
-    public DateTime DateTime { get; set; }
-    public string EmbeddedPlayerCode { get; set; }
-    public Uri Url { get; set; }
-    public int Views { get; set; }
+    public Post()
+    {
+    }
+    
+    public int Id { get; init; }
+    public string Title { get; init; }
+    public string Description { get; init; }
+    public string Image { get; init; }
+    public DateTime DateTime { get; init; }
+    public string EmbeddedPlayerCode { get; init; }
+    public Uri Url { get; init; }
+    public int Views { get; init; }
+    public int CategoryId { get; init; }
 }

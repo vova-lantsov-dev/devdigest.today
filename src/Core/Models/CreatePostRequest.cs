@@ -1,5 +1,9 @@
-namespace WebSite.ViewModels;
+using System;
+using JetBrains.Annotations;
 
+namespace Core.Models;
+
+[PublicAPI]
 public record CreatePostRequest
 {
     public Uri Link { get; set; } = null;

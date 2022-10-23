@@ -21,12 +21,12 @@ public class TelegramIntegrationTest
         var message2 = @"Ecma International одобрила шестую версию спецификации языка C# официально известную как ECMA-334";
         var link = new Uri("https://devdigest.today/goto/1980");
 
-        await postingService.Send(
+        await postingService.Post(
             "Ecma International одобрила шестую версию спецификации языка C#",
             message1,
             link);
         
-        await postingService.Send(
+        await postingService.Post(
             "Ecma International одобрила шестую версию спецификации языка C#",
             message2,
             link);

@@ -1,8 +1,11 @@
-using Core.Models;
-
 namespace WebSite.ViewModels;
 
-public class ContentPageViewModel : PageMetaData
+public record ContentPageViewModel
 {
-    public string Content { get; set; }
+    public string Title { get; init; }
+    public string Description { get; init; }
+    public string Keywords { get; init; }
+    public Uri Url { get; init; }
+    public Uri Image { get; init; }
+    public string Content { get; init; }
 }

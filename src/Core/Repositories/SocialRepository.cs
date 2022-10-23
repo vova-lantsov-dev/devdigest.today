@@ -12,7 +12,6 @@ public interface ISocialRepository
     Task<IReadOnlyCollection<FacebookPage>> GetFacebookPages();
     Task<IReadOnlyCollection<Channel>> GetTelegramChannels(int categoryId);
     Task<IReadOnlyCollection<Channel>> GetTelegramChannels();
-    Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccountsChannels(int categoryId);
     Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccounts();
     Task<IReadOnlyCollection<DAL.Slack>> GetSlackApplications();
 }
@@ -31,9 +30,6 @@ public class SocialRepository : ISocialRepository
 
     public async Task<IReadOnlyCollection<Channel>> GetTelegramChannels() =>
         await _database.Channels.ToListAsync();
-
-    public async Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccountsChannels(int categoryId)
-        => await _database.TwitterAccounts.ToListAsync();
 
     public async Task<IReadOnlyCollection<TwitterAccount>> GetTwitterAccounts() =>
         await _database.TwitterAccounts.ToListAsync();

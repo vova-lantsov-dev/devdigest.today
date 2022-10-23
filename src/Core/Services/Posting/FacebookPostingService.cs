@@ -5,34 +5,27 @@ using X.Web.Facebook;
 
 namespace Core.Services.Posting;
 
-public class FacebookPostingService : IPostingService
+public class FacebookPostingService : SocialNetworkPostingService
 {
     private readonly ILogger _logger;
     private readonly string _token;
     private readonly string _name;
 
-    public FacebookPostingService(string token, string name, ILogger<FacebookPostingService> logger)
+    public FacebookPostingService(string token, string name, ILogger<FacebookPostingService> logger) 
+        : base(logger)
     {
         _logger = logger;
         _token = token;
         _name = name;
     }
 
-    public async Task Send(string title, string body, Uri link)
+    protected override async Task PostImplementation(string title, string body, Uri link)
     {
-        var message = MessageParser.Glue(title, body);
+        var message = MergeMessage(title, body);
+        var facebook = new FacebookClient(_token);
 
-        try
-        {
-            var facebook = new FacebookClient(_token);
+        await facebook.PostOnWall(message, link.ToString());
 
-            await facebook.PostOnWall(message, link.ToString());
-
-            _logger.LogInformation($"Message was sent to Facebook page `{_name}`: `{message}` `{link}`");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error during send message to Facebook: `{message}` `{link}`");
-        }
+        _logger.LogInformation($"Message was sent to Facebook page `{_name}`: `{message}` `{link}`");
     }
 }

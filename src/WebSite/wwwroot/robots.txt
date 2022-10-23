@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://devdigest.today/sitemap.xml

@@ -1,8 +1,8 @@
 namespace WebSite.ViewModels;
 
-public class ErrorViewModel
+public record ErrorViewModel
 {
-    public string RequestId { get; set; }
-    public int StatusCode { get; set; }
-    public string Description { get; set; }
+    public string RequestId { get; init; }
+    public int StatusCode { get; init; }
+    public string Description { get; init; }
 }

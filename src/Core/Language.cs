@@ -1,6 +1,6 @@
 namespace Core;
 
-public class Language
+public static class Language
 {
     public const int EnglishId = 1;
 

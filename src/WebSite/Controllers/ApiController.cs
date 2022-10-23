@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Immutable;
-using System.Data;
-using System.Linq;
+﻿using System.Data;
 using System.Net;
-using System.Threading.Tasks;
 using Core;
+using Core.Models;
 using Core.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using WebSite.AppCode;
-using WebSite.ViewModels;
 
 namespace WebSite.Controllers;
 
@@ -18,18 +12,18 @@ public class ApiController : ControllerBase
     private readonly IUserService _userService;
     private readonly Settings _settings;
     private readonly ILogger _logger;
-    private readonly IWebAppPublicationService _webAppPublicationService;
+    private readonly IPostService _postService;
 
     public ApiController(
-        IWebAppPublicationService webAppPublicationService,
         IUserService userService,
         Settings settings,
+        IPostService postService,
         ILogger<ApiController> logger)
     {
         _logger = logger;
+        _postService = postService;
         _settings = settings;
         _userService = userService;
-        _webAppPublicationService = webAppPublicationService;
     }
         
     [HttpGet]
@@ -40,7 +34,7 @@ public class ApiController : ControllerBase
     [Route("api/categories")]
     public async Task<IActionResult> GetCategories()
     {
-        var categories = await _webAppPublicationService.GetCategories();
+        var categories = await _postService.GetCategories();
 
         return Ok(categories);
     }
@@ -60,9 +54,9 @@ public class ApiController : ControllerBase
 
         try
         {
-            var publication = await _webAppPublicationService.CreatePublication(request, user.Id);
-
-            return Created(publication.ShareUrl, publication);
+            var (post, url) = await _postService.Create(request, user.Id);
+            
+            return Created(url, post);
         }
         catch (DuplicateNameException ex)
         {

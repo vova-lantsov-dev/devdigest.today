@@ -1,4 +1,7 @@
-$("#add-post").click(function () { addNewPost(); });
+$("#add-post").click(function () {
+    createPost();
+});
+
 $(".progress").hide();
 
 loadCategories();
@@ -6,7 +9,7 @@ loadCategories();
 function loadCategories() {
 
     const options = $("#category-id");
-    
+
     options.html('');
 
     $.get('/api/categories',
@@ -18,7 +21,7 @@ function loadCategories() {
     );
 }
 
-function addNewPost() {
+function createPost() {
 
     const link = $("#link").val();
     const key = $("#security-key").val();
@@ -27,7 +30,7 @@ function addNewPost() {
     const comment = $("#post-comment").val();
     const titleUa = $("#post-title-ua").val();
     const commentUa = $("#post-comment-ua").val();
-
+    
     const progress = $(".progress");
 
     const data = {
@@ -48,10 +51,8 @@ function addNewPost() {
             window.location.replace(response.shareUrl);
         })
         .fail(function (err) {
-            if (!!err && err.status === 403) {
-                alert('Access denied');
-            }
-            else {
+            if (!!err) {
+                alert(err);
                 console.error(err);
             }
         });
