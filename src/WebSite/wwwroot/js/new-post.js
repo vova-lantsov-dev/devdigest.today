@@ -30,7 +30,7 @@ function createPost() {
     const comment = $("#post-comment").val();
     const titleUa = $("#post-title-ua").val();
     const commentUa = $("#post-comment-ua").val();
-    
+
     const progress = $(".progress");
 
     const data = {
@@ -45,15 +45,29 @@ function createPost() {
 
     progress.show();
 
-    $.post('/api/publications', data)
-        .done(function (response) {
+
+    $.ajax({
+        type: 'POST',
+        url: '/api/publications',
+        data: data,
+        success: function (data, textStatus, request) {
             progress.hide();
-            window.location.replace(response.shareUrl);
-        })
-        .fail(function (err) {
-            if (!!err) {
-                alert(err);
-                console.error(err);
-            }
-        });
+
+            const location = request.getResponseHeader('location');
+
+            window.location.replace(location);
+        },
+        error: function (request, textStatus, error) {
+            progress.hide();
+
+            const message = JSON.stringify({
+                message: request.responseText,
+                error
+            }, null, 4);
+
+            alert(message);
+
+            console.error(error);
+        }
+    });
 }

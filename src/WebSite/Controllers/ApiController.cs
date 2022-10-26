@@ -49,7 +49,7 @@ public class ApiController : ControllerBase
         {
             _logger.LogWarning($"Somebody tried to login with this key: `{request.Key}`. Text: `{request.Comment}`");
 
-            return Forbid();
+            return StatusCode((int)HttpStatusCode.Forbidden, "Access denied");
         }
 
         try
