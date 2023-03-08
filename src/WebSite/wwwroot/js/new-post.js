@@ -1,10 +1,13 @@
-$("#add-post").click(function () {
-    createPost();
-});
+function init(){
+    $('#add-post').click(function () {
+        createPost();
+    });
+    
+    const progress = $('.progress');
+    progress.hide();
 
-$(".progress").hide();
-
-loadCategories();
+    loadCategories();
+}
 
 function loadCategories() {
 
@@ -15,7 +18,7 @@ function loadCategories() {
     $.get('/api/categories',
         function (result) {
             $.each(result, function () {
-                options.append($("<option />").val(this.id).text(this.name));
+                options.append($('<option />').val(this.id).text(this.name));
             });
         }
     );
@@ -23,15 +26,15 @@ function loadCategories() {
 
 function createPost() {
 
-    const link = $("#link").val();
-    const key = $("#security-key").val();
-    const categoryId = $("#category-id").val();
-    const title = $("#post-title").val();
-    const comment = $("#post-comment").val();
-    const titleUa = $("#post-title-ua").val();
-    const commentUa = $("#post-comment-ua").val();
+    const link = $('#link').val();
+    const key = $('#security-key').val();
+    const categoryId = $('#category-id').val();
+    const title = $('#post-title').val();
+    const comment = $('#post-comment').val();
+    const titleUa = $('#post-title-ua').val();
+    const commentUa = $('#post-comment-ua').val();
 
-    const progress = $(".progress");
+    const progress = $('.progress');
 
     const data = {
         link: link,
@@ -71,3 +74,5 @@ function createPost() {
         }
     });
 }
+
+init();
