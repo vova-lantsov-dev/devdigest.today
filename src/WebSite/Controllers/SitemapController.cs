@@ -87,10 +87,10 @@ public class SitemapController : Controller
             while (vacancies.HasNextPage);
 
             xml = sitemap.ToXml();
+            
             _cache.Set(key, xml, TimeSpan.FromMinutes(10));
         }
 
-            
         return Content(xml, "application/xml");
     }
 
