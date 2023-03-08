@@ -297,6 +297,7 @@ footer {
 footer h4,
 footer h5 {
     color: #FFF;
+    font-weight: bold;
 }
 
 footer a {
@@ -492,10 +493,6 @@ footer ul {
 
 .panel-default {
     border-radius: 0px;
-}
-
-.gitter-chat-embed {
-    z-index: 9999;
 }
 
 .founder {
