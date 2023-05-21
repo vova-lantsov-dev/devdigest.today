@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Tweetinvi;
-using Tweetinvi.Parameters;
+using SocialOpinionAPI.Core;
 
 namespace Core.Services.Posting;
 
@@ -17,7 +15,7 @@ public class TwitterPostingService : SocialNetworkPostingService
     private readonly ILogger _logger;
     private readonly string _name;
     private readonly IReadOnlyCollection<string> _defaultTags;
-    private readonly TwitterClient _client;
+    private readonly SocialOpinionAPI.Clients.TweetsClient _client;
 
     private const int MaxTweetLength = 186;
 
@@ -34,8 +32,14 @@ public class TwitterPostingService : SocialNetworkPostingService
         _logger = logger;
         _defaultTags = defaultTags;
         _name = name;
-            
-        _client = new TwitterClient(consumerKey, consumerSecret, accessToken, accessSecret);
+
+        _client = new SocialOpinionAPI.Clients.TweetsClient(new OAuthInfo
+        {
+            AccessSecret = accessSecret,
+            AccessToken = accessToken,
+            ConsumerKey = consumerKey,
+            ConsumerSecret = consumerSecret
+        });
     }
 
     protected override async Task PostImplementation(string title, string body, Uri link)
@@ -56,7 +60,7 @@ public class TwitterPostingService : SocialNetworkPostingService
         {
             Semaphore.WaitOne();
 
-            await _client.Tweets.PublishTweetAsync(new PublishTweetParameters(text));
+            _client.PostTweet(text);
 
             _logger.LogInformation($"Message was sent to Twitter channel `{_name}`: `{text}`");
         }
