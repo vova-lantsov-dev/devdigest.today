@@ -39,7 +39,7 @@ public class TelegramPostingService : SocialNetworkPostingService
 
         var bot = new TelegramBotClient(_token);
 
-        await bot.SendTextMessageAsync(_name, sb.ToString(), ParseMode.Html);
+        await bot.SendTextMessageAsync(_name, sb.ToString(), parseMode: ParseMode.Html);
 
         _logger.LogInformation($"Message was sent to Telegram channel `{_name}`: `{sb}`");
     }
