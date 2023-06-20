@@ -43,7 +43,7 @@ public abstract class SocialNetworkPostingService : ISocialNetworkPostingService
     protected abstract Task PostImplementation(string title, string body, Uri link);
     
     /// <summary>
-    /// Some social networks do not support formating title and body,
+    /// Some social networks do not support formatting title and body,
     /// so we merge title and body to single message   
     /// </summary>
     /// <param name="title"></param>

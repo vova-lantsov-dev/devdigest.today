@@ -46,11 +46,30 @@ public class TelegramPostingService : SocialNetworkPostingService
 
     private static string FormatMessage(string title, string body)
     {
+        var icon = GetIcon(body);
+        
         if (!string.IsNullOrWhiteSpace(body))
         {
-            return $"⚡ <b>{title}</b>{Environment.NewLine}{Environment.NewLine}{body}";
+            return $"{icon} <b>{title}</b>{Environment.NewLine}{Environment.NewLine}{body}";
         }
 
-        return $"⚡ {title}";
+        return $"{icon} {title}";
+    }
+
+    /// <summary>
+    /// Chose right icon for the post
+    /// </summary>
+    /// <param name="body"></param>
+    /// <returns></returns>
+    private static string GetIcon(string body)
+    {
+        if (body.Contains("devdigest.today/post"))
+        {
+            //We usually use /post links for videos
+            
+            return "🎥";
+        }
+        
+        return "⚡️";
     }
 }
