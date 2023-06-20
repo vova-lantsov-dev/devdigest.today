@@ -146,6 +146,12 @@ public class ContentService : IContentService
     public async Task<VacancyViewModel> GetVacancy(int id)
     {
         var vacancy = await _vacancyService.Get(id);
+
+        if (vacancy == null)
+        {
+            return null;
+        }
+        
         await _vacancyService.IncreaseViewCount(id);
 
         var image = _vacancyService.GetVacancyImage();

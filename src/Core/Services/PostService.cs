@@ -18,21 +18,21 @@ namespace Core.Services;
 public interface IPostService
 {
     Task<(Post post, Uri url)> Create(CreatePostRequest request, int userId);
-    
+
     Task<IPagedList<Post>> GetList(
-        int? categoryId = null, 
+        int? categoryId = null,
         int page = 1,
-        int pageSize = 10, 
+        int pageSize = 10,
         int languageId = Language.EnglishId);
-        
+
     Task<IReadOnlyCollection<Post>> GetTop(int languageId = Language.EnglishId);
-        
+
     Task<IReadOnlyCollection<Category>> GetCategories();
-        
+
     Task<Post> Get(int id);
 
     Task IncreaseViewCount(int id);
-    
+
     Task<IReadOnlyCollection<Post>> Find(params string[] keywords);
 }
 
@@ -46,7 +46,7 @@ public class PostService : IPostService
     private readonly ILanguageAnalyzerService _languageAnalyzer;
     private readonly PostingServiceFactory _factory;
     private readonly ISocialRepository _socialRepository;
-    
+
     public PostService(
         IMemoryCache cache,
         IPostRepository repository,
@@ -68,9 +68,9 @@ public class PostService : IPostService
     }
 
     public async Task<IPagedList<Post>> GetList(
-        int? categoryId = null, 
+        int? categoryId = null,
         int page = 1,
-        int pageSize = 10, 
+        int pageSize = 10,
         int languageId = Language.EnglishId)
     {
         var key = $"page_{page}_{pageSize}_{categoryId}";
@@ -79,14 +79,21 @@ public class PostService : IPostService
 
         if (result == null)
         {
-            var list = (await _repository.GetList(categoryId, languageId, page, pageSize))
-                .Select(Map)
-                .ToImmutableList();
-            
-            var totalItemsCount = await _repository.GetCount(categoryId, languageId);
+            var posts = await _repository.GetList(categoryId, languageId, page, pageSize);
 
-            result = new StaticPagedList<Post>(list, page, pageSize, totalItemsCount);
-            
+            if (posts != null && posts.Any())
+            {
+                var list = posts.Select(Map).ToImmutableList();
+
+                var totalItemsCount = await _repository.GetCount(categoryId, languageId);
+
+                result = new StaticPagedList<Post>(list, page, pageSize, totalItemsCount);
+            }
+            else
+            {
+                result = new StaticPagedList<Post>(new List<Post>(), 1, 1, 0);
+            }
+
             _cache.Set(key, result, GetMemoryCacheEntryOptions());
         }
 
@@ -116,7 +123,7 @@ public class PostService : IPostService
 
         return await Task.FromResult(result);
     }
-        
+
     public async Task IncreaseViewCount(int id) => await _repository.IncreaseViewCount(id);
 
     /// <summary>
@@ -193,7 +200,7 @@ public class PostService : IPostService
         {
             throw new DuplicateNameException("Publication with this URL already exist");
         }
-        
+
         var post = await StoreNewPostInDatabase(metadata, userId, request);
 
         var shareUrl = _postUrlBuilder.Build(post.Id);
@@ -204,7 +211,7 @@ public class PostService : IPostService
 
         var services = await GetPostingService(request.CategoryId);
         var serviceUa = _factory.CreateTelegramService("@devdigest_ua");
-        
+
         foreach (var service in services)
         {
             await service.Post(request.Title, request.Comment, url);
@@ -214,7 +221,7 @@ public class PostService : IPostService
 
         return (post, shareUrl);
     }
-    
+
     private async Task<IReadOnlyCollection<ISocialNetworkPostingService>> GetPostingService(int categoryId)
     {
         var telegramChannels = await _socialRepository.GetTelegramChannels(categoryId);
@@ -223,7 +230,7 @@ public class PostService : IPostService
         var slackApplications = await _socialRepository.GetSlackApplications();
 
         var services = new List<ISocialNetworkPostingService>();
-            
+
         foreach (var telegramChannel in telegramChannels)
         {
             services.Add(_factory.CreateTelegramService(telegramChannel.Name));
@@ -246,7 +253,7 @@ public class PostService : IPostService
                 twitterAccount.Name,
                 await GetCategoryTags(categoryId)));
         }
-            
+
         foreach (var slack in slackApplications)
         {
             services.Add(_factory.CreateSlackService(slack.WebHookUrl));
@@ -270,14 +277,14 @@ public class PostService : IPostService
     public async Task<IReadOnlyCollection<Post>> Find(params string[] keywords)
     {
         var list = await _repository.Find(keywords);
-        
+
         return list.Select(Map).ToImmutableList();
     }
 
     public async Task<bool> IsPostExist(string url)
     {
         var post = await _repository.Get(new Uri(url));
-        
+
         return post != null;
     }
 
@@ -289,7 +296,7 @@ public class PostService : IPostService
     public async Task<IReadOnlyCollection<Post>> GetTop(int languageId = Language.EnglishId)
     {
         var list = await _repository.GetTop(languageId);
-        
+
         return list.Select(Map).ToImmutableList();
     }
 }
