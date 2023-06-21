@@ -28,7 +28,7 @@ public class TelegramPostingService : SocialNetworkPostingService
 
         var sb = new StringBuilder();
 
-        sb.Append($"{FormatMessage(title, body)}");
+        sb.Append($"{FormatMessage(title, body, link)}");
         sb.Append(Environment.NewLine);
         sb.Append(Environment.NewLine);
         sb.Append($"🔗 {link}");
@@ -44,9 +44,9 @@ public class TelegramPostingService : SocialNetworkPostingService
         _logger.LogInformation($"Message was sent to Telegram channel `{_name}`: `{sb}`");
     }
 
-    private static string FormatMessage(string title, string body)
+    private static string FormatMessage(string title, string body, Uri link)
     {
-        var icon = GetIcon(body);
+        var icon = GetIcon(link.ToString());
         
         if (!string.IsNullOrWhiteSpace(body))
         {
@@ -61,9 +61,9 @@ public class TelegramPostingService : SocialNetworkPostingService
     /// </summary>
     /// <param name="body"></param>
     /// <returns></returns>
-    private static string GetIcon(string body)
+    private static string GetIcon(string link)
     {
-        if (body.Contains("devdigest.today/post"))
+        if (link.Contains("devdigest.today/post"))
         {
             //We usually use /post links for videos
             
