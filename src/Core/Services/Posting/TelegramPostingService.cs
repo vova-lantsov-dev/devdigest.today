@@ -28,13 +28,22 @@ public class TelegramPostingService : SocialNetworkPostingService
 
         var sb = new StringBuilder();
 
+        // Message block
         sb.Append($"{FormatMessage(title, body, link)}");
         sb.Append(Environment.NewLine);
         sb.Append(Environment.NewLine);
+
+        // Link block
         sb.Append($"🔗 {link}");
         sb.Append(Environment.NewLine);
         sb.Append(Environment.NewLine);
+
+        // Footer block
         sb.Append($"👉🏻 <a href=\"{channelLink}\">Наш канал</a> | 💬 <a href=\"{chatLink}\">Наш чат</a>");
+        if (TryMapToUaChannel(channelLink, out string uaChannelName))
+        {
+            sb.Append(" | 🇺🇦 <a href=\"https://t.me/{uaChannelLink}\">UA канал</a>");
+        }
 
 
         var bot = new TelegramBotClient(_token);
@@ -71,5 +80,18 @@ public class TelegramPostingService : SocialNetworkPostingService
         }
         
         return "⚡️";
+    }
+
+    private static bool TryMapToUaChannel(string channelLink, out string uaChannelName)
+    {
+        string channelName = channelLink.Split('/')[^1];
+
+        uaChannelName = channelName switch
+        {
+            "dncuug" => "devdigest_ua",
+            _ => null
+        };
+
+        return uaChannelName != null;
     }
 }
