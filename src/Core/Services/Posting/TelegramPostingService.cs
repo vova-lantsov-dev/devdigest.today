@@ -42,7 +42,7 @@ public class TelegramPostingService : SocialNetworkPostingService
         sb.Append($"👉🏻 <a href=\"{channelLink}\">Наш канал</a> | 💬 <a href=\"{chatLink}\">Наш чат</a>");
         if (TryMapToUaChannel(channelLink, out string uaChannelName))
         {
-            sb.Append(" | 🇺🇦 <a href=\"https://t.me/{uaChannelLink}\">UA канал</a>");
+            sb.Append($" | 🇺🇦 <a href=\"https://t.me/{uaChannelName}\">UA канал</a>");
         }
 
 
